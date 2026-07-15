@@ -1,0 +1,94 @@
+:root {
+  /* Colors */
+
+  --clr-bg: #09090b;
+  --clr-surface: #18181b;
+  --clr-surface-light: #27272a;
+
+  --clr-primary: #8b5cf6;
+  --clr-primary-hover: #7c3aed;
+  --clr-primary-light: #a78bfa;
+
+  --clr-success: #22c55e;
+  --clr-danger: #ef4444;
+  --clr-warning: #facc15;
+
+  --clr-text: #fafafa;
+  --clr-text-muted: #a1a1aa;
+
+  --clr-border: #2a2a2a;
+
+  /* Shadows */
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.4);
+
+  /* Glass */
+
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  /* Typography */
+
+  --ff-primary: "Plus Jakarta Sans", sans-serif;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 2rem;
+  --fs-3xl: 3rem;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* Spacing */
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 2rem;
+  --space-8: 2.5rem;
+  --space-9: 3rem;
+
+  /* Radius */
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-round: 999px;
+
+  /* Layout */
+
+  --header-height: 4.5rem;
+  --mini-player-height: 5.5rem;
+
+  /* Transition */
+
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* Z-index */
+
+  --z-header: 100;
+  --z-player: 200;
+  --z-modal: 500;
+  --z-toast: 1000;
+
+  /* Sizes */
+
+  --album-size: 110px;
+  --icon-size: 24px;
+  --radius-md: 12px;
+  --playlist-size: 60px;
+  --play-btn-size: 44px;
+}

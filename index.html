@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pulse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header>
+      <button class="menu-btn">
+        <i data-lucide="menu"></i>
+      </button>
+      <h1 class="logo">Pulse</h1>
+      <button class="settings-btn">
+        <i data-lucide="settings"></i>
+      </button>
+    </header>
+    <main>
+      <section class="search-section">
+        <form class="search-form">
+          <i class="search-icon" data-lucide="search"></i>
+          <input type="search" placeholder="Search songs, artists..." />
+        </form>
+      </section>
+      <section class="recently-played">
+        <div class="section-header">
+          <h2>Recently Played</h2>
+          <a href="#">See all</a>
+        </div>
+        <div class="recent-list">
+          <article class="song-card">
+            <img src="/assets/images/OIP.jpg" alt="blinding-nights" />
+
+            <h3>Blinding Lights</h3>
+
+            <p>The Weeknd</p>
+          </article>
+          <article class="song-card">
+            <img src="/assets/images/OIP.jpg" alt="blinding-nights" />
+
+            <h3>Blinding Lights</h3>
+
+            <p>The Weeknd</p>
+          </article>
+          <article class="song-card">
+            <img src="/assets/images/OIP.jpg" alt="blinding-nights" />
+
+            <h3>Blinding Lights</h3>
+
+            <p>The Weeknd</p>
+          </article>
+          <article class="song-card">
+            <img src="/assets/images/OIP.jpg" alt="blinding-nights" />
+
+            <h3>Blinding Lights</h3>
+
+            <p>The Weeknd</p>
+          </article>
+        </div>
+      </section>
+      <section class="playlists">
+        <div class="section-header">
+          <h2>Playlists</h2>
+          <a href="#">See all</a>
+        </div>
+
+        <div class="playlist-list">
+          <article class="playlist-card">
+            <img src="assets/images/coding mix.webp" alt="Coding Mix" />
+
+            <div class="playlist-info">
+              <h3>Coding Mix</h3>
+              <p>24 songs</p>
+            </div>
+
+            <button class="play-btn">
+              <i data-lucide="play"></i>
+            </button>
+          </article>
+          <article class="playlist-card">
+            <img src="assets/images/coding mix.webp" alt="Coding Mix" />
+
+            <div class="playlist-info">
+              <h3>Coding Mix</h3>
+              <p>24 songs</p>
+            </div>
+
+            <button class="play-btn">
+              <i data-lucide="play"></i>
+            </button>
+          </article>
+          <article class="playlist-card">
+            <img src="assets/images/coding mix.webp" alt="Coding Mix" />
+
+            <div class="playlist-info">
+              <h3>Coding Mix</h3>
+              <p>24 songs</p>
+            </div>
+
+            <button class="play-btn">
+              <i data-lucide="play"></i>
+            </button>
+          </article>
+        </div>
+      </section>
+      <section class="songs"></section>
+    </main>
+    <footer>
+      <div class="mini-player"></div>
+    </footer>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

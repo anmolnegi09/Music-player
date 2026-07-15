@@ -1,0 +1,134 @@
+header {
+  padding-top: var(--space-3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-inline: var(--space-5);
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--clr-text);
+}
+
+.search-section {
+  margin-top: var(--space-7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-form {
+  padding-left: var(--space-3);
+  background-color: var(--clr-surface-light);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  height: var(--fs-2xl);
+  width: 85%;
+  max-width: 420px;
+}
+
+.search-icon {
+  height: var(--fs-xl);
+  width: var(--fs-xl);
+}
+
+.search-form input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+}
+
+.recently-played {
+  margin-top: var(--space-5);
+}
+
+.section-header {
+  padding-inline: var(--space-5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-header a {
+  color: var(--clr-text);
+  text-decoration: none;
+}
+
+.section-header a:hover {
+  color: var(--clr-primary);
+}
+
+.recent-list {
+  margin: var(--space-5) var(--space-3);
+  display: flex;
+  gap: var(--space-5);
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  padding-inline: var(--space-5);
+}
+
+.recent-list::-webkit-scrollbar {
+  display: none; /* Chrome, Edge, Brave */
+}
+
+.song-card {
+  flex: 0 0 var(--album-size);
+}
+
+.song-card img {
+  width: var(--album-size);
+  height: var(--album-size);
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+.song-card h3 {
+  margin-top: var(--space-2);
+  font-size: var(--fs-sm);
+}
+
+.song-card p {
+  margin-top: var(--space-1);
+  font-size: var(--fs-xs);
+}
+
+.playlist-list {
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--space-3);
+  gap: var(--space-4);
+}
+
+.playlist-card {
+  display: flex;
+  align-items: center;
+  padding-inline: var(--space-5);
+  gap: var(--space-4);
+}
+
+.playlist-card img {
+  border-radius: var(--radius-md);
+  width: var(--playlist-size);
+  height: var(--playlist-size);
+}
+
+.playlist-info {
+  flex: 1;
+}
+
+.play-btn {
+  width: var(--play-btn-size);
+  height: var(--play-btn-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--clr-surface-light);
+}
