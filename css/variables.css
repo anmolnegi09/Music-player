@@ -91,4 +91,9 @@
   --radius-md: 12px;
   --playlist-size: 60px;
   --play-btn-size: 44px;
+  --play-btn-size: 3rem;
+  --mini-player-height: 4.5rem;
+
+  /* height */
+  --nav-height: 4rem;
 }
