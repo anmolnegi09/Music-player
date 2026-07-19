@@ -1,0 +1,88 @@
+const songs = [
+  {
+    id: 1,
+    title: "4 minutes",
+    artist: "Maddona",
+    cover: "assets/images/covers/song1.webp",
+    audio: "assets/songs/4minutes.mp3",
+  },
+  {
+    id: 2,
+    title: "Boom Shaka",
+    artist: "Kr$na",
+    cover: "assets/images/covers/song2.webp",
+    audio: "assets/songs/boom-shaka.mp3",
+  },
+  {
+    id: 3,
+    title: "Dura",
+    artist: "Daddy Yankee",
+    cover: "assets/images/covers/song3.webp",
+    audio: "assets/songs/dura.mp3",
+  },
+  {
+    id: 4,
+    title: "I want it that way",
+    artist: "Backstreet Boys",
+    cover: "assets/images/covers/song4.webp",
+    audio: "assets/songs/I-want-it-that-way.mp3",
+  },
+  {
+    id: 5,
+    title: "La isla bonita",
+    artist: "Maddona",
+    cover: "assets/images/covers/song5.webp",
+    audio: "assets/songs/la-isla-bonita.mp3",
+  },
+  {
+    id: 6,
+    title: "persona4",
+    artist: "Atlus",
+    cover: "assets/images/covers/song6.webp",
+    audio: "assets/songs/persona4-opening.mp3",
+  },
+  {
+    id: 7,
+    title: "Sparkle",
+    artist: "Radwipms",
+    cover: "assets/images/covers/song7.webp",
+    audio: "assets/songs/sparkle.mp3",
+  },
+  {
+    id: 8,
+    title: "Sunflower",
+    artist: "Post Melone",
+    cover: "assets/images/covers/song8.webp",
+    audio: "assets/songs/sunflower.mp3",
+  },
+  {
+    id: 9,
+    title: "Thousand Miles",
+    artist: "Vanessa",
+    cover: "assets/images/covers/song9.webp",
+    audio: "assets/songs/thousand-miles.mp3",
+  },
+  {
+    id: 10,
+    title: "We go on",
+    artist: "Bia",
+    cover: "assets/images/covers/song10.webp",
+    audio: "assets/songs/we-go-on.mp3",
+  },
+  {
+    id: 11,
+    title: "Zenzense",
+    artist: "Radwimps",
+    cover: "assets/images/covers/song11.webp",
+    audio: "assets/songs/zenzense.mp3",
+  },
+];
+
+const playlists = [
+  {
+    id: 1,
+    name: "Coding Mix",
+    songs: 24,
+    cover: "assets/images/playlists/coding-mix.webp",
+  },
+];
