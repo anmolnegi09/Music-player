@@ -81,8 +81,20 @@ const songs = [
 const playlists = [
   {
     id: 1,
-    name: "Coding Mix",
-    songs: 24,
-    cover: "assets/images/playlists/coding-mix.webp",
+    title: "Chill Mix",
+    cover: songs[0].cover,
+    songs: [0, 2, 5, 8, 10],
+  },
+  {
+    id: 2,
+    title: "Workout",
+    cover: songs[1].cover,
+    songs: [1, 3, 6, 9, 7],
+  },
+  {
+    id: 3,
+    title: "Coding Buzz",
+    cover: songs[9].cover,
+    songs: [1, 3, 4, 5, 6, 7, 8, 9, 11],
   },
 ];

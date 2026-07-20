@@ -1,3 +1,3 @@
 renderRecentSongs();
-// renderPlaylists();
+renderPlaylists();
 renderAllSongs();

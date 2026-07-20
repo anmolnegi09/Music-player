@@ -1,29 +1,15 @@
-header {
-  padding-top: var(--space-3);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-inline: var(--space-5);
-}
-
-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--clr-text);
-}
-
 .search-section {
-  margin-top: var(--space-7);
   display: flex;
   justify-content: center;
   align-items: center;
+
+  padding-top: var(--space-5);
 }
 
 .search-form {
   padding-left: var(--space-3);
   background-color: var(--clr-surface-light);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xl);
   display: flex;
   align-items: center;
   gap: var(--space-4);
@@ -170,13 +156,10 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   padding: var(--space-3) var(--space-5);
-
+  margin: 0 var(--space-2);
   background: var(--clr-surface-light);
   border-radius: var(--radius-xl);
-
-  margin: var(--space-5);
 }
 
 .player-left {

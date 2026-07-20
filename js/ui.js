@@ -1,5 +1,6 @@
 const recentList = document.querySelector(".recent-list");
-const allSongs = document.querySelector(".all-songs");
+const playlistList = document.querySelector(".playlist-list");
+const songsList = document.querySelector(".songs-list");
 
 function renderRecentSongs() {
   let html = "";
@@ -15,7 +16,30 @@ function renderRecentSongs() {
   recentList.innerHTML = html;
 }
 
-// function renderPlaylists() {}
+function renderPlaylists() {
+  let html = "";
+
+  playlists.forEach((playlist) => {
+    html += `
+      <article class="playlist-card">
+        <img src="${playlist.cover}" alt="${playlist.title}">
+
+        <div class="playlist-info">
+          <h3>${playlist.title}</h3>
+
+          <p>${playlist.songs.length} Songs</p>
+
+        </div>
+
+        <button class="play-btn">
+        <i data-lucide="play"></i>
+        </button>
+      </article>
+    `;
+  });
+
+  playlistList.innerHTML = html;
+}
 
 function renderAllSongs() {
   let html = "";
@@ -36,5 +60,5 @@ function renderAllSongs() {
             </button>
           </article>`;
   });
-  allSongs.innerHTML = html;
+  songsList.innerHTML = html;
 }

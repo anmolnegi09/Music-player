@@ -70,6 +70,7 @@
 
   --header-height: 4.5rem;
   --mini-player-height: 5.5rem;
+  --bottom-nav-height: 4rem;
 
   /* Transition */
 
@@ -87,13 +88,7 @@
   /* Sizes */
 
   --album-size: 110px;
-  --icon-size: 24px;
-  --radius-md: 12px;
   --playlist-size: 60px;
-  --play-btn-size: 44px;
+  --icon-size: 24px;
   --play-btn-size: 3rem;
-  --mini-player-height: 4.5rem;
-
-  /* height */
-  --nav-height: 4rem;
 }

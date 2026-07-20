@@ -14,3 +14,48 @@ body {
   background-color: var(--clr-bg);
   color: var(--clr-text);
 }
+
+header {
+  height: var(--header-height);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding-inline: var(--space-5);
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+
+  background: var(--clr-bg);
+
+  z-index: var(--z-header);
+}
+
+main {
+  padding-top: calc(var(--header-height) + var(--space-5));
+
+  padding-bottom: calc(
+    var(--mini-player-height) + var(--bottom-nav-height) + var(--space-6)
+  );
+}
+
+footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background: var(--clr-bg);
+
+  z-index: var(--z-player);
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--clr-text);
+}
