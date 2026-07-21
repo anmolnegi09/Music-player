@@ -5,6 +5,8 @@ const songsList = document.querySelector(".songs-list");
 const miniCover = document.querySelector(".player-left img");
 const miniTitle = document.querySelector(".player-info h3");
 const miniArtist = document.querySelector(".player-info p");
+const playerBtn = document.querySelector(".player-btn");
+const playerIcon = document.querySelector(".player-btn i");
 
 // ----------------------
 // Recently Played
@@ -114,3 +116,16 @@ function updateMiniPlayer(song) {
   miniTitle.textContent = song.title;
   miniArtist.textContent = song.artist;
 }
+
+// Play/Pause logic
+
+playerBtn.addEventListener("click", () => {
+  if (audio.paused === false) {
+    audio.pause();
+    playerBtn.innerHTML = `<i data-lucide="play"></i>`;
+  } else {
+    audio.play();
+    playerBtn.innerHTML = `<i data-lucide="pause"></i>`;
+  }
+  lucide.createIcons();
+});
