@@ -6,7 +6,8 @@ const miniCover = document.querySelector(".player-left img");
 const miniTitle = document.querySelector(".player-info h3");
 const miniArtist = document.querySelector(".player-info p");
 const playerBtn = document.querySelector(".player-btn");
-const playerIcon = document.querySelector(".player-btn i");
+
+let currentSongIndex = 0;
 
 // ----------------------
 // Recently Played
@@ -63,9 +64,9 @@ function renderPlaylists() {
 function renderAllSongs() {
   let html = "";
 
-  songs.forEach((song) => {
+  songs.forEach((song, index) => {
     html += `
-      <article class="songs-card" data-id="${song.id}">
+      <article class="songs-card" data-index="${index}">
         <div class="songs-left">
           <img src="${song.cover}" alt="${song.title}">
 
@@ -88,19 +89,16 @@ function renderAllSongs() {
 
   document.querySelectorAll(".songs-card").forEach((card) => {
     card.addEventListener("click", () => {
-      const id = Number(card.dataset.id);
+      currentSongIndex = Number(card.dataset.index);
 
-      const song = songs.find((song) => song.id === id);
-
-      if (!song) return;
-
-      currentSong = song;
+      const song = songs[currentSongIndex];
 
       updateMiniPlayer(song);
 
       audio.src = song.audio;
-
       audio.play();
+
+      updatePlayerButton();
     });
   });
 }
@@ -117,15 +115,26 @@ function updateMiniPlayer(song) {
   miniArtist.textContent = song.artist;
 }
 
-// Play/Pause logic
+// ----------------------
+// Play / Pause
+// ----------------------
 
-playerBtn.addEventListener("click", () => {
-  if (audio.paused === false) {
-    audio.pause();
+function updatePlayerButton() {
+  if (audio.paused) {
     playerBtn.innerHTML = `<i data-lucide="play"></i>`;
   } else {
-    audio.play();
     playerBtn.innerHTML = `<i data-lucide="pause"></i>`;
   }
+
   lucide.createIcons();
+}
+
+playerBtn.addEventListener("click", () => {
+  if (audio.paused) {
+    audio.play();
+  } else {
+    audio.pause();
+  }
+
+  updatePlayerButton();
 });
