@@ -237,3 +237,97 @@
 .nav-item span {
   font-size: 0.75rem;
 }
+
+/* ===========================
+   FULL SCREEN PLAYER
+=========================== */
+
+.hidden {
+  display: none;
+}
+
+.player-cover {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-inline: var(--space-5);
+}
+
+.player-cover-img {
+  margin-top: 100px;
+  max-width: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+}
+
+.player-details {
+  margin-top: var(--space-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* max-width: 100%; */
+  font-size: var(--fs-xl);
+  padding-inline: var(--space-5);
+}
+
+.player-details svg{
+  height: var(--icon-xl);
+  width: var(--icon-xl);
+}
+
+.progress-section {
+  padding-top: var(--space-5);
+  padding-inline: var(--space-5);
+}
+.progress-bar{
+  width: 100%;
+}
+
+.time-info{
+  display: flex;
+  justify-content: space-between;
+}
+
+.player-controls{
+  padding-top: var(--space-9);
+  padding-inline: var(--space-5);
+  display: flex;
+  justify-content: space-between;
+}
+
+.player-controls svg {
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+}
+
+.play-btn-large{
+  background-color: var(--clr-primary);
+  border-radius: var(--radius-round);
+  height: var(--icon-3xl);
+  width: var(--icon-3xl);
+}
+
+.play-btn-large svg{
+  height: var(--icon-xl);
+  width: var(--icon-xl);
+}
+
+.previous-btn svg {
+  height: var(--icon-xl);
+  width: var(--icon-xl);
+}
+.next-btn svg {
+  height: var(--icon-xl);
+  width: var(--icon-xl);
+}
+
+.player-bottom{
+  padding-inline: var(--space-5);
+  padding-top: var(--space-9);
+  display: flex;
+  justify-content: space-between;
+}
+.lyrics-btn{
+  display: flex;
+  align-items: center;
+}

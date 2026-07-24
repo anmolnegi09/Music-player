@@ -91,4 +91,12 @@
   --playlist-size: 60px;
   --icon-size: 24px;
   --play-btn-size: 3rem;
+
+  /* Icon Sizes */
+  --icon-sm: 1.25rem; /* 20px */
+  --icon-md: 1.5rem; /* 24px */
+  --icon-lg: 2rem; /* 32px */
+  --icon-xl: 2.5rem; /* 40px */
+  --icon-2xl: 3rem; 
+  --icon-3xl: 90px; 
 }

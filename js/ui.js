@@ -1,3 +1,6 @@
+const randomIndex = Math.floor(Math.random() * songs.length);
+
+const homeScreen = document.querySelector(".home-screen");
 const recentList = document.querySelector(".recent-list");
 const playlistList = document.querySelector(".playlist-list");
 const songsList = document.querySelector(".songs-list");
@@ -6,6 +9,13 @@ const miniCover = document.querySelector(".player-left img");
 const miniTitle = document.querySelector(".player-info h3");
 const miniArtist = document.querySelector(".player-info p");
 const playerBtn = document.querySelector(".player-btn");
+const miniPlayer = document.querySelector(".mini-player");
+
+const playerScreen = document.querySelector(".player-screen");
+const backBtn = document.querySelector(".back-btn");
+const playerCover = document.querySelector(".player-cover img");
+const playerTitle = document.querySelector(".song-details h2");
+const playerArtist = document.querySelector(".song-details p");
 
 let currentSongIndex = 0;
 
@@ -89,16 +99,8 @@ function renderAllSongs() {
 
   document.querySelectorAll(".songs-card").forEach((card) => {
     card.addEventListener("click", () => {
-      currentSongIndex = Number(card.dataset.index);
-
-      const song = songs[currentSongIndex];
-
-      updateMiniPlayer(song);
-
-      audio.src = song.audio;
-      audio.play();
-
-      updatePlayerButton();
+      loadSong(Number(card.dataset.index));
+      playSong();
     });
   });
 }
@@ -106,6 +108,24 @@ function renderAllSongs() {
 // ----------------------
 // Mini Player
 // ----------------------
+
+function loadSong(index) {
+  currentSongIndex = index;
+
+  const song = songs[currentSongIndex];
+
+  updateMiniPlayer(song);
+  updateFullPlayer(song);
+
+  audio.src = song.audio;
+
+  updatePlayerButton();
+}
+
+function playSong() {
+  audio.play();
+  updatePlayerButton();
+}
 
 function updateMiniPlayer(song) {
   miniCover.src = song.cover;
@@ -129,7 +149,9 @@ function updatePlayerButton() {
   lucide.createIcons();
 }
 
-playerBtn.addEventListener("click", () => {
+playerBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+
   if (audio.paused) {
     audio.play();
   } else {
@@ -138,3 +160,24 @@ playerBtn.addEventListener("click", () => {
 
   updatePlayerButton();
 });
+
+// ----------------------
+// player screen
+// ----------------------
+
+miniPlayer.addEventListener("click", () => {
+  homeScreen.classList.add("hidden");
+  playerScreen.classList.remove("hidden");
+});
+
+backBtn.addEventListener("click", () => {
+  playerScreen.classList.add("hidden");
+  homeScreen.classList.remove("hidden");
+});
+
+function updateFullPlayer(song) {
+  playerCover.src = song.cover;
+  playerCover.alt = song.title;
+  playerTitle.textContent = song.title;
+  playerArtist.textContent = song.artist;
+}
