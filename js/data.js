@@ -76,6 +76,13 @@ const songs = [
     cover: "assets/images/covers/song11.webp",
     audio: "assets/songs/zenzense.mp3",
   },
+  {
+    id: 12,
+    title: "Piya Tu",
+    artist: "Asha Bhosle",
+    cover: "assets/images/covers/song12.webp",
+    audio: "assets/songs/piya-tu.mp3",
+  },
 ];
 
 const playlists = [

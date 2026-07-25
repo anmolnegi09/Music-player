@@ -270,7 +270,7 @@
   padding-inline: var(--space-5);
 }
 
-.player-details svg{
+.player-details svg {
   height: var(--icon-xl);
   width: var(--icon-xl);
 }
@@ -279,16 +279,16 @@
   padding-top: var(--space-5);
   padding-inline: var(--space-5);
 }
-.progress-bar{
+.progress-bar {
   width: 100%;
 }
 
-.time-info{
+.time-info {
   display: flex;
   justify-content: space-between;
 }
 
-.player-controls{
+.player-controls {
   padding-top: var(--space-9);
   padding-inline: var(--space-5);
   display: flex;
@@ -300,14 +300,14 @@
   height: var(--icon-lg);
 }
 
-.play-btn-large{
+.play-btn-large {
   background-color: var(--clr-primary);
   border-radius: var(--radius-round);
   height: var(--icon-3xl);
   width: var(--icon-3xl);
 }
 
-.play-btn-large svg{
+.play-btn-large svg {
   height: var(--icon-xl);
   width: var(--icon-xl);
 }
@@ -321,13 +321,88 @@
   width: var(--icon-xl);
 }
 
-.player-bottom{
+.player-bottom {
   padding-inline: var(--space-5);
   padding-top: var(--space-9);
   display: flex;
   justify-content: space-between;
 }
-.lyrics-btn{
+.lyrics-btn {
   display: flex;
   align-items: center;
+}
+
+.active {
+  color: var(--clr-primary);
+  transition: var(--transition-normal);
+}
+
+/* ===========================
+   QUEUE SCREEN
+=========================== */
+
+.queue-screen {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 50%;
+  background: var(--clr-surface);
+
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding-inline: var(--space-6);
+
+  overflow-y: auto;
+
+  transform: translateY(100%);
+  transition: transform 0.35s ease;
+
+  z-index: var(--z-header);
+}
+
+.queue-header {
+  padding: var(--space-4);
+  top: 0;
+  position: sticky;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--clr-surface);
+}
+
+/* Open State */
+.queue-screen.show {
+  transform: translateY(0);
+}
+
+.queue-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+
+  padding: var(--space-3);
+  margin-bottom: var(--space-2);
+
+  border-radius: var(--radius-md);
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.queue-item:hover {
+  background: var(--clr-surface);
+}
+
+.queue-item img {
+  width: var(--playlist-size);
+  height: var(--playlist-size);
+
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+.queue-item.playing {
+  background: var(--clr-bg);
+  color: var(--clr-primary);
 }
