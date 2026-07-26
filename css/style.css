@@ -156,7 +156,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-3) var(--space-5);
+  padding: var(--space-2);
   margin: 0 var(--space-2);
   background: var(--clr-surface-light);
   border-radius: var(--radius-xl);
@@ -207,7 +207,7 @@
   justify-content: space-around;
   align-items: center;
 
-  margin-top: var(--space-5);
+  margin-top: var(--space-3);
   padding: var(--space-3) 0;
 
   background: var(--clr-bg);
@@ -230,8 +230,8 @@
 }
 
 .nav-item i {
-  width: var(--icon-size);
-  height: var(--icon-size);
+  width: var(--icon-sm);
+  height: var(--icon-sm);
 }
 
 .nav-item span {
@@ -255,7 +255,8 @@
 
 .player-cover-img {
   margin-top: 100px;
-  max-width: 100%;
+  max: 100%;
+  max-width: 340px;
   object-fit: cover;
   border-radius: var(--radius-xl);
 }
@@ -266,13 +267,13 @@
   justify-content: space-between;
   align-items: center;
   /* max-width: 100%; */
-  font-size: var(--fs-xl);
+  font-size: var(--fs-md);
   padding-inline: var(--space-5);
 }
 
 .player-details svg {
-  height: var(--icon-xl);
-  width: var(--icon-xl);
+  height: var(--icon-md);
+  width: var(--icon-md);
 }
 
 .progress-section {
@@ -296,29 +297,29 @@
 }
 
 .player-controls svg {
-  width: var(--icon-lg);
-  height: var(--icon-lg);
+  width: var(--icon-md);
+  height: var(--icon-md);
 }
 
 .play-btn-large {
   background-color: var(--clr-primary);
   border-radius: var(--radius-round);
-  height: var(--icon-3xl);
-  width: var(--icon-3xl);
+  height: var(--icon-2xl);
+  width: var(--icon-2xl);
 }
 
 .play-btn-large svg {
-  height: var(--icon-xl);
-  width: var(--icon-xl);
+  height: var(--icon-md);
+  width: var(--icon-md);
 }
 
 .previous-btn svg {
-  height: var(--icon-xl);
-  width: var(--icon-xl);
+  height: var(--icon-md);
+  width: var(--icon-md);
 }
 .next-btn svg {
-  height: var(--icon-xl);
-  width: var(--icon-xl);
+  height: var(--icon-md);
+  width: var(--icon-md);
 }
 
 .player-bottom {
