@@ -304,13 +304,13 @@
 .play-btn-large {
   background-color: var(--clr-primary);
   border-radius: var(--radius-round);
-  height: var(--icon-2xl);
-  width: var(--icon-2xl);
+  height: var(--icon-3xl);
+  width: var(--icon-3xl);
 }
 
 .play-btn-large svg {
-  height: var(--icon-md);
-  width: var(--icon-md);
+  height: var(--icon-lg);
+  width: var(--icon-lg);
 }
 
 .previous-btn svg {
