@@ -1,3 +1,7 @@
+// ----------------------
+// Songs
+// ----------------------
+
 const songs = [
   {
     id: 1,
@@ -83,7 +87,25 @@ const songs = [
     cover: "assets/images/covers/song12.webp",
     audio: "assets/songs/piya-tu.mp3",
   },
+  {
+    id: 13,
+    title: "Beat it",
+    artist: "Michael Jackson",
+    cover: "assets/images/covers/song13.jpg",
+    audio: "assets/songs/beat It.mp3",
+  },
+  {
+    id: 14,
+    title: "Bumpy Ride",
+    artist: "Mohombi",
+    cover: "assets/images/covers/song14.jpg",
+    audio: "assets/songs/Bumpy Ride.mp3",
+  },
 ];
+
+// ----------------------
+// Playlists
+// ----------------------
 
 const playlists = [
   {

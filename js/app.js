@@ -1,5 +1,5 @@
 renderRecentSongs();
 renderPlaylists();
 renderAllSongs();
-loadSong(randomIndex);
 
+loadSong(currentSongIndex);

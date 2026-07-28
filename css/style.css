@@ -1,3 +1,14 @@
+.login {
+  background-color: var(--clr-primary);
+  border-radius: var(--radius-xl);
+  height: 40px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--fs-lg);
+}
+
 .search-section {
   display: flex;
   justify-content: center;

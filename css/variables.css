@@ -1,4 +1,5 @@
 :root {
+  
   /* Colors */
 
   --clr-bg: #09090b;
@@ -93,6 +94,7 @@
   --play-btn-size: 3rem;
 
   /* Icon Sizes */
+
   --icon-sm: 1.25rem; /* 20px */
   --icon-md: 1.5rem; /* 24px */
   --icon-lg: 2rem; /* 32px */
