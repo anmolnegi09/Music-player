@@ -206,10 +206,7 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-
-  margin-top: var(--space-3);
   padding: var(--space-3) 0;
-
   background: var(--clr-bg);
 }
 

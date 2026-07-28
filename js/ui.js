@@ -1,6 +1,6 @@
 const audio = new Audio();
-window.audio = new Audio();
-const randomIndex = Math.floor(Math.random() * songs.length);
+// window.audio = new Audio();
+const savedSong = localStorage.getItem("currentSongIndex");
 
 const homeScreen = document.querySelector(".home-screen");
 const recentList = document.querySelector(".recent-list");
@@ -43,11 +43,15 @@ let currentSongIndex = 0;
 // ----------------------
 
 function renderRecentSongs() {
+  const recentSongs = JSON.parse(localStorage.getItem("recentSongs")) || [];
+
   let html = "";
 
-  songs.forEach((song) => {
+  recentSongs.forEach((index) => {
+    const song = songs[index];
+
     html += `
-      <article class="song-card">
+      <article class="song-card" data-index="${index}">
         <img src="${song.cover}" alt="${song.title}">
         <h3>${song.title}</h3>
         <p>${song.artist}</p>
@@ -56,6 +60,29 @@ function renderRecentSongs() {
   });
 
   recentList.innerHTML = html;
+
+  document.querySelectorAll(".song-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      loadSong(Number(card.dataset.index));
+
+      playSong();
+    });
+  });
+}
+
+function saveRecentSong(index) {
+  let recentSongs = JSON.parse(localStorage.getItem("recentSongs")) || [];
+
+  // Agar song pehle se hai to remove
+  recentSongs = recentSongs.filter((songIndex) => songIndex !== index);
+
+  // Sabse upar add
+  recentSongs.unshift(index);
+
+  // Sirf latest 10 songs rakho
+  recentSongs = recentSongs.slice(0, 10);
+
+  localStorage.setItem("recentSongs", JSON.stringify(recentSongs));
 }
 
 // ----------------------
@@ -130,6 +157,8 @@ function renderAllSongs() {
 
 function loadSong(index) {
   currentSongIndex = index;
+  localStorage.setItem("currentSongIndex", currentSongIndex);
+  saveRecentSong(currentSongIndex);
 
   const song = songs[currentSongIndex];
 
@@ -139,6 +168,8 @@ function loadSong(index) {
   audio.src = song.audio;
 
   updatePlayerButton();
+
+  renderRecentSongs();
 }
 
 function playSong() {
@@ -350,3 +381,15 @@ function renderQueue() {
     queueList.appendChild(songItem);
   });
 }
+
+// ----------------------
+// Local Storage
+// ----------------------
+
+if (savedSong !== null) {
+  currentSongIndex = Number(savedSong);
+} else {
+  currentSongIndex = Math.floor(Math.random() * songs.length);
+}
+
+loadSong(currentSongIndex);
