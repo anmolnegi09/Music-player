@@ -92,14 +92,14 @@ const songs = [
     title: "Beat it",
     artist: "Michael Jackson",
     cover: "assets/images/covers/song13.jpg",
-    audio: "assets/songs/beat It.mp3",
+    audio: "assets/songs/beat-it.mp3",
   },
   {
     id: 14,
     title: "Bumpy Ride",
     artist: "Mohombi",
     cover: "assets/images/covers/song14.jpg",
-    audio: "assets/songs/Bumpy Ride.mp3",
+    audio: "assets/songs/bumpy-ride.mp3",
   },
 ];
 
