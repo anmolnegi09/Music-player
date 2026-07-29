@@ -17,6 +17,11 @@ function loadSong(index) {
   updatePlayerButton();
 
   renderRecentSongs();
+
+  // CHECK KAREIN KI SONG LIKED HAI YA NAHI
+  const liked = getLikedSongs();
+  isFavorite = liked.includes(currentSongIndex);
+  updateFavoriteButton();
 }
 
 function playSong() {
@@ -73,7 +78,7 @@ playBtnLarge.addEventListener("click", (e) => {
 });
 
 // ----------------------
-// player screen
+// Player Screen Navigation
 // ----------------------
 
 miniPlayer.addEventListener("click", () => {
@@ -136,7 +141,8 @@ shuffleBtn.addEventListener("click", () => {
 // ----------------------
 
 previousBtn.addEventListener("click", () => {
-  currentSongIndex = (currentSongIndex - 1) % songs.length;
+  // Negative math fix so it loops properly backwards
+  currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
 
   loadSong(currentSongIndex);
   playSong();
@@ -183,7 +189,7 @@ audio.addEventListener("ended", () => {
 });
 
 // ----------------------
-// Queue Button
+// Queue Screen
 // ----------------------
 
 queueBtn.addEventListener("click", () => {
@@ -217,11 +223,8 @@ function renderQueue() {
 
     songItem.addEventListener("click", () => {
       currentSongIndex = index;
-
       loadSong(currentSongIndex);
-
       playSong();
-
       renderQueue();
     });
 
@@ -229,4 +232,14 @@ function renderQueue() {
   });
 }
 
+// ----------------------
+// Favorite Feature Button
+// ----------------------
 
+favoriteBtn.addEventListener("click", () => {
+    // Storage logic se heart toggle karega aur save karega
+    isFavorite = toggleLikedSong(currentSongIndex);
+    
+    updateFavoriteButton();
+    renderFavoritesCount(); // Ye Library folder par number of songs update karega
+});

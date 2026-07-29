@@ -40,3 +40,22 @@ let currentSongIndex = 0;
 const searchInput = document.querySelector(".search-input");
 const searchResults = document.querySelector(".search-results");
 const searchList = document.querySelector(".search-list");
+
+const favoriteBtn = document.querySelector(".favorite-btn");
+let isFavorite = false;
+
+// ----------------------
+// Library & Navigation Variables
+// ----------------------
+const libraryScreen = document.querySelector('.library-screen');
+const likedSongsScreen = document.querySelector('.liked-songs-screen');
+
+// Nav Buttons
+const homeNavBtn = document.querySelectorAll('.nav-item')[0]; // Home Btn
+const libraryNavBtn = document.querySelectorAll('.nav-item')[2]; // Library Btn
+
+// Library Elements
+const favoritesFolder = document.getElementById('favorites-folder');
+const backToLibraryBtn = document.querySelector('.back-to-library-btn');
+const likedSongsList = document.querySelector('.liked-songs-list');
+const favSongCount = document.getElementById('fav-song-count');
