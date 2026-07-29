@@ -363,6 +363,8 @@
   border-radius: var(--radius-xl);
   cursor: pointer;
   box-shadow: var(--shadow-sm);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
 .player-left {
@@ -766,12 +768,13 @@
   padding: var(--space-2) 0;
 }
 
-
 /* ===========================
    PROFILE SCREEN
 =========================== */
 .profile-screen {
-  padding-bottom: calc(var(--mini-player-height) + var(--bottom-nav-height) + var(--space-6));
+  padding-bottom: calc(
+    var(--mini-player-height) + var(--bottom-nav-height) + var(--space-6)
+  );
 }
 
 .profile-auth-section {
@@ -815,7 +818,9 @@
   border-radius: var(--radius-xl);
   font-weight: var(--fw-bold);
   font-size: var(--fs-md);
-  transition: transform var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .google-login-btn:hover {
