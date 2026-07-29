@@ -1,79 +1,50 @@
-// ----------------------
-// Search Logic & Genres
-// ----------------------
-
 const browseSection = document.querySelector(".browse-section");
 
-searchInput.addEventListener("input", handleSearch);
+searchInput.addEventListener("input", (e) => {
+  const query = e.target.value.trim().toLowerCase();
+  
+  browseSection.classList.toggle("hidden", query !== "");
+  searchResults.classList.toggle("hidden", query === "");
+  
+  if (query) renderSearchResults(filterSongs(query));
+});
 
-function handleSearch() {
-  const query = searchInput.value.trim().toLowerCase();
+const filterSongs = (query) => {
+  const words = query.split(/\s+/);
+  return songs.filter(song => 
+    words.every(word => `${song.title} ${song.artist}`.toLowerCase().includes(word))
+  );
+};
 
-  // Agar user ne input clear kar diya, toh wapas Genres dikhao
-  if (query === "") {
-    browseSection.classList.remove("hidden");
-    searchResults.classList.add("hidden");
+const renderSearchResults = (filtered) => {
+  if (!filtered.length) {
+    searchList.innerHTML = `<p style="text-align:center; padding-top: 30px; color: var(--clr-text-muted);">No songs found.</p>`;
     return;
   }
-
-  // Agar user type kar raha hai, toh Genres chupao, Results dikhao
-  browseSection.classList.add("hidden");
-  searchResults.classList.remove("hidden");
-
-  const filteredSongs = filterSongs(query);
-  renderSearchResults(filteredSongs);
-}
-
-function filterSongs(query) {
-  const words = query.trim().toLowerCase().split(/\s+/);
-
-  return songs.filter((song) => {
-    const text = `${song.title} ${song.artist}`.toLowerCase();
-    return words.every((word) => text.includes(word));
-  });
-}
-
-function renderSearchResults(filteredSongs) {
-  let html = "";
-
-  if (filteredSongs.length === 0) {
-    searchList.innerHTML = `<p style="text-align:center; padding-top: 30px; color: var(--clr-text-muted);">No songs found for your search.</p>`;
-    return;
-  }
-
-  filteredSongs.forEach((song) => {
-    const index = songs.indexOf(song);
-
-    // Hum All Songs wali 'songs-card' layout use kar rahe hain
-    html += `
-      <article class="songs-card" data-index="${index}">
-        <div class="songs-left">
-          <img src="${song.cover}" alt="${song.title}">
-          <div class="songs-info">
-            <h3>${song.title}</h3>
-            <p>${song.artist}</p>
-          </div>
+  
+  // Updated h3 to h1 to match your new styling!
+  searchList.innerHTML = filtered.map(song => `
+    <article class="songs-card" data-index="${songs.indexOf(song)}">
+      <div class="songs-left">
+        <img src="${song.cover}" alt="${song.title}">
+        <div class="songs-info">
+          <h1>${song.title}</h1>
+          <p>${song.artist}</p>
         </div>
-        <button class="more-btn">
-          <i data-lucide="play" fill="currentColor"></i>
-        </button>
-      </article>
-    `;
-  });
-
-  searchList.innerHTML = html;
+      </div>
+      <button class="more-btn"><i data-lucide="play" fill="currentColor"></i></button>
+    </article>
+  `).join('');
+  
   lucide.createIcons();
+};
 
-  // Click on search result to play
-  searchList.querySelectorAll(".songs-card").forEach((card) => {
-    card.addEventListener("click", () => {
-      loadSong(Number(card.dataset.index));
-      playSong();
-      
-      // Gaana chalte hi full player khol de
-      const searchScreen = document.querySelector('.search-screen');
-      if(searchScreen) searchScreen.classList.add("hidden");
-      playerScreen.classList.remove("hidden");
-    });
-  });
-}
+searchList.addEventListener("click", (e) => {
+  const card = e.target.closest(".songs-card");
+  if (card) {
+    loadSong(Number(card.dataset.index));
+    playSong();
+    document.querySelector('.search-screen')?.classList.add("hidden");
+    playerScreen.classList.remove("hidden");
+  }
+});

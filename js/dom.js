@@ -7,8 +7,8 @@ const playlistList = document.querySelector(".playlist-list");
 const songsList = document.querySelector(".songs-list");
 
 const miniCover = document.querySelector(".player-left img");
-const miniTitle = document.querySelector(".player-info h3");
 const miniArtist = document.querySelector(".player-info p");
+const miniTitle = document.querySelector(".player-info h1");
 const playerBtn = document.querySelector(".player-btn");
 const miniPlayer = document.querySelector(".mini-player");
 

@@ -5,87 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Aura</title>
 
-    <!-- Preconnect to Google Fonts for faster font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-    <!-- Application Stylesheets -->
+    <!-- base.css has been merged into style.css -->
     <link rel="stylesheet" href="css/variables.css" />
-    <link rel="stylesheet" href="css/base.css" />
     <link rel="stylesheet" href="css/style.css" />
 
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>"
-    />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>" />
   </head>
   <body>
-    <!-- ==========================================
-         HOME SCREEN
-         Main landing view containing search, recent, 
-         playlists, and all songs.
-         ========================================== -->
     <section class="home-screen">
       <header>
-        <h1 class="logo" style="display: flex; align-items: center; gap: 8px">
-          <i data-lucide="radio" style="color: var(--clr-primary)"></i> Aura
-        </h1>
+        <h1 class="logo"><i data-lucide="radio" style="color: var(--clr-primary)"></i> Aura</h1>
         <button class="login" aria-label="Login to Aura">Login</button>
       </header>
 
       <main>
-        <!-- Recently Played Section -->
         <section class="recently-played">
           <div class="section-header">
             <h2>Recently Played</h2>
             <a href="#" aria-label="See all recently played tracks">See all</a>
           </div>
-          <!-- JS will dynamically inject recent song cards here -->
           <div class="recent-list"></div>
         </section>
 
-        <!-- Playlists Section -->
         <section class="playlists">
           <div class="section-header">
             <h2>Playlists</h2>
             <a href="#" aria-label="See all playlists">See all</a>
           </div>
-          <!-- JS will dynamically inject playlist cards here -->
           <div class="playlist-list"></div>
         </section>
 
-        <!-- All Songs Section -->
         <section class="all-songs">
           <div class="section-header">
             <h2>All Songs</h2>
             <a href="#" aria-label="See all songs">See all</a>
           </div>
-          <!-- JS will dynamically inject song list items here -->
           <div class="songs-list"></div>
         </section>
       </main>
     </section>
 
-    <!-- ==========================================
-         FULL PLAYER SCREEN (Hidden by default)
-         Displays the active song details and playback controls
-         ========================================== -->
     <section class="player-screen hidden">
       <header class="player-header">
-        <button class="back-btn" aria-label="Minimize player">
-          <i data-lucide="chevron-down" aria-hidden="true"></i>
-        </button>
+        <button class="back-btn" aria-label="Minimize player"><i data-lucide="chevron-down"></i></button>
         <div class="playing-from">
           <p>Playing from</p>
           <h3>Coding Mix</h3>
         </div>
-        <button class="player-menu-btn" aria-label="Player menu options">
-          <i data-lucide="ellipsis-vertical" aria-hidden="true"></i>
-        </button>
+        <button class="player-menu-btn" aria-label="Player menu options"><i data-lucide="ellipsis-vertical"></i></button>
       </header>
 
       <div class="player-cover">
@@ -97,147 +68,78 @@
           <h2 class="player-title"></h2>
           <p class="player-artist"></p>
         </div>
-        <button class="favorite-btn" aria-label="Add to favorites">
-          <i data-lucide="heart" aria-hidden="true"></i>
-        </button>
+        <button class="favorite-btn" aria-label="Add to favorites"><i data-lucide="heart"></i></button>
       </div>
 
-      <!-- Timeline / Progress Bar -->
       <div class="progress-section">
-        <input
-          type="range"
-          class="progress-bar"
-          min="0"
-          max="100"
-          value="0"
-          aria-label="Seek track position"
-        />
+        <input type="range" class="progress-bar" min="0" max="100" value="0" aria-label="Seek track position" />
         <div class="time-info">
           <span class="current-time">0:00</span>
           <span class="duration">0:00</span>
         </div>
       </div>
 
-      <!-- Playback Controls -->
       <div class="player-controls">
-        <button class="shuffle-btn" aria-label="Shuffle queue">
-          <i data-lucide="shuffle" aria-hidden="true"></i>
-        </button>
-        <button class="previous-btn" aria-label="Play previous track">
-          <i data-lucide="skip-back" aria-hidden="true"></i>
-        </button>
-        <button class="play-btn-large" aria-label="Play track">
-          <i data-lucide="play" aria-hidden="true"></i>
-        </button>
-        <button class="next-btn" aria-label="Play next track">
-          <i data-lucide="skip-forward" aria-hidden="true"></i>
-        </button>
-        <button class="repeat-btn" aria-label="Toggle repeat">
-          <i data-lucide="repeat" aria-hidden="true"></i>
-        </button>
+        <button class="shuffle-btn" aria-label="Shuffle queue"><i data-lucide="shuffle"></i></button>
+        <button class="previous-btn" aria-label="Play previous track"><i data-lucide="skip-back"></i></button>
+        <button class="play-btn-large" aria-label="Play track"><i data-lucide="play"></i></button>
+        <button class="next-btn" aria-label="Play next track"><i data-lucide="skip-forward"></i></button>
+        <button class="repeat-btn" aria-label="Toggle repeat"><i data-lucide="repeat"></i></button>
       </div>
 
-      <!-- Additional Player Options -->
       <div class="player-bottom">
-        <button class="lyrics-btn" aria-label="Show lyrics">
-          <i data-lucide="list-music" aria-hidden="true"></i>
-          <span>Lyrics</span>
-        </button>
-        <button class="queue-btn" aria-label="Show upcoming queue">
-          <i data-lucide="list" aria-hidden="true"></i>
-        </button>
+        <button class="lyrics-btn" aria-label="Show lyrics"><i data-lucide="list-music"></i><span>Lyrics</span></button>
+        <button class="queue-btn" aria-label="Show upcoming queue"><i data-lucide="list"></i></button>
       </div>
     </section>
 
-    <!-- ==========================================
-         QUEUE SCREEN
-         ========================================== -->
     <div class="queue-screen">
       <div class="queue-header">
         <h2>Queue</h2>
-        <button class="close-queue" aria-label="Close queue screen">
-          <i data-lucide="x" aria-hidden="true"></i>
-        </button>
+        <button class="close-queue" aria-label="Close queue screen"><i data-lucide="x"></i></button>
       </div>
-      <!-- Dynamic queue items populated via JS -->
       <div class="queue-list"></div>
     </div>
 
-    <!-- ==========================================
-     SEARCH SCREEN (Hidden by default)
-     ========================================== -->
     <section class="search-screen hidden">
       <header class="screen-header">
-        <!-- Naya Back button add kiya hai -->
-        <button class="close-search-btn" aria-label="Back to Home">
-          <i data-lucide="arrow-left" aria-hidden="true"></i>
-        </button>
+        <button class="close-search-btn" aria-label="Back to Home"><i data-lucide="arrow-left"></i></button>
         <h2>Search</h2>
       </header>
 
-      <!-- Search Bar -->
       <div class="search-container">
         <form class="search-form" onsubmit="event.preventDefault()">
-          <i class="search-icon" data-lucide="search" aria-hidden="true"></i>
-          <input
-            class="search-input"
-            type="search"
-            placeholder="What do you want to listen to?"
-            aria-label="Search for music"
-          />
+          <i class="search-icon" data-lucide="search"></i>
+          <input class="search-input" type="search" placeholder="What do you want to listen to?" aria-label="Search for music" />
         </form>
       </div>
 
-      <!-- Browse Genres (Default State) -->
       <div class="browse-section">
         <h3 class="browse-title">Browse All</h3>
         <div class="genre-grid">
-          <!-- Dummy Genres -->
-          <div class="genre-card" style="background-color: #e13300">
-            <h4>Podcasts</h4>
-          </div>
-          <div class="genre-card" style="background-color: #1e3264">
-            <h4>Made For You</h4>
-          </div>
-          <div class="genre-card" style="background-color: #e8115b">
-            <h4>New Releases</h4>
-          </div>
-          <div class="genre-card" style="background-color: #148a08">
-            <h4>Hindi</h4>
-          </div>
-          <div class="genre-card" style="background-color: #8c1932">
-            <h4>Hip-Hop</h4>
-          </div>
-          <div class="genre-card" style="background-color: #d84000">
-            <h4>Chill</h4>
-          </div>
+          <div class="genre-card" style="--bg: #e13300"><h4>Podcasts</h4></div>
+          <div class="genre-card" style="--bg: #1e3264"><h4>Made For You</h4></div>
+          <div class="genre-card" style="--bg: #e8115b"><h4>New Releases</h4></div>
+          <div class="genre-card" style="--bg: #148a08"><h4>Hindi</h4></div>
+          <div class="genre-card" style="--bg: #8c1932"><h4>Hip-Hop</h4></div>
+          <div class="genre-card" style="--bg: #d84000"><h4>Chill</h4></div>
         </div>
       </div>
 
-      <!-- Search Results (Hidden by default) -->
       <div class="search-results hidden">
-        <!-- Results list yahan aayegi -->
         <div class="search-list songs-list"></div>
       </div>
     </section>
 
-    <!-- ==========================================
-     LIBRARY SCREEN 
-     ========================================== -->
     <section class="library-screen hidden">
       <header class="screen-header">
-        <!-- Naya Close button add kiya hai -->
-        <button class="close-library-btn" aria-label="Close Library">
-          <i data-lucide="x" aria-hidden="true"></i>
-        </button>
+        <button class="close-library-btn" aria-label="Close Library"><i data-lucide="x"></i></button>
         <h2>Your Library</h2>
       </header>
 
       <div class="library-grid">
         <article class="library-folder" id="favorites-folder">
-          <div class="folder-icon">
-            <i data-lucide="heart" fill="currentColor"></i>
-          </div>
+          <div class="folder-icon"><i data-lucide="heart" fill="currentColor"></i></div>
           <div class="folder-info">
             <h3>Liked Songs</h3>
             <p id="fav-song-count">0 songs</p>
@@ -246,145 +148,62 @@
       </div>
     </section>
 
-    <!-- ==========================================
-     LIKED SONGS LIST SCREEN (Hidden by default)
-     ========================================== -->
     <section class="liked-songs-screen hidden">
       <header class="screen-header">
-        <button class="back-to-library-btn" aria-label="Back to Library">
-          <i data-lucide="arrow-left"></i>
-        </button>
+        <button class="back-to-library-btn" aria-label="Back to Library"><i data-lucide="arrow-left"></i></button>
         <h2>Liked Songs</h2>
       </header>
-
-      <!-- Yahan JS se favorite songs render honge -->
       <div class="liked-songs-list"></div>
     </section>
 
-    <!-- ==========================================
-     PROFILE SCREEN (Hidden by default)
-     ========================================== -->
     <section class="profile-screen hidden">
       <header class="screen-header">
         <h2>Your Profile</h2>
       </header>
 
-      <!-- Login Prompt Section -->
       <div class="profile-auth-section">
-        <div class="auth-avatar">
-          <i data-lucide="user-circle" stroke-width="1.5"></i>
-        </div>
+        <div class="auth-avatar"><i data-lucide="user-circle" stroke-width="1.5"></i></div>
         <h3>Create an account or log in</h3>
-        <p>
-          Log in to save your playlists, library, and favorites across all your
-          devices.
-        </p>
+        <p>Log in to save your playlists, library, and favorites across all your devices.</p>
 
-        <!-- Google Login Button (With exact Google Logo SVG) -->
         <button class="google-login-btn">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 48 48"
-            width="24px"
-            height="24px"
-          >
-            <path
-              fill="#FFC107"
-              d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
-            />
-            <path
-              fill="#FF3D00"
-              d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
-            />
-            <path
-              fill="#4CAF50"
-              d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
-            />
-            <path
-              fill="#1976D2"
-              d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
-            />
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px">
+            <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+            <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+            <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+            <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
           </svg>
           <span>Continue with Google</span>
         </button>
       </div>
 
-      <!-- Settings List -->
       <div class="settings-list">
-        <div class="settings-item">
-          <div class="settings-left">
-            <i data-lucide="settings"></i>
-            <span>App Settings</span>
-          </div>
-          <i data-lucide="chevron-right" class="chevron"></i>
-        </div>
-        <div class="settings-item">
-          <div class="settings-left">
-            <i data-lucide="bell"></i>
-            <span>Notifications</span>
-          </div>
-          <i data-lucide="chevron-right" class="chevron"></i>
-        </div>
-        <div class="settings-item">
-          <div class="settings-left">
-            <i data-lucide="shield"></i>
-            <span>Privacy & Security</span>
-          </div>
-          <i data-lucide="chevron-right" class="chevron"></i>
-        </div>
-        <div class="settings-item">
-          <div class="settings-left">
-            <i data-lucide="info"></i>
-            <span>About Aura</span>
-          </div>
-          <i data-lucide="chevron-right" class="chevron"></i>
-        </div>
+        <div class="settings-item"><div class="settings-left"><i data-lucide="settings"></i><span>App Settings</span></div><i data-lucide="chevron-right" class="chevron"></i></div>
+        <div class="settings-item"><div class="settings-left"><i data-lucide="bell"></i><span>Notifications</span></div><i data-lucide="chevron-right" class="chevron"></i></div>
+        <div class="settings-item"><div class="settings-left"><i data-lucide="shield"></i><span>Privacy & Security</span></div><i data-lucide="chevron-right" class="chevron"></i></div>
+        <div class="settings-item"><div class="settings-left"><i data-lucide="info"></i><span>About Aura</span></div><i data-lucide="chevron-right" class="chevron"></i></div>
       </div>
     </section>
 
-    <!-- Persistent Footer: Mini Player & Navigation -->
     <footer class="footer">
       <div class="mini-player">
         <div class="player-left">
           <img src="" alt="" aria-hidden="true" />
-          <div class="player-info">
-            <h3></h3>
-            <p></p>
-          </div>
+          <div class="player-info"><p></p><h1></h1></div>
         </div>
-        <button class="player-btn" aria-label="Play or pause current track">
-          <i data-lucide="play" aria-hidden="true"></i>
-        </button>
+        <button class="player-btn" aria-label="Play or pause current track"><i data-lucide="play"></i></button>
       </div>
 
       <nav class="bottom-nav" aria-label="Main Navigation">
-        <button class="nav-item active" aria-label="Home">
-          <i data-lucide="house" aria-hidden="true"></i>
-          <span>Home</span>
-        </button>
-        <button class="nav-item" aria-label="Search">
-          <i data-lucide="search" aria-hidden="true"></i>
-          <span>Search</span>
-        </button>
-        <button class="nav-item" aria-label="Library">
-          <i data-lucide="library" aria-hidden="true"></i>
-          <span>Library</span>
-        </button>
-        <button class="nav-item" aria-label="Profile">
-          <i data-lucide="user" aria-hidden="true"></i>
-          <span>Profile</span>
-        </button>
+        <button class="nav-item active" aria-label="Home"><i data-lucide="house"></i><span>Home</span></button>
+        <button class="nav-item" aria-label="Search"><i data-lucide="search"></i><span>Search</span></button>
+        <button class="nav-item" aria-label="Library"><i data-lucide="library"></i><span>Library</span></button>
+        <button class="nav-item" aria-label="Profile"><i data-lucide="user"></i><span>Profile</span></button>
       </nav>
     </footer>
 
-    <!-- ==========================================
-         SCRIPTS
-         Uses defer to avoid blocking HTML DOM parsing
-         ========================================== -->
-    <!-- External icon library -->
     <script src="https://unpkg.com/lucide@latest" defer></script>
-
-    <!-- Application logic -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js" defer></script>
     <script src="js/data.js" defer></script>
     <script src="js/dom.js" defer></script>
     <script src="js/storage.js" defer></script>
@@ -392,11 +211,10 @@
     <script src="js/render.js" defer></script>
     <script src="js/search.js" defer></script>
     <script src="js/app.js" defer></script>
-
-    <!-- Initialize Icons after DOM is loaded -->
     <script defer>
       document.addEventListener("DOMContentLoaded", () => {
-        lucide.createIcons();
+        // Automatically injects aria-hidden to all lucide icons to keep HTML clean
+        lucide.createIcons({ attrs: { 'aria-hidden': 'true' } }); 
       });
     </script>
   </body>

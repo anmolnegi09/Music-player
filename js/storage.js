@@ -1,30 +1,17 @@
-// ----------------------
-// Local Storage
-// ----------------------
+currentSongIndex = localStorage.getItem("currentSongIndex") !== null 
+  ? Number(localStorage.getItem("currentSongIndex")) 
+  : Math.floor(Math.random() * songs.length);
 
-if (savedSong !== null) {
-  currentSongIndex = Number(savedSong);
-} else {
-  currentSongIndex = Math.floor(Math.random() * songs.length);
-}
+const getLikedSongs = () => JSON.parse(localStorage.getItem("likedSongs")) || [];
 
-// ----------------------
-// Liked Songs Storage
-// ----------------------
-
-function getLikedSongs() {
-  return JSON.parse(localStorage.getItem("likedSongs")) || [];
-}
-
-function toggleLikedSong(index) {
+const toggleLikedSong = (index) => {
   let liked = getLikedSongs();
   
-  if (liked.includes(index)) {
-    liked = liked.filter(i => i !== index); // Un-like (remove)
-  } else {
-    liked.unshift(index); // Like (add to start)
-  }
-  
+  // If liked, filter it out. If not liked, add it to the start of the array.
+  liked = liked.includes(index) 
+    ? liked.filter(i => i !== index) 
+    : [index, ...liked];
+    
   localStorage.setItem("likedSongs", JSON.stringify(liked));
-  return liked.includes(index); // Naya status return karega
-}
+  return liked.includes(index); 
+};

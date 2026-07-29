@@ -1,5 +1,5 @@
 // ----------------------
-// Mini Player
+// Mini Player & Initialization
 // ----------------------
 
 function loadSong(index) {
@@ -9,16 +9,14 @@ function loadSong(index) {
 
   const song = songs[currentSongIndex];
 
+  applyDynamicColor(song.cover);
   updateMiniPlayer(song);
   updateFullPlayer(song);
 
   audio.src = song.audio;
-
   updatePlayerButton();
-
   renderRecentSongs();
 
-  // CHECK KAREIN KI SONG LIKED HAI YA NAHI
   const liked = getLikedSongs();
   isFavorite = liked.includes(currentSongIndex);
   updateFavoriteButton();
@@ -32,50 +30,37 @@ function playSong() {
 function updateMiniPlayer(song) {
   miniCover.src = song.cover;
   miniCover.alt = song.title;
+  
+  miniArtist.textContent = song.artist; // <p> tag
+  miniTitle.textContent = song.title;   // <h1> tag
+}
 
-  miniTitle.textContent = song.title;
-  miniArtist.textContent = song.artist;
+function updateFullPlayer(song) {
+  playerCover.src = song.cover;
+  playerCover.alt = song.title;
+  playerTitle.textContent = song.title;
+  playerArtist.textContent = song.artist;
 }
 
 // ----------------------
-// Play / Pause
+// Play / Pause Logic
 // ----------------------
 
 function updatePlayerButton() {
-  if (audio.paused) {
-    playerBtn.innerHTML = `<i data-lucide="play"></i>`;
-    playBtnLarge.innerHTML = `<i data-lucide="play"></i>`;
-  } else {
-    playerBtn.innerHTML = `<i data-lucide="pause"></i>`;
-    playBtnLarge.innerHTML = `<i data-lucide="pause"></i>`;
-  }
-
+  const icon = audio.paused ? "play" : "pause";
+  playerBtn.innerHTML = `<i data-lucide="${icon}"></i>`;
+  playBtnLarge.innerHTML = `<i data-lucide="${icon}"></i>`;
   lucide.createIcons();
 }
 
-playerBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
-
-  if (audio.paused) {
-    audio.play();
-  } else {
-    audio.pause();
-  }
-
+function togglePlay(e) {
+  if (e) e.stopPropagation();
+  audio.paused ? audio.play() : audio.pause();
   updatePlayerButton();
-});
+}
 
-playBtnLarge.addEventListener("click", (e) => {
-  e.stopPropagation();
-
-  if (audio.paused) {
-    audio.play();
-  } else {
-    audio.pause();
-  }
-
-  updatePlayerButton();
-});
+playerBtn.addEventListener("click", togglePlay);
+playBtnLarge.addEventListener("click", togglePlay);
 
 // ----------------------
 // Player Screen Navigation
@@ -91,31 +76,22 @@ backBtn.addEventListener("click", () => {
   homeScreen.classList.remove("hidden");
 });
 
-function updateFullPlayer(song) {
-  playerCover.src = song.cover;
-  playerCover.alt = song.title;
-  playerTitle.textContent = song.title;
-  playerArtist.textContent = song.artist;
-}
-
 // ----------------------
 // Progress Bar
 // ----------------------
 
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${minutes}:${secs.toString().padStart(2, "0")}`;
+}
+
 audio.addEventListener("timeupdate", () => {
   if (!audio.duration) return;
-
   const progress = (audio.currentTime / audio.duration) * 100;
   progressBar.value = progress;
   currentTime.textContent = formatTime(audio.currentTime);
 });
-
-function formatTime(seconds) {
-  const minutes = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-
-  return `${minutes}:${secs.toString().padStart(2, "0")}`;
-}
 
 audio.addEventListener("loadedmetadata", () => {
   duration.textContent = formatTime(audio.duration);
@@ -123,49 +99,35 @@ audio.addEventListener("loadedmetadata", () => {
 
 progressBar.addEventListener("input", () => {
   if (!audio.duration) return;
-
   audio.currentTime = (progressBar.value / 100) * audio.duration;
 });
 
 // ----------------------
-// Shuffle Button
+// Track Navigation
 // ----------------------
+
+function playNext() {
+  if (isShuffle) {
+    currentSongIndex = Math.floor(Math.random() * songs.length);
+  } else {
+    currentSongIndex = (currentSongIndex + 1) % songs.length;
+  }
+  loadSong(currentSongIndex);
+  playSong();
+}
 
 shuffleBtn.addEventListener("click", () => {
   isShuffle = !isShuffle;
   shuffleBtn.classList.toggle("active", isShuffle);
 });
 
-// ----------------------
-// Previous Button
-// ----------------------
-
 previousBtn.addEventListener("click", () => {
-  // Negative math fix so it loops properly backwards
   currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-
   loadSong(currentSongIndex);
   playSong();
 });
 
-// ----------------------
-// Next Button
-// ----------------------
-
-nextBtn.addEventListener("click", () => {
-  if (isShuffle) {
-    currentSongIndex = Math.floor(Math.random() * songs.length);
-  } else {
-    currentSongIndex = (currentSongIndex + 1) % songs.length;
-  }
-
-  loadSong(currentSongIndex);
-  playSong();
-});
-
-// ----------------------
-// Repeat Button
-// ----------------------
+nextBtn.addEventListener("click", playNext);
 
 repeatBtn.addEventListener("click", () => {
   isRepeat = !isRepeat;
@@ -177,14 +139,7 @@ audio.addEventListener("ended", () => {
     audio.currentTime = 0;
     playSong();
   } else {
-    if (isShuffle) {
-      currentSongIndex = Math.floor(Math.random() * songs.length);
-    } else {
-      currentSongIndex = (currentSongIndex + 1) % songs.length;
-    }
-
-    loadSong(currentSongIndex);
-    playSong();
+    playNext(); 
   }
 });
 
@@ -206,13 +161,7 @@ function renderQueue() {
 
   songs.forEach((song, index) => {
     const songItem = document.createElement("div");
-
-    songItem.className = "queue-item";
-
-    if (index === currentSongIndex) {
-      songItem.classList.add("playing");
-    }
-
+    songItem.className = `queue-item ${index === currentSongIndex ? "playing" : ""}`;
     songItem.innerHTML = `
             <img src="${song.cover}" alt="">
             <div>
@@ -237,9 +186,52 @@ function renderQueue() {
 // ----------------------
 
 favoriteBtn.addEventListener("click", () => {
-    // Storage logic se heart toggle karega aur save karega
-    isFavorite = toggleLikedSong(currentSongIndex);
-    
-    updateFavoriteButton();
-    renderFavoritesCount(); // Ye Library folder par number of songs update karega
+  isFavorite = toggleLikedSong(currentSongIndex);
+  updateFavoriteButton();
+  renderFavoritesCount(); 
 });
+
+// ----------------------
+// Dynamic Color System
+// ----------------------
+
+function applyDynamicColor(imgUrl) {
+  const img = new Image();
+  img.crossOrigin = "Anonymous";
+  img.src = imgUrl;
+
+  img.addEventListener('load', () => {
+    const miniPlayerEl = document.querySelector('.mini-player');
+
+    try {
+      const palette = colorThief.getPalette(img, 5);
+      let chosenColor = palette[0]; 
+
+      for (let i = 0; i < palette.length; i++) {
+        const [r, g, b] = palette[i];
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        
+        if (brightness < 130) { 
+          chosenColor = palette[i];
+          break;
+        }
+      }
+
+      let [r, g, b] = chosenColor;
+
+      const finalBrightness = (r * 299 + g * 587 + b * 114) / 1000;
+      if (finalBrightness > 130) {
+        r = Math.floor(r * 0.35); 
+        g = Math.floor(g * 0.35);
+        b = Math.floor(b * 0.35);
+      }
+
+      // The stray gradient line is now safely tucked back inside where it belongs!
+      miniPlayerEl.style.background = `linear-gradient(to right, rgba(${r}, ${g}, ${b}, 0.35) 0%, var(--clr-surface-light) 60%)`;
+
+    } catch (error) {
+      console.log("Color extraction error:", error);
+      if (miniPlayerEl) miniPlayerEl.style.background = 'var(--clr-surface-light)';
+    }
+  });
+}
