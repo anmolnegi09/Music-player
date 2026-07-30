@@ -81,10 +81,10 @@ const songs = [
   },
   {
     id: 12,
-    title: "Piya Tu",
-    artist: "Asha Bhosle",
+    title: "Without Me",
+    artist: "Eminem",
     cover: "assets/images/covers/song12.jpg",
-    audio: "assets/songs/piya-tu.mp3",
+    audio: "assets/songs/without-me.mp3",
   },
   {
     id: 13,
@@ -157,6 +157,6 @@ const playlists = [
     id: 3,
     title: "Coding Buzz",
     cover: songs[1].cover,
-    songs: [1, 13, 4, 15, 6, 17, 8, 19, 11],
+    songs: [1, 13, 4, 15, 6, 17, 8, 18, 11],
   },
 ];

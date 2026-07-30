@@ -1,6 +1,7 @@
 // ----------------------
 // Mini Player & Initialization
 // ----------------------
+
 function loadSong(index) {
   currentSongIndex = index;
   localStorage.setItem("currentSongIndex", currentSongIndex);
@@ -23,7 +24,6 @@ function loadSong(index) {
 
 function playSong() {
   const playPromise = audio.play();
-  
   if (playPromise !== undefined) {
     playPromise.then(() => {
       updatePlayerButton();
@@ -31,56 +31,36 @@ function playSong() {
       console.log("Audio load interrupted smoothly. Loading next...");
     });
   }
-  
   updatePlayerButton();
 }
 
 function updateMiniPlayer(song) {
-  miniCover.src = song.cover;
-  miniCover.alt = song.title;
-  
-  miniArtist.textContent = song.artist; // <p> tag
-  miniTitle.textContent = song.title;   // <h1> tag
+  if(miniCover) miniCover.src = song.cover;
+  if(miniCover) miniCover.alt = song.title;
+  if(miniArtist) miniArtist.textContent = song.artist;
+  if(miniTitle) miniTitle.textContent = song.title;
 }
 
 function updateFullPlayer(song) {
-  playerCover.src = song.cover;
-  playerCover.alt = song.title;
-  playerTitle.textContent = song.title;
-  playerArtist.textContent = song.artist;
+  if(playerCover) playerCover.src = song.cover;
+  if(playerCover) playerCover.alt = song.title;
+  if(playerTitle) playerTitle.textContent = song.title;
+  if(playerArtist) playerArtist.textContent = song.artist;
 }
 
 // ----------------------
-// Mini Next Button
+// Mini Player Buttons
 // ----------------------
 miniNextBtn.addEventListener("click", (e) => {
-  e.stopPropagation(); // Ye bohot zaroori hai! Isse full player open nahi hoga.
-
-  // Aapka existing next button ka logic
-  if (isShuffle) {
-    currentSongIndex = Math.floor(Math.random() * songs.length);
-  } else {
-    currentSongIndex = (currentSongIndex + 1) % songs.length;
-  }
-
-  loadSong(currentSongIndex);
-  playSong();
+  e.stopPropagation(); 
+  playNext(); // Smart queue engine directly use karega
 });
 
-// ----------------------
-// Mini Like Button
-// ----------------------
 miniLikeBtn.addEventListener("click", (e) => {
-  e.stopPropagation(); // Full player ko open hone se rokna
-
-  // Aapka existing like button ka logic
+  e.stopPropagation(); 
   isFavorite = toggleLikedSong(currentSongIndex);
-  
-  // Icon ko fill ya outline karne ke liye function call
   updateFavoriteButton(); 
-  
-  // Note: Aapko updateFavoriteButton() function me 'miniLikeBtn' ke icon ko bhi 
-  // update karne ka logic add karna padega (fill="currentColor" ya empty).
+  if(typeof renderFavoritesCount === "function") renderFavoritesCount();
 });
 
 // ----------------------
@@ -88,14 +68,14 @@ miniLikeBtn.addEventListener("click", (e) => {
 // ----------------------
 function updatePlayerButton() {
   const icon = audio.paused ? "play" : "pause";
-  playerBtn.innerHTML = `<i data-lucide="${icon}"></i>`;
-  playBtnLarge.innerHTML = `<i data-lucide="${icon}"></i>`;
+  if(playerBtn) playerBtn.innerHTML = `<i data-lucide="${icon}"></i>`;
+  if(playBtnLarge) playBtnLarge.innerHTML = `<i data-lucide="${icon}"></i>`;
   lucide.createIcons();
 }
 
 function togglePlay(e) {
   if (e) e.stopPropagation();
-  audio.paused ? audio.play() : audio.pause();
+  audio.paused ? playSong() : audio.pause();
   updatePlayerButton();
 }
 
@@ -103,33 +83,40 @@ playerBtn.addEventListener("click", togglePlay);
 playBtnLarge.addEventListener("click", togglePlay);
 
 // ----------------------
-// Player Screen Navigation (Dynamic Routing)
+// Player Screen Navigation (Bulletproof Routing)
 // ----------------------
+function openFullPlayer() {
+  const allScreens = [
+    homeScreen, searchScreen, libraryScreen, profileScreen, 
+    playlistDetailScreen, likedSongsScreen
+  ];
 
-miniPlayer.addEventListener("click", () => {
-  // Sirf main badi screens ko hi select karein, andar ke chhote sections ko nahi
-  const mainScreens = document.querySelectorAll(
-    ".home-screen, .search-screen, .library-screen, .profile-screen, .playlist-detail-screen, .liked-songs-screen"
-  );
-  
-  mainScreens.forEach(screen => {
-    if (!screen.classList.contains("hidden")) {
-      activeScreenBeforePlayer = screen; // Asli screen save kar li
-      screen.classList.add("hidden");
+  // 1. Dhoondho konsi screen currently active hai
+  for (let screen of allScreens) {
+    if (screen && !screen.classList.contains("hidden")) {
+      activeScreenBeforePlayer = screen;
+      break; 
     }
-  });
-  
-  playerScreen.classList.remove("hidden");
-});
+  }
 
+  // 2. Baaki saari screens strictly hide kardo
+  allScreens.forEach(screen => {
+    if (screen) screen.classList.add("hidden");
+  });
+
+  playerScreen.classList.remove("hidden");
+}
+
+miniPlayer.addEventListener("click", openFullPlayer);
+
+// Yahan sirf EK hi back button listener hai, jo kabhi galti nahi karega
 backBtn.addEventListener("click", () => {
   playerScreen.classList.add("hidden");
   
-  // Wapas theek usi screen par jao
   if (activeScreenBeforePlayer) {
     activeScreenBeforePlayer.classList.remove("hidden");
   } else {
-    homeScreen.classList.remove("hidden");
+    homeScreen.classList.remove("hidden"); 
   }
 });
 
@@ -161,19 +148,18 @@ progressBar.addEventListener("input", () => {
 // ----------------------
 // Track Navigation (Smart Queue Engine)
 // ----------------------
-
 function playNext() {
-  // Agar playlist queue bhari hai toh usko use karo, warna saare gaano (All Songs) ka array bana lo
-  let queue = currentPlaylistQueue.length > 0 ? currentPlaylistQueue : songs.map((_, i) => i);
-  let currentIndex = queue.indexOf(currentSongIndex);
+  let queue = (typeof currentPlaylistQueue !== "undefined" && currentPlaylistQueue.length > 0) 
+    ? currentPlaylistQueue 
+    : songs.map((_, i) => i);
   
-  if (currentIndex === -1) currentIndex = 0; // Fallback
+  let currentIndex = queue.indexOf(currentSongIndex);
+  if (currentIndex === -1) currentIndex = 0; 
 
   if (isShuffle) {
     let randomIndex = Math.floor(Math.random() * queue.length);
     currentSongIndex = queue[randomIndex];
   } else {
-    // Next gaana queue ke hisaab se nikalo
     currentSongIndex = queue[(currentIndex + 1) % queue.length];
   }
 
@@ -181,13 +167,19 @@ function playNext() {
   playSong();
 }
 
-previousBtn.addEventListener("click", () => {
-  let queue = currentPlaylistQueue.length > 0 ? currentPlaylistQueue : songs.map((_, i) => i);
-  let currentIndex = queue.indexOf(currentSongIndex);
-  
-  if (currentIndex === -1) currentIndex = 0; // Fallback
+shuffleBtn.addEventListener("click", () => {
+  isShuffle = !isShuffle;
+  shuffleBtn.classList.toggle("active", isShuffle);
+});
 
-  // Negative math fix so it loops properly backwards inside the queue
+previousBtn.addEventListener("click", () => {
+  let queue = (typeof currentPlaylistQueue !== "undefined" && currentPlaylistQueue.length > 0) 
+    ? currentPlaylistQueue 
+    : songs.map((_, i) => i);
+  
+  let currentIndex = queue.indexOf(currentSongIndex);
+  if (currentIndex === -1) currentIndex = 0; 
+
   let prevIndex = (currentIndex - 1 + queue.length) % queue.length;
   currentSongIndex = queue[prevIndex];
 
@@ -195,8 +187,21 @@ previousBtn.addEventListener("click", () => {
   playSong();
 });
 
-// Next Button click hone par automatic playNext() chalega
 nextBtn.addEventListener("click", playNext);
+
+repeatBtn.addEventListener("click", () => {
+  isRepeat = !isRepeat;
+  repeatBtn.classList.toggle("active", isRepeat);
+});
+
+audio.addEventListener("ended", () => {
+  if (isRepeat) {
+    audio.currentTime = 0;
+    playSong();
+  } else {
+    playNext(); 
+  }
+});
 
 // ----------------------
 // Queue Screen
@@ -211,11 +216,19 @@ closeQueue.addEventListener("click", () => {
 });
 
 function renderQueue() {
+  if(!queueList) return;
   queueList.innerHTML = "";
 
-  songs.forEach((song, index) => {
+  let queueToRender = (typeof currentPlaylistQueue !== "undefined" && currentPlaylistQueue.length > 0) 
+    ? currentPlaylistQueue 
+    : songs.map((_, index) => index); 
+
+  queueToRender.forEach((songIndex) => {
+    const song = songs[songIndex]; 
     const songItem = document.createElement("div");
-    songItem.className = `queue-item ${index === currentSongIndex ? "playing" : ""}`;
+    
+    songItem.className = `queue-item ${songIndex === currentSongIndex ? "playing" : ""}`;
+    
     songItem.innerHTML = `
             <img src="${song.cover}" alt="">
             <div>
@@ -225,10 +238,9 @@ function renderQueue() {
         `;
 
     songItem.addEventListener("click", () => {
-      currentSongIndex = index;
-      loadSong(currentSongIndex);
+      loadSong(songIndex); 
       playSong();
-      renderQueue();
+      renderQueue(); 
     });
 
     queueList.appendChild(songItem);
@@ -241,7 +253,7 @@ function renderQueue() {
 favoriteBtn.addEventListener("click", () => {
   isFavorite = toggleLikedSong(currentSongIndex);
   updateFavoriteButton();
-  renderFavoritesCount(); 
+  if(typeof renderFavoritesCount === "function") renderFavoritesCount(); 
 });
 
 // ----------------------
@@ -253,7 +265,7 @@ function applyDynamicColor(imgUrl) {
   img.src = imgUrl;
 
   img.addEventListener('load', () => {
-    const miniPlayerEl = document.querySelector('.mini-player');
+    const miniPlayerEl = document.getElementById('miniPlayer');
 
     try {
       const palette = colorThief.getPalette(img, 5);
@@ -278,8 +290,7 @@ function applyDynamicColor(imgUrl) {
         b = Math.floor(b * 0.35);
       }
 
-      // The stray gradient line is now safely tucked back inside where it belongs!
-      miniPlayerEl.style.background = `linear-gradient(to right, rgba(${r}, ${g}, ${b}, 0.35) 0%, var(--clr-surface-light) 60%)`;
+      if(miniPlayerEl) miniPlayerEl.style.background = `linear-gradient(to right, rgba(${r}, ${g}, ${b}, 0.35) 0%, var(--clr-surface-light) 60%)`;
 
     } catch (error) {
       console.log("Color extraction error:", error);

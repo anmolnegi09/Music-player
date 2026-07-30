@@ -44,10 +44,29 @@ const renderPlaylists = () => {
   lucide.createIcons();
 };
 
+const renderAllSongs = () => {
+  songsList.innerHTML = songs.map((s, i) => `
+    <article class="songs-card" data-index="${i}">
+      <div class="songs-left">
+        <img src="${s.cover}" alt="${s.title}">
+        <div class="songs-info">
+          <h1>${s.title}</h1>
+          <p>${s.artist}</p>
+        </div>
+      </div>
+      <button class="more-btn"><i data-lucide="ellipsis"></i></button>
+    </article>`).join('');
+  lucide.createIcons();
+};
+
+// ----------------------
+// Playlist Logic
+// ----------------------
+
 // Playlist Card par click karne ka logic
 playlistList.addEventListener('click', (e) => {
   const card = e.target.closest('.playlist-card');
-  const playBtn = e.target.closest('.play-btn'); // Check karein ki play dabaya hai ya nahi
+  const playBtn = e.target.closest('.play-btn'); 
 
   if (card) {
     const playlistIndex = Number(card.dataset.index);
@@ -55,22 +74,20 @@ playlistList.addEventListener('click', (e) => {
 
     // AGAR DIRECT PLAY BUTTON DABAYA HAI:
     if (playBtn) {
-      e.stopPropagation(); // Card ko click hone se roko (screen open nahi hogi)
-      
-      // Check karein ki playlist me gaane hain ya nahi
+      e.stopPropagation(); 
       if (selectedPlaylist.songs.length > 0) {
-        currentPlaylistName = selectedPlaylist.title; // Playlist ka naam set karein
+        currentPlaylistName = selectedPlaylist.title; 
+        currentPlaylistQueue = selectedPlaylist.songs; // QUEUE SET KIYA
         updatePlayingFromUI();
         
-        // Playlist ke array me se pehla gaana play karein[cite: 11]
         loadSong(selectedPlaylist.songs[0]); 
         playSong();
       }
-      return; // Code yahin se wapas bhej do, screen mat kholo
+      return; 
     }
 
-    // AGAR PLAY BUTTON NAHI, BALKI CARD DABAYA HAI (Toh screen kholo):
-    currentPlaylistName = selectedPlaylist.title; // Screen open hote hi context set karein
+    // AGAR PLAY BUTTON NAHI, BALKI CARD DABAYA HAI:
+    currentPlaylistName = selectedPlaylist.title; 
     updatePlayingFromUI();
 
     // Playlist ka Top Section Update karna
@@ -94,36 +111,6 @@ playlistList.addEventListener('click', (e) => {
         </article>`;
     }).join('');
 
-    if (playBtn) {
-      e.stopPropagation(); 
-      if (selectedPlaylist.songs.length > 0) {
-        currentPlaylistName = selectedPlaylist.title; 
-        currentPlaylistQueue = selectedPlaylist.songs; // QUEUE SET KIYA
-        updatePlayingFromUI();
-        
-        loadSong(selectedPlaylist.songs[0]); 
-        playSong();
-      }
-      return; 
-    }
-
-    playlistDetailSongs.addEventListener('click', (e) => {
-  const card = e.target.closest('.songs-card');
-  if (card) {
-    // Current active playlist ki array dhoondh kar Queue set kardi
-    const p = playlists.find(p => p.title === currentPlaylistName);
-    if (p) currentPlaylistQueue = p.songs;
-
-    loadSong(Number(card.dataset.index));
-    playSong();
-    
-    // Naya Navigation tracking logic
-    activeScreenBeforePlayer = playlistDetailScreen; 
-    playlistDetailScreen.classList.add('hidden');
-    playerScreen.classList.remove('hidden'); 
-  }
-});
-
     // Nayi screen dikhana
     homeScreen.classList.add('hidden');
     playlistDetailScreen.classList.remove('hidden');
@@ -141,58 +128,43 @@ closePlaylistBtn?.addEventListener('click', () => {
 playlistDetailSongs.addEventListener('click', (e) => {
   const card = e.target.closest('.songs-card');
   if (card) {
+    const p = playlists.find(p => p.title === currentPlaylistName);
+    if (p) currentPlaylistQueue = p.songs;
+
     loadSong(Number(card.dataset.index));
     playSong();
-    
-    // Optional: Gaana click karte hi Full Player kholna ho toh:
-    playlistDetailScreen.classList.add('hidden');
-    playerScreen.classList.remove('hidden'); 
   }
 });
 
-const renderAllSongs = () => {
-  songsList.innerHTML = songs.map((s, i) => `
-    <article class="songs-card" data-index="${i}">
-      <div class="songs-left">
-        <img src="${s.cover}" alt="${s.title}">
-        <div class="songs-info">
-          <h1>${s.title}</h1>
-          <p>${s.artist}</p>
-        </div>
-      </div>
-      <button class="more-btn"><i data-lucide="ellipsis"></i></button>
-    </article>`).join('');
-  lucide.createIcons();
-};
+// ----------------------
+// Home Screen Songs Logic
+// ----------------------
 
 [recentList, songsList].forEach(list => {
   list.addEventListener("click", (e) => {
     const card = e.target.closest(".song-card, .songs-card");
     if (card) { 
       currentPlaylistName = ""; 
-      currentPlaylistQueue = [];
+      currentPlaylistQueue = []; // All songs queue
       updatePlayingFromUI();
 
       loadSong(Number(card.dataset.index)); 
-      playSong(); 
+      playSong();
     }
   });
 });
 
 // ----------------------
-// Favorites System (Mini Player Linked)
+// Favorites System
 // ----------------------
 const updateFavoriteButton = () => {
-  // SVG Icon Design: Agar liked hai toh lal rang fill karo, nahi toh outline rakho
   const iconHTML = isFavorite 
     ? `<i data-lucide="heart" fill="currentColor" color="#ff4040"></i>` 
     : `<i data-lucide="heart"></i>`;
 
-  // Full Player Button Update
   favoriteBtn.innerHTML = iconHTML;
   favoriteBtn.classList.toggle("active", isFavorite);
 
-  // Mini Player Button Update
   if (miniLikeBtn) {
     miniLikeBtn.innerHTML = iconHTML;
     miniLikeBtn.classList.toggle("active", isFavorite);
@@ -242,21 +214,30 @@ likedSongsList.addEventListener("click", (e) => {
     renderLikedSongs();
     renderFavoritesCount();
   } else if (card) {
+    currentPlaylistName = "Liked Songs";
+    currentPlaylistQueue = getLikedSongs(); // Liked songs ki queue set ki
+    updatePlayingFromUI();
+
     loadSong(Number(card.dataset.index));
     playSong();
-    likedSongsScreen.classList.add("hidden");
-    playerScreen.classList.remove("hidden");
   }
 });
 
 // ----------------------
-// Main Navigation Logic
+// Main Navigation Logic (Aggressive Hiding)
 // ----------------------
 const screens = [homeScreen, searchScreen, libraryScreen, profileScreen];
+// Ye ek master list hai jo overlap rokkegi
+const allPossibleScreens = [homeScreen, searchScreen, libraryScreen, profileScreen, playlistDetailScreen, likedSongsScreen];
 
 navBtns.forEach((btn, idx) => {
   btn.addEventListener('click', () => {
-    screens.forEach(s => s?.classList.add('hidden'));
+    
+    // Nayi tab par jane se pehle saari screens (playlists, liked songs sab) force-hide karo
+    allPossibleScreens.forEach(s => {
+      if (s) s.classList.add('hidden');
+    });
+    
     document.querySelector('.nav-item.active')?.classList.remove('active');
     
     btn.classList.add('active');

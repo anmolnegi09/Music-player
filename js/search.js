@@ -22,7 +22,6 @@ const renderSearchResults = (filtered) => {
     return;
   }
   
-  // Updated h3 to h1 to match your new styling!
   searchList.innerHTML = filtered.map(song => `
     <article class="songs-card" data-index="${songs.indexOf(song)}">
       <div class="songs-left">
@@ -42,9 +41,15 @@ const renderSearchResults = (filtered) => {
 searchList.addEventListener("click", (e) => {
   const card = e.target.closest(".songs-card");
   if (card) {
+    // 1. Purani playlist ka data clean karo taaki leak na ho
+    currentPlaylistName = ""; 
+    currentPlaylistQueue = []; 
+    updatePlayingFromUI(); // "Playing from" text gayab ho jayega
+
+    // 2. Gaana load karke sirf Mini Player mein bajao
     loadSong(Number(card.dataset.index));
     playSong();
-    document.querySelector('.search-screen')?.classList.add("hidden");
-    playerScreen.classList.remove("hidden");
+    
+    // Full screen open karne wala code yahan se permanently hata diya gaya hai!
   }
 });
