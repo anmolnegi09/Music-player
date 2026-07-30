@@ -59,14 +59,25 @@ const renderAllSongs = () => {
 });
 
 // ----------------------
-// Favorites System
+// Favorites System (Mini Player Linked)
 // ----------------------
 
 const updateFavoriteButton = () => {
-  favoriteBtn.innerHTML = isFavorite 
+  // SVG Icon Design: Agar liked hai toh lal rang fill karo, nahi toh outline rakho
+  const iconHTML = isFavorite 
     ? `<i data-lucide="heart" fill="currentColor" color="#ff4040"></i>` 
     : `<i data-lucide="heart"></i>`;
+
+  // Full Player Button Update
+  favoriteBtn.innerHTML = iconHTML;
   favoriteBtn.classList.toggle("active", isFavorite);
+
+  // Mini Player Button Update
+  if (miniLikeBtn) {
+    miniLikeBtn.innerHTML = iconHTML;
+    miniLikeBtn.classList.toggle("active", isFavorite);
+  }
+
   lucide.createIcons();
 };
 
@@ -92,7 +103,7 @@ const renderLikedSongs = () => {
         </div>
       </div>
       <button class="favorite-btn active remove-liked-btn" data-index="${i}">
-        <i data-lucide="heart" fill="currentColor"></i>
+        <i data-lucide="heart" fill="currentColor" color="#ff4040"></i>
       </button>
     </article>`).join('');
   lucide.createIcons();
@@ -122,13 +133,10 @@ likedSongsList.addEventListener("click", (e) => {
 // Main Navigation Logic
 // ----------------------
 
-const searchScreen = document.querySelector('.search-screen'); 
-const profileScreen = document.querySelector('.profile-screen'); 
-const closeLibraryBtn = document.querySelector('.close-library-btn');
-const closeSearchBtn = document.querySelector('.close-search-btn');
+// Yahan se humne duplicate variables (searchScreen etc.) hata diye hain 
+// kyunki wo ab dom.js me naturally stored hain!
 
 const screens = [homeScreen, searchScreen, libraryScreen, profileScreen];
-const navBtns = document.querySelectorAll('.nav-item');
 
 navBtns.forEach((btn, idx) => {
   btn.addEventListener('click', () => {

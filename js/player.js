@@ -43,6 +43,39 @@ function updateFullPlayer(song) {
 }
 
 // ----------------------
+// Mini Next Button
+// ----------------------
+miniNextBtn.addEventListener("click", (e) => {
+  e.stopPropagation(); // Ye bohot zaroori hai! Isse full player open nahi hoga.
+
+  // Aapka existing next button ka logic
+  if (isShuffle) {
+    currentSongIndex = Math.floor(Math.random() * songs.length);
+  } else {
+    currentSongIndex = (currentSongIndex + 1) % songs.length;
+  }
+
+  loadSong(currentSongIndex);
+  playSong();
+});
+
+// ----------------------
+// Mini Like Button
+// ----------------------
+miniLikeBtn.addEventListener("click", (e) => {
+  e.stopPropagation(); // Full player ko open hone se rokna
+
+  // Aapka existing like button ka logic
+  isFavorite = toggleLikedSong(currentSongIndex);
+  
+  // Icon ko fill ya outline karne ke liye function call
+  updateFavoriteButton(); 
+  
+  // Note: Aapko updateFavoriteButton() function me 'miniLikeBtn' ke icon ko bhi 
+  // update karne ka logic add karna padega (fill="currentColor" ya empty).
+});
+
+// ----------------------
 // Play / Pause Logic
 // ----------------------
 

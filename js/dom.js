@@ -1,61 +1,71 @@
+// ----------------------
+// Audio & State Variables
+// ----------------------
 const audio = new Audio();
-const savedSong = localStorage.getItem("currentSongIndex");
+let currentSongIndex = localStorage.getItem("currentSongIndex") ? Number(localStorage.getItem("currentSongIndex")) : 0;
+let isRepeat = false;
+let isShuffle = false;
+let isFavorite = false;
 
+// ----------------------
+// Main Screens & Lists
+// ----------------------
 const homeScreen = document.querySelector(".home-screen");
+const playerScreen = document.querySelector(".player-screen");
+const queueScreen = document.querySelector(".queue-screen");
+const searchScreen = document.querySelector('.search-screen'); 
+const libraryScreen = document.querySelector('.library-screen');
+const likedSongsScreen = document.querySelector('.liked-songs-screen');
+const profileScreen = document.querySelector('.profile-screen'); 
+
 const recentList = document.querySelector(".recent-list");
 const playlistList = document.querySelector(".playlist-list");
 const songsList = document.querySelector(".songs-list");
+const queueList = document.querySelector(".queue-list");
+const searchList = document.querySelector(".search-list");
+const likedSongsList = document.querySelector('.liked-songs-list');
 
-const miniCover = document.querySelector(".player-left img");
-const miniArtist = document.querySelector(".player-info p");
-const miniTitle = document.querySelector(".player-info h1");
-const playerBtn = document.querySelector(".player-btn");
-const miniPlayer = document.querySelector(".mini-player");
+// ----------------------
+// Mini Player Elements (Optimized with GetElementById)
+// ----------------------
+const miniPlayer = document.getElementById("miniPlayer");
+const miniCover = document.getElementById("miniCover");
+const miniArtist = document.getElementById("miniArtist");
+const miniTitle = document.getElementById("miniTitle");
+const playerBtn = document.getElementById("playerBtn");
+const miniNextBtn = document.getElementById("miniNextBtn");
+const miniLikeBtn = document.getElementById("miniLikeBtn");
 
-const playerScreen = document.querySelector(".player-screen");
+// ----------------------
+// Full Player Elements
+// ----------------------
 const backBtn = document.querySelector(".back-btn");
-const playerCover = document.querySelector(".player-cover img");
+const playerCover = document.querySelector(".player-cover-img"); // Fixed class name
 const playerTitle = document.querySelector(".song-details h2");
 const playerArtist = document.querySelector(".song-details p");
 
 const previousBtn = document.querySelector(".previous-btn");
 const playBtnLarge = document.querySelector(".play-btn-large");
 const nextBtn = document.querySelector(".next-btn");
+const repeatBtn = document.querySelector(".repeat-btn");
+const shuffleBtn = document.querySelector(".shuffle-btn");
+const favoriteBtn = document.querySelector(".favorite-btn");
+
 const progressBar = document.querySelector(".progress-bar");
 const currentTime = document.querySelector(".current-time");
 const duration = document.querySelector(".duration");
-const repeatBtn = document.querySelector(".repeat-btn");
-const shuffleBtn = document.querySelector(".shuffle-btn");
 
-let isRepeat = false;
-let isShuffle = false;
-
+// ----------------------
+// Library & Nav Elements
+// ----------------------
 const queueBtn = document.querySelector(".queue-btn");
-const queueScreen = document.querySelector(".queue-screen");
 const closeQueue = document.querySelector(".close-queue");
-const queueList = document.querySelector(".queue-list");
-
-let currentSongIndex = 0;
-
 const searchInput = document.querySelector(".search-input");
 const searchResults = document.querySelector(".search-results");
-const searchList = document.querySelector(".search-list");
 
-const favoriteBtn = document.querySelector(".favorite-btn");
-let isFavorite = false;
-
-// ----------------------
-// Library & Navigation Variables
-// ----------------------
-const libraryScreen = document.querySelector('.library-screen');
-const likedSongsScreen = document.querySelector('.liked-songs-screen');
-
-// Nav Buttons
-const homeNavBtn = document.querySelectorAll('.nav-item')[0]; // Home Btn
-const libraryNavBtn = document.querySelectorAll('.nav-item')[2]; // Library Btn
-
-// Library Elements
+const navBtns = document.querySelectorAll('.nav-item');
 const favoritesFolder = document.getElementById('favorites-folder');
 const backToLibraryBtn = document.querySelector('.back-to-library-btn');
-const likedSongsList = document.querySelector('.liked-songs-list');
 const favSongCount = document.getElementById('fav-song-count');
+const closeLibraryBtn = document.querySelector('.close-library-btn');
+const closeSearchBtn = document.querySelector('.close-search-btn');

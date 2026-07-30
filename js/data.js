@@ -40,7 +40,7 @@ const songs = [
   },
   {
     id: 6,
-    title: "persona4",
+    title: "Persona 4 Opening",
     artist: "Atlus",
     cover: "assets/images/covers/song6.webp",
     audio: "assets/songs/persona4-opening.mp3",
