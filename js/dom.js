@@ -1,3 +1,7 @@
+let currentPlaylistQueue = []; 
+let activeScreenBeforePlayer = null;
+let currentPlaylistName = "";
+
 // ----------------------
 // Audio & State Variables
 // ----------------------
@@ -69,3 +73,11 @@ const backToLibraryBtn = document.querySelector('.back-to-library-btn');
 const favSongCount = document.getElementById('fav-song-count');
 const closeLibraryBtn = document.querySelector('.close-library-btn');
 const closeSearchBtn = document.querySelector('.close-search-btn');
+
+// Playlist Screen Elements
+const playlistDetailScreen = document.querySelector(".playlist-detail-screen");
+const closePlaylistBtn = document.querySelector(".close-playlist-btn");
+const playlistDetailCover = document.getElementById("playlist-detail-cover");
+const playlistDetailName = document.getElementById("playlist-detail-name");
+const playlistDetailCount = document.getElementById("playlist-detail-count");
+const playlistDetailSongs = document.querySelector(".playlist-detail-songs");

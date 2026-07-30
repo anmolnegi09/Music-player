@@ -1,7 +1,6 @@
 // ----------------------
 // Mini Player & Initialization
 // ----------------------
-
 function loadSong(index) {
   currentSongIndex = index;
   localStorage.setItem("currentSongIndex", currentSongIndex);
@@ -23,7 +22,16 @@ function loadSong(index) {
 }
 
 function playSong() {
-  audio.play();
+  const playPromise = audio.play();
+  
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      updatePlayerButton();
+    }).catch(error => {
+      console.log("Audio load interrupted smoothly. Loading next...");
+    });
+  }
+  
   updatePlayerButton();
 }
 
@@ -78,7 +86,6 @@ miniLikeBtn.addEventListener("click", (e) => {
 // ----------------------
 // Play / Pause Logic
 // ----------------------
-
 function updatePlayerButton() {
   const icon = audio.paused ? "play" : "pause";
   playerBtn.innerHTML = `<i data-lucide="${icon}"></i>`;
@@ -96,23 +103,39 @@ playerBtn.addEventListener("click", togglePlay);
 playBtnLarge.addEventListener("click", togglePlay);
 
 // ----------------------
-// Player Screen Navigation
+// Player Screen Navigation (Dynamic Routing)
 // ----------------------
 
 miniPlayer.addEventListener("click", () => {
-  homeScreen.classList.add("hidden");
+  // Sirf main badi screens ko hi select karein, andar ke chhote sections ko nahi
+  const mainScreens = document.querySelectorAll(
+    ".home-screen, .search-screen, .library-screen, .profile-screen, .playlist-detail-screen, .liked-songs-screen"
+  );
+  
+  mainScreens.forEach(screen => {
+    if (!screen.classList.contains("hidden")) {
+      activeScreenBeforePlayer = screen; // Asli screen save kar li
+      screen.classList.add("hidden");
+    }
+  });
+  
   playerScreen.classList.remove("hidden");
 });
 
 backBtn.addEventListener("click", () => {
   playerScreen.classList.add("hidden");
-  homeScreen.classList.remove("hidden");
+  
+  // Wapas theek usi screen par jao
+  if (activeScreenBeforePlayer) {
+    activeScreenBeforePlayer.classList.remove("hidden");
+  } else {
+    homeScreen.classList.remove("hidden");
+  }
 });
 
 // ----------------------
 // Progress Bar
 // ----------------------
-
 function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
@@ -136,50 +159,48 @@ progressBar.addEventListener("input", () => {
 });
 
 // ----------------------
-// Track Navigation
+// Track Navigation (Smart Queue Engine)
 // ----------------------
 
 function playNext() {
+  // Agar playlist queue bhari hai toh usko use karo, warna saare gaano (All Songs) ka array bana lo
+  let queue = currentPlaylistQueue.length > 0 ? currentPlaylistQueue : songs.map((_, i) => i);
+  let currentIndex = queue.indexOf(currentSongIndex);
+  
+  if (currentIndex === -1) currentIndex = 0; // Fallback
+
   if (isShuffle) {
-    currentSongIndex = Math.floor(Math.random() * songs.length);
+    let randomIndex = Math.floor(Math.random() * queue.length);
+    currentSongIndex = queue[randomIndex];
   } else {
-    currentSongIndex = (currentSongIndex + 1) % songs.length;
+    // Next gaana queue ke hisaab se nikalo
+    currentSongIndex = queue[(currentIndex + 1) % queue.length];
   }
+
   loadSong(currentSongIndex);
   playSong();
 }
 
-shuffleBtn.addEventListener("click", () => {
-  isShuffle = !isShuffle;
-  shuffleBtn.classList.toggle("active", isShuffle);
-});
-
 previousBtn.addEventListener("click", () => {
-  currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+  let queue = currentPlaylistQueue.length > 0 ? currentPlaylistQueue : songs.map((_, i) => i);
+  let currentIndex = queue.indexOf(currentSongIndex);
+  
+  if (currentIndex === -1) currentIndex = 0; // Fallback
+
+  // Negative math fix so it loops properly backwards inside the queue
+  let prevIndex = (currentIndex - 1 + queue.length) % queue.length;
+  currentSongIndex = queue[prevIndex];
+
   loadSong(currentSongIndex);
   playSong();
 });
 
+// Next Button click hone par automatic playNext() chalega
 nextBtn.addEventListener("click", playNext);
-
-repeatBtn.addEventListener("click", () => {
-  isRepeat = !isRepeat;
-  repeatBtn.classList.toggle("active", isRepeat);
-});
-
-audio.addEventListener("ended", () => {
-  if (isRepeat) {
-    audio.currentTime = 0;
-    playSong();
-  } else {
-    playNext(); 
-  }
-});
 
 // ----------------------
 // Queue Screen
 // ----------------------
-
 queueBtn.addEventListener("click", () => {
   renderQueue();
   queueScreen.classList.add("show");
@@ -217,7 +238,6 @@ function renderQueue() {
 // ----------------------
 // Favorite Feature Button
 // ----------------------
-
 favoriteBtn.addEventListener("click", () => {
   isFavorite = toggleLikedSong(currentSongIndex);
   updateFavoriteButton();
@@ -227,7 +247,6 @@ favoriteBtn.addEventListener("click", () => {
 // ----------------------
 // Dynamic Color System
 // ----------------------
-
 function applyDynamicColor(imgUrl) {
   const img = new Image();
   img.crossOrigin = "Anonymous";
