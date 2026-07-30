@@ -1,4 +1,12 @@
-const colorThief = new ColorThief();
+// Safe ColorThief initialization check
+let colorThief = null;
+try {
+  if (typeof ColorThief !== 'undefined') {
+    colorThief = new ColorThief();
+  }
+} catch (e) {
+  console.log("ColorThief not loaded yet");
+}
 
 const updatePlayingFromUI = () => {
   const playingFromSection = document.querySelector(".playing-from");
@@ -6,9 +14,9 @@ const updatePlayingFromUI = () => {
   
   if (currentPlaylistName !== "") {
     playingFromTitle.textContent = currentPlaylistName;
-    playingFromSection.classList.remove("hidden"); // UI dikhao
+    playingFromSection.classList.remove("hidden");
   } else {
-    playingFromSection.classList.add("hidden"); // UI chhupa do
+    playingFromSection.classList.add("hidden");
   }
 };
 
@@ -22,7 +30,11 @@ const saveRecentSong = (index) => {
 };
 
 const renderRecentSongs = () => {
-  const recent = JSON.parse(localStorage.getItem("recentSongs")) || [];
+  if (!recentList) return;
+  let recent = JSON.parse(localStorage.getItem("recentSongs")) || [];
+  recent = recent.filter(i => songs[i] !== undefined);
+  localStorage.setItem("recentSongs", JSON.stringify(recent));
+
   recentList.innerHTML = recent.map(i => `
     <article class="song-card" data-index="${i}">
       <img src="${songs[i].cover}" alt="${songs[i].title}">
@@ -32,6 +44,7 @@ const renderRecentSongs = () => {
 };
 
 const renderPlaylists = () => {
+  if (!playlistList) return;
   playlistList.innerHTML = playlists.map((p, i) => `
     <article class="playlist-card" data-index="${i}">
       <img src="${p.cover}" alt="${p.title}">
@@ -44,27 +57,64 @@ const renderPlaylists = () => {
   lucide.createIcons();
 };
 
-const renderAllSongs = () => {
-  songsList.innerHTML = songs.map((s, i) => `
-    <article class="songs-card" data-index="${i}">
-      <div class="songs-left">
-        <img src="${s.cover}" alt="${s.title}">
-        <div class="songs-info">
-          <h1>${s.title}</h1>
-          <p>${s.artist}</p>
-        </div>
+// ----------------------
+// Suggested For You (2-Column Grid)
+// ----------------------
+const renderSuggestedSongs = () => {
+  const gridContainer = document.getElementById("suggestedGrid");
+  if (!gridContainer) return;
+
+  const suggested = songs
+    .map((song, index) => ({ song, index }))
+    .sort(() => 0.5 - Math.random())
+    .slice(0, 8);
+
+  gridContainer.innerHTML = suggested.map(({ song, index }) => `
+    <article class="suggested-card" data-index="${index}">
+      <img src="${song.cover}" alt="${song.title}">
+      <div class="suggested-info">
+        <p>${song.artist}</p>
+        <h4>${song.title}</h4>
       </div>
-      <button class="more-btn"><i data-lucide="ellipsis"></i></button>
-    </article>`).join('');
+      <button class="more-btn"><i data-lucide="ellipsis-vertical" size="16"></i></button>
+    </article>
+  `).join('');
+  
   lucide.createIcons();
 };
 
 // ----------------------
-// Playlist Logic
+// Featured Playlists 
 // ----------------------
+const renderFeaturedPlaylists = () => {
+  const container = document.getElementById("featuredPlaylistList");
+  if (!container) return;
 
-// Playlist Card par click karne ka logic
-playlistList.addEventListener('click', (e) => {
+  const featured = songs
+    .map((song, index) => ({ song, index }))
+    .sort(() => 0.3 - Math.random())
+    .slice(0, 6);
+
+  container.innerHTML = featured.map(({ song, index }) => `
+    <article class="featured-card" data-index="${index}">
+      <img src="${song.cover}" alt="${song.title}">
+      <div class="featured-card-footer">
+        <div class="featured-card-info">
+          <p>${song.artist}</p>
+          <h4>${song.title}</h4>
+        </div>
+        <button class="more-btn"><i data-lucide="ellipsis-vertical" size="16"></i></button>
+      </div>
+    </article>
+  `).join('');
+
+  lucide.createIcons();
+};
+
+// ----------------------
+// Playlist Click Logic
+// ----------------------
+playlistList?.addEventListener('click', (e) => {
   const card = e.target.closest('.playlist-card');
   const playBtn = e.target.closest('.play-btn'); 
 
@@ -72,12 +122,11 @@ playlistList.addEventListener('click', (e) => {
     const playlistIndex = Number(card.dataset.index);
     const selectedPlaylist = playlists[playlistIndex];
 
-    // AGAR DIRECT PLAY BUTTON DABAYA HAI:
     if (playBtn) {
       e.stopPropagation(); 
       if (selectedPlaylist.songs.length > 0) {
         currentPlaylistName = selectedPlaylist.title; 
-        currentPlaylistQueue = selectedPlaylist.songs; // QUEUE SET KIYA
+        currentPlaylistQueue = selectedPlaylist.songs;
         updatePlayingFromUI();
         
         loadSong(selectedPlaylist.songs[0]); 
@@ -86,18 +135,16 @@ playlistList.addEventListener('click', (e) => {
       return; 
     }
 
-    // AGAR PLAY BUTTON NAHI, BALKI CARD DABAYA HAI:
     currentPlaylistName = selectedPlaylist.title; 
     updatePlayingFromUI();
 
-    // Playlist ka Top Section Update karna
     playlistDetailCover.src = selectedPlaylist.cover;
     playlistDetailName.textContent = selectedPlaylist.title;
     playlistDetailCount.textContent = `${selectedPlaylist.songs.length} Songs`;
 
-    // Playlist ke Andar ke Gaane Render karna
     playlistDetailSongs.innerHTML = selectedPlaylist.songs.map(songIndex => {
       const s = songs[songIndex];
+      if (!s) return '';
       return `
         <article class="songs-card" data-index="${songIndex}">
           <div class="songs-left">
@@ -111,21 +158,18 @@ playlistList.addEventListener('click', (e) => {
         </article>`;
     }).join('');
 
-    // Nayi screen dikhana
     homeScreen.classList.add('hidden');
     playlistDetailScreen.classList.remove('hidden');
     lucide.createIcons();
   }
 });
 
-// Playlist Screen se wapas Home aane ka button
 closePlaylistBtn?.addEventListener('click', () => {
   playlistDetailScreen.classList.add('hidden');
   homeScreen.classList.remove('hidden');
 });
 
-// Playlist ke andar se gaana play karne ka logic
-playlistDetailSongs.addEventListener('click', (e) => {
+playlistDetailSongs?.addEventListener('click', (e) => {
   const card = e.target.closest('.songs-card');
   if (card) {
     const p = playlists.find(p => p.title === currentPlaylistName);
@@ -137,15 +181,21 @@ playlistDetailSongs.addEventListener('click', (e) => {
 });
 
 // ----------------------
-// Home Screen Songs Logic
+// 🔥 FIXED HOME SCREEN CLICKS 
 // ----------------------
+const homeClickContainers = [recentList, document.getElementById("suggestedGrid"), document.getElementById("featuredPlaylistList"), playlistList];
 
-[recentList, songsList].forEach(list => {
-  list.addEventListener("click", (e) => {
-    const card = e.target.closest(".song-card, .songs-card");
-    if (card) { 
+homeClickContainers.forEach(list => {
+  list?.addEventListener("click", (e) => {
+    // Agar 3-dots ya play button dabaya hai, toh gaana mat play karo
+    if (e.target.closest(".more-btn") || e.target.closest(".play-btn")) return;
+
+    const card = e.target.closest(".song-card, .suggested-card, .featured-card, .songs-card, .playlist-card");
+    if (card && card.dataset.index !== undefined) { 
+      if (card.classList.contains('playlist-card')) return;
+
       currentPlaylistName = ""; 
-      currentPlaylistQueue = []; // All songs queue
+      currentPlaylistQueue = []; 
       updatePlayingFromUI();
 
       loadSong(Number(card.dataset.index)); 
@@ -201,7 +251,7 @@ const renderLikedSongs = () => {
   lucide.createIcons();
 };
 
-likedSongsList.addEventListener("click", (e) => {
+likedSongsList?.addEventListener("click", (e) => {
   const removeBtn = e.target.closest(".remove-liked-btn");
   const card = e.target.closest(".songs-card");
   
@@ -215,7 +265,7 @@ likedSongsList.addEventListener("click", (e) => {
     renderFavoritesCount();
   } else if (card) {
     currentPlaylistName = "Liked Songs";
-    currentPlaylistQueue = getLikedSongs(); // Liked songs ki queue set ki
+    currentPlaylistQueue = getLikedSongs();
     updatePlayingFromUI();
 
     loadSong(Number(card.dataset.index));
@@ -224,16 +274,13 @@ likedSongsList.addEventListener("click", (e) => {
 });
 
 // ----------------------
-// Main Navigation Logic (Aggressive Hiding)
+// Main Navigation Logic
 // ----------------------
 const screens = [homeScreen, searchScreen, libraryScreen, profileScreen];
-// Ye ek master list hai jo overlap rokkegi
 const allPossibleScreens = [homeScreen, searchScreen, libraryScreen, profileScreen, playlistDetailScreen, likedSongsScreen];
 
 navBtns.forEach((btn, idx) => {
   btn.addEventListener('click', () => {
-    
-    // Nayi tab par jane se pehle saari screens (playlists, liked songs sab) force-hide karo
     allPossibleScreens.forEach(s => {
       if (s) s.classList.add('hidden');
     });
@@ -248,13 +295,13 @@ navBtns.forEach((btn, idx) => {
   });
 });
 
-favoritesFolder.addEventListener('click', () => {
+favoritesFolder?.addEventListener('click', () => {
   libraryScreen.classList.add('hidden');
   likedSongsScreen.classList.remove('hidden');
   renderLikedSongs();
 });
 
-backToLibraryBtn.addEventListener('click', () => {
+backToLibraryBtn?.addEventListener('click', () => {
   likedSongsScreen.classList.add('hidden');
   libraryScreen.classList.remove('hidden');
   renderFavoritesCount();

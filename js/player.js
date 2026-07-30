@@ -1,7 +1,6 @@
 // ----------------------
 // Mini Player & Initialization
 // ----------------------
-
 function loadSong(index) {
   currentSongIndex = index;
   localStorage.setItem("currentSongIndex", currentSongIndex);
@@ -53,7 +52,7 @@ function updateFullPlayer(song) {
 // ----------------------
 miniNextBtn.addEventListener("click", (e) => {
   e.stopPropagation(); 
-  playNext(); // Smart queue engine directly use karega
+  playNext(); 
 });
 
 miniLikeBtn.addEventListener("click", (e) => {
@@ -91,7 +90,6 @@ function openFullPlayer() {
     playlistDetailScreen, likedSongsScreen
   ];
 
-  // 1. Dhoondho konsi screen currently active hai
   for (let screen of allScreens) {
     if (screen && !screen.classList.contains("hidden")) {
       activeScreenBeforePlayer = screen;
@@ -99,7 +97,6 @@ function openFullPlayer() {
     }
   }
 
-  // 2. Baaki saari screens strictly hide kardo
   allScreens.forEach(screen => {
     if (screen) screen.classList.add("hidden");
   });
@@ -109,7 +106,6 @@ function openFullPlayer() {
 
 miniPlayer.addEventListener("click", openFullPlayer);
 
-// Yahan sirf EK hi back button listener hai, jo kabhi galti nahi karega
 backBtn.addEventListener("click", () => {
   playerScreen.classList.add("hidden");
   

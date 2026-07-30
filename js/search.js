@@ -41,15 +41,11 @@ const renderSearchResults = (filtered) => {
 searchList.addEventListener("click", (e) => {
   const card = e.target.closest(".songs-card");
   if (card) {
-    // 1. Purani playlist ka data clean karo taaki leak na ho
     currentPlaylistName = ""; 
     currentPlaylistQueue = []; 
-    updatePlayingFromUI(); // "Playing from" text gayab ho jayega
-
-    // 2. Gaana load karke sirf Mini Player mein bajao
+    updatePlayingFromUI(); 
     loadSong(Number(card.dataset.index));
     playSong();
     
-    // Full screen open karne wala code yahan se permanently hata diya gaya hai!
   }
 });

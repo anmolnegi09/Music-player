@@ -1,8 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
   renderRecentSongs();
   renderPlaylists();
-  renderAllSongs();
-  renderFavoritesCount(); 
-  
+  renderSuggestedSongs();
+  renderFeaturedPlaylists();
+  renderFavoritesCount();
+
   loadSong(currentSongIndex);
 });

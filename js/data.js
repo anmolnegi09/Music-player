@@ -1,162 +1,125 @@
 // ----------------------
-// Songs
+// Auto-generated Songs & Dynamic Playlists
 // ----------------------
 const songs = [
   {
-    id: 1,
-    title: "4 minutes",
-    artist: "Maddona",
-    cover: "assets/images/covers/song1.jpg",
-    audio: "assets/songs/4minutes.mp3",
+    "id": 1,
+    "title": "Headlights",
+    "artist": "Alok, Alan Walker",
+    "cover": "assets/images/covers/Alok, Alan Walker - Headlights.jpg",
+    "audio": "assets/songs/Alok, Alan Walker - Headlights.mp3"
   },
   {
-    id: 2,
-    title: "Boom Shaka",
-    artist: "Kr$na",
-    cover: "assets/images/covers/song2.jpg",
-    audio: "assets/songs/boom-shaka.mp3",
+    "id": 2,
+    "title": "I Want It That Way",
+    "artist": "Backstreet Boys",
+    "cover": "assets/images/covers/Backstreet Boys - I Want It That Way.jpg",
+    "audio": "assets/songs/Backstreet Boys - I Want It That Way.mp3"
   },
   {
-    id: 3,
-    title: "Dura",
-    artist: "Daddy Yankee",
-    cover: "assets/images/covers/song3.jpg",
-    audio: "assets/songs/dura.mp3",
+    "id": 3,
+    "title": "One Love",
+    "artist": "Blue",
+    "cover": "assets/images/covers/Blue - One Love.jpg",
+    "audio": "assets/songs/Blue - One Love.mp3"
   },
   {
-    id: 4,
-    title: "I want it that way",
-    artist: "Backstreet Boys",
-    cover: "assets/images/covers/song4.jpg",
-    audio: "assets/songs/I-want-it-that-way.mp3",
+    "id": 4,
+    "title": "Rasputin",
+    "artist": "Boney M",
+    "cover": "assets/images/covers/Boney M - Rasputin.jpg",
+    "audio": "assets/songs/Boney M - Rasputin.mp3"
   },
   {
-    id: 5,
-    title: "La isla bonita",
-    artist: "Maddona",
-    cover: "assets/images/covers/song5.jpg",
-    audio: "assets/songs/la-isla-bonita.mp3",
+    "id": 5,
+    "title": "Perfect",
+    "artist": "Ed Sheeran",
+    "cover": "assets/images/covers/Ed Sheeran - Perfect.jpg",
+    "audio": "assets/songs/Ed Sheeran - Perfect.mp3"
   },
   {
-    id: 6,
-    title: "Persona 4 Opening",
-    artist: "Atlus",
-    cover: "assets/images/covers/song6.jpg",
-    audio: "assets/songs/persona4-opening.mp3",
+    "id": 6,
+    "title": "Shape Of You",
+    "artist": "Ed Sheeran",
+    "cover": "assets/images/covers/Ed Sheeran - Shape of You.jpg",
+    "audio": "assets/songs/Ed Sheeran - Shape of You.mp3"
   },
   {
-    id: 7,
-    title: "Sparkle",
-    artist: "Radwipms",
-    cover: "assets/images/covers/song7.jpg",
-    audio: "assets/songs/sparkle.mp3",
+    "id": 7,
+    "title": "Without Me",
+    "artist": "Eminem",
+    "cover": "assets/images/covers/Eminem - Without Me.jpg",
+    "audio": "assets/songs/Eminem - Without Me.mp3"
   },
   {
-    id: 8,
-    title: "Sunflower",
-    artist: "Post Melone",
-    cover: "assets/images/covers/song8.jpg",
-    audio: "assets/songs/sunflower.mp3",
+    "id": 8,
+    "title": "Stereo Hearts",
+    "artist": "Gym Class Heroes",
+    "cover": "assets/images/covers/Gym Class Heroes - Stereo Hearts.jpg",
+    "audio": "assets/songs/Gym Class Heroes - Stereo Hearts.mp3"
   },
   {
-    id: 9,
-    title: "Thousand Miles",
-    artist: "Vanessa",
-    cover: "assets/images/covers/song9.jpg",
-    audio: "assets/songs/thousand-miles.mp3",
+    "id": 9,
+    "title": "La Isla Bonita",
+    "artist": "Madonna",
+    "cover": "assets/images/covers/Madonna - La Isla Bonita.jpg",
+    "audio": "assets/songs/Madonna - La Isla Bonita.mp3"
   },
   {
-    id: 10,
-    title: "We go on",
-    artist: "Bia",
-    cover: "assets/images/covers/song10.jpg",
-    audio: "assets/songs/we-go-on.mp3",
+    "id": 10,
+    "title": "Beat It",
+    "artist": "Michael Jackson",
+    "cover": "assets/images/covers/Michael Jackson - Beat It.jpg",
+    "audio": "assets/songs/Michael Jackson - Beat It.mp3"
   },
   {
-    id: 11,
-    title: "Zenzense",
-    artist: "Radwimps",
-    cover: "assets/images/covers/song11.jpg",
-    audio: "assets/songs/zenzense.mp3",
+    "id": 11,
+    "title": "Cheri Cheri Lady",
+    "artist": "Modern Talking",
+    "cover": "assets/images/covers/Modern Talking - Cheri Cheri Lady.jpg",
+    "audio": "assets/songs/Modern Talking - Cheri Cheri Lady.mp3"
   },
   {
-    id: 12,
-    title: "Without Me",
-    artist: "Eminem",
-    cover: "assets/images/covers/song12.jpg",
-    audio: "assets/songs/without-me.mp3",
+    "id": 12,
+    "title": "Bye Bye Bye",
+    "artist": "NSYNC",
+    "cover": "assets/images/covers/NSYNC - Bye Bye Bye.jpg",
+    "audio": "assets/songs/NSYNC - Bye Bye Bye.mp3"
   },
   {
-    id: 13,
-    title: "Beat it",
-    artist: "Michael Jackson",
-    cover: "assets/images/covers/song13.jpg",
-    audio: "assets/songs/beat-it.mp3",
+    "id": 13,
+    "title": "Sunflower",
+    "artist": "Post Malone, Swae Lee",
+    "cover": "assets/images/covers/Post Malone, Swae Lee - Sunflower.jpg",
+    "audio": "assets/songs/Post Malone, Swae Lee - Sunflower.mp3"
   },
   {
-    id: 14,
-    title: "Bumpy Ride",
-    artist: "Mohombi",
-    cover: "assets/images/covers/song14.jpg",
-    audio: "assets/songs/bumpy-ride.mp3",
+    "id": 14,
+    "title": "Blinding Lights",
+    "artist": "The Weeknd",
+    "cover": "assets/images/covers/The Weeknd - Blinding Lights.jpg",
+    "audio": "assets/songs/The Weeknd - Blinding Lights.mp3"
   },
   {
-    id: 15,
-    title: "APT",
-    artist: "Rose & Bruno Mars",
-    cover: "assets/images/covers/song15.jpg",
-    audio: "assets/songs/apt.mp3",
-  },
-  {
-    id: 16,
-    title: "Blinding Lights",
-    artist: "The Weeknd",
-    cover: "assets/images/covers/song16.jpg",
-    audio: "assets/songs/blinding-lights.mp3",
-  },
-  {
-    id: 17,
-    title: "Bye Bye Bye",
-    artist: "NSYNC",
-    cover: "assets/images/covers/song17.jpg",
-    audio: "assets/songs/bye.mp3",
-  },
-  {
-    id: 18,
-    title: "One Love",
-    artist: "Blue",
-    cover: "assets/images/covers/song18.jpg",
-    audio: "assets/songs/one-love.mp3",
-  },
-  {
-    id: 19,
-    title: "Stereo Hearts",
-    artist: "Gym class Heroes",
-    cover: "assets/images/covers/song19.jpg",
-    audio: "assets/songs/stereo-hearts.mp3",
-  },
+    "id": 15,
+    "title": "Starboy",
+    "artist": "The Weeknd",
+    "cover": "assets/images/covers/The Weeknd - Starboy.jpg",
+    "audio": "assets/songs/The Weeknd - Starboy.mp3"
+  }
 ];
 
-// ----------------------
-// Playlists
-// ----------------------
 const playlists = [
   {
     id: 1,
     title: "Chill Mix",
-    cover: songs[0].cover,
-    songs: [0, 3, 5, 7, 9],
+    cover: songs[0]?.cover || "",
+    songs: [0,1,2,3,4,5,6,7],
   },
   {
     id: 2,
-    title: "Workout",
-    cover: songs[2].cover,
-    songs: [2, 4, 6, 8, 10],
-  },
-  {
-    id: 3,
-    title: "Coding Buzz",
-    cover: songs[1].cover,
-    songs: [1, 13, 4, 15, 6, 17, 8, 18, 11],
-  },
+    title: "All Tracks Mix",
+    cover: songs[Math.min(1, songs.length - 1)]?.cover || "",
+    songs: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+  }
 ];
