@@ -1,3 +1,87 @@
+:root {
+  /* Colors */
+  --clr-bg: #09090b;
+  --clr-surface: #18181b;
+  --clr-surface-light: #27272a;
+  --clr-primary: #8b5cf6;
+  --clr-primary-hover: #7c3aed;
+  --clr-primary-light: #a78bfa;
+  --clr-success: #22c55e;
+  --clr-danger: #ef4444;
+  --clr-warning: #facc15;
+  --clr-text: #fafafa;
+  --clr-text-muted: #a1a1aa;
+  --clr-border: #2a2a2a;
+  --bg: #09090b;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.4s ease;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.4);
+
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  /* Typography */
+  --ff-primary: "Plus Jakarta Sans", sans-serif;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 2rem;
+  --fs-3xl: 3rem;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 2rem;
+  --space-8: 2.5rem;
+  --space-9: 3rem;
+
+  /* Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-round: 999px;
+
+  /* Layout & Z-index */
+  --header-height: 4.5rem;
+  --mini-player-height: 5.5rem;
+  --bottom-nav-height: 4rem;
+  --z-header: 100;
+  --z-player: 200;
+  --z-modal: 500;
+  --z-toast: 1000;
+  
+  /* Sizes */
+  --album-size: 110px;
+  --playlist-size: 55px;
+  --icon-size: 24px;
+  --play-btn-size: 3rem;
+  --icon-sm: 1.25rem;
+  --icon-md: 1.5rem;
+  --icon-lg: 2rem;
+  --icon-xl: 2.5rem;
+  --icon-2xl: 3rem; 
+  --icon-3xl: 90px; 
+}
+
 /* ===========================
    GLOBAL RESET & BEHAVIOR
 =========================== */
@@ -50,14 +134,6 @@ button {
 /* ===========================
    UTILITIES & DRY LAYOUTS 
 =========================== */
-.song-card h1,
-.player-info h1,
-.queue-item h4 {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .song-card,
 .library-folder,
 .genre-card,
@@ -203,6 +279,7 @@ footer {
   flex: 0 0 var(--album-size);
   cursor: pointer;
   transition: transform var(--transition-fast);
+  min-width: 0;
 }
 
 .song-card:hover {
@@ -217,9 +294,14 @@ footer {
   box-shadow: var(--shadow-sm);
 }
 
+/* Consolidated & Cleaned .song-card h1 rule with ellipsis */
 .song-card h1 {
   margin-top: var(--space-2);
   font-size: var(--fs-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .song-card p {
@@ -327,7 +409,6 @@ footer {
 .suggested-card {
   display: flex;
   align-items: center;
-  /* background: var(--clr-surface-light, #181818); */
   padding: 6px;
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -357,7 +438,7 @@ footer {
 .suggested-info p {
   font-size: 10px;
   text-transform: uppercase;
-  color: var(--clr-text-muted, #b3b3b3);
+  color: var(--clr-text-muted);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -377,7 +458,7 @@ footer {
 .suggested-card .more-btn {
   background: none;
   border: none;
-  color: var(--clr-text-muted, #b3b3b3);
+  color: var(--clr-text-muted);
   cursor: pointer;
   padding: 4px;
 }
@@ -430,7 +511,7 @@ footer {
 .featured-card-info p {
   font-size: 10px;
   text-transform: uppercase;
-  color: var(--clr-text-muted, #b3b3b3);
+  color: var(--clr-text-muted);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -452,7 +533,7 @@ footer {
 .featured-card .more-btn {
   background: none;
   border: none;
-  color: var(--clr-text-muted, #b3b3b3);
+  color: var(--clr-text-muted);
   cursor: pointer;
 }
 
@@ -1094,4 +1175,87 @@ footer {
 
 .playlist-detail-songs {
   padding-inline: 0;
+}
+
+/* =========================================
+   SEARCH RESULTS UI (CLEANED & OPTIMIZED)
+========================================= */
+
+.search-results .songs-list,
+#search-results {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    gap: 10px;
+    padding-bottom: 120px;
+    width: 100%;
+}
+
+.search-results .songs-card,
+.live-search-card {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 10px;
+    background: transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.live-search-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.live-search-card .more-btn,
+.live-search-card button {
+    display: none;
+}
+
+.live-search-card .songs-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.live-search-card img {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.live-search-card .songs-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.live-search-card .songs-info h1 {
+    font-size: var(--fs-md);
+    font-weight: var(--fw-semibold);
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: block;
+}
+
+.live-search-card .songs-info p {
+    font-size: var(--fs-sm);
+    color: var(--clr-text-muted);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: block;
 }

@@ -1,12 +1,18 @@
-let currentPlaylistQueue = []; 
+// ----------------------
+// State Variables
+// ----------------------
+let currentPlaylistQueue = [];
 let activeScreenBeforePlayer = null;
 let currentPlaylistName = "";
 
-// ----------------------
-// Audio & State Variables
-// ----------------------
 const audio = new Audio();
-let currentSongIndex = localStorage.getItem("currentSongIndex") ? Number(localStorage.getItem("currentSongIndex")) : 0;
+
+// CRITICAL WARNING: Your comment mentions this is initialized in storage.js.
+// If storage.js loads before this file and uses 'let currentSongIndex = 0;', 
+// having 'let' here again will crash your app with a "SyntaxError: Identifier has already been declared".
+// Fix: If it is declared in storage.js, change this to just: currentSongIndex = currentSongIndex || 0;
+let currentSongIndex = 0; 
+
 let isRepeat = false;
 let isShuffle = false;
 let isFavorite = false;
@@ -17,20 +23,20 @@ let isFavorite = false;
 const homeScreen = document.querySelector(".home-screen");
 const playerScreen = document.querySelector(".player-screen");
 const queueScreen = document.querySelector(".queue-screen");
-const searchScreen = document.querySelector('.search-screen'); 
-const libraryScreen = document.querySelector('.library-screen');
-const likedSongsScreen = document.querySelector('.liked-songs-screen');
-const profileScreen = document.querySelector('.profile-screen'); 
+const searchScreen = document.querySelector(".search-screen");
+const libraryScreen = document.querySelector(".library-screen");
+const likedSongsScreen = document.querySelector(".liked-songs-screen");
+const profileScreen = document.querySelector(".profile-screen");
 
 const recentList = document.querySelector(".recent-list");
 const playlistList = document.querySelector(".playlist-list");
 const songsList = document.querySelector(".songs-list");
 const queueList = document.querySelector(".queue-list");
 const searchList = document.querySelector(".search-list");
-const likedSongsList = document.querySelector('.liked-songs-list');
+const likedSongsList = document.querySelector(".liked-songs-list");
 
 // ----------------------
-// Mini Player Elements (Optimized with GetElementById)
+// Mini Player Elements
 // ----------------------
 const miniPlayer = document.getElementById("miniPlayer");
 const miniCover = document.getElementById("miniCover");
@@ -44,7 +50,7 @@ const miniLikeBtn = document.getElementById("miniLikeBtn");
 // Full Player Elements
 // ----------------------
 const backBtn = document.querySelector(".back-btn");
-const playerCover = document.querySelector(".player-cover-img"); // Fixed class name
+const playerCover = document.querySelector(".player-cover-img");
 const playerTitle = document.querySelector(".song-details h2");
 const playerArtist = document.querySelector(".song-details p");
 
@@ -67,14 +73,16 @@ const closeQueue = document.querySelector(".close-queue");
 const searchInput = document.querySelector(".search-input");
 const searchResults = document.querySelector(".search-results");
 
-const navBtns = document.querySelectorAll('.nav-item');
-const favoritesFolder = document.getElementById('favorites-folder');
-const backToLibraryBtn = document.querySelector('.back-to-library-btn');
-const favSongCount = document.getElementById('fav-song-count');
-const closeLibraryBtn = document.querySelector('.close-library-btn');
-const closeSearchBtn = document.querySelector('.close-search-btn');
+const navBtns = document.querySelectorAll(".nav-item");
+const favoritesFolder = document.getElementById("favorites-folder");
+const backToLibraryBtn = document.querySelector(".back-to-library-btn");
+const favSongCount = document.getElementById("fav-song-count");
+const closeLibraryBtn = document.querySelector(".close-library-btn");
+const closeSearchBtn = document.querySelector(".close-search-btn");
 
+// ----------------------
 // Playlist Screen Elements
+// ----------------------
 const playlistDetailScreen = document.querySelector(".playlist-detail-screen");
 const closePlaylistBtn = document.querySelector(".close-playlist-btn");
 const playlistDetailCover = document.getElementById("playlist-detail-cover");

@@ -1,125 +1,68 @@
-// ----------------------
-// Auto-generated Songs & Dynamic Playlists
-// ----------------------
-const songs = [
+// js/data.js (Auto-generated & Cleaned)
+let songs = [
   {
     "id": 1,
-    "title": "Headlights",
-    "artist": "Alok, Alan Walker",
-    "cover": "assets/images/covers/Alok, Alan Walker - Headlights.jpg",
-    "audio": "assets/songs/Alok, Alan Walker - Headlights.mp3"
+    "title": "tum se hi lyrcial jab we met kareena kapoor",
+    "artist": "Unknown Artist",
+    "cover": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500&auto=format&fit=crop&q=60",
+    "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785605772/aura/tum_se_hi_lyrcial_jab_we_met_kareena_kapoor_shahid.mp3"
   },
   {
     "id": 2,
-    "title": "I Want It That Way",
-    "artist": "Backstreet Boys",
-    "cover": "assets/images/covers/Backstreet Boys - I Want It That Way.jpg",
-    "audio": "assets/songs/Backstreet Boys - I Want It That Way.mp3"
+    "title": "La Isla Bonita",
+    "artist": "Madonna",
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/ab/f6/3d/abf63d25-a582-a1ef-dcc1-65dcda1ecbcb/mzi.klximtlq.jpg/600x600bb.jpg",
+    "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785605279/aura/madonna_la_isla_bonita_.mp3"
   },
   {
     "id": 3,
-    "title": "One Love",
-    "artist": "Blue",
-    "cover": "assets/images/covers/Blue - One Love.jpg",
-    "audio": "assets/songs/Blue - One Love.mp3"
+    "title": "tasogare no bay city",
+    "artist": "JUNKO YAGAMI",
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/y2005/m07/d13/h06/s07.usbmmjal.tif/600x600bb.jpg",
+    "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785604948/aura/bay_city_junko_yagami.mp3"
   },
   {
     "id": 4,
-    "title": "Rasputin",
-    "artist": "Boney M",
-    "cover": "assets/images/covers/Boney M - Rasputin.jpg",
-    "audio": "assets/songs/Boney M - Rasputin.mp3"
+    "title": "Family Affair",
+    "artist": "Mary J. Blige",
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/bc/ba/dd/bcbadd95-9fff-b93e-b03c-84d11e9382e2/06UMGIM00908.rgb.jpg/600x600bb.jpg",
+    "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785604291/aura/family_affair_mary_j_blige.mp3"
   },
   {
     "id": 5,
-    "title": "Perfect",
-    "artist": "Ed Sheeran",
-    "cover": "assets/images/covers/Ed Sheeran - Perfect.jpg",
-    "audio": "assets/songs/Ed Sheeran - Perfect.mp3"
+    "title": "Empire State Of Mind (feat. Alicia Keys)",
+    "artist": "JAŸ-Z",
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/17/4a/a7/174aa7ea-0116-6240-1187-1efb51552833/00602527586502.rgb.jpg/600x600bb.jpg",
+    "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785604139/aura/empire_of_state_mind_jay_z.mp3"
   },
   {
     "id": 6,
-    "title": "Shape Of You",
-    "artist": "Ed Sheeran",
-    "cover": "assets/images/covers/Ed Sheeran - Shape of You.jpg",
-    "audio": "assets/songs/Ed Sheeran - Shape of You.mp3"
+    "title": "Hit 'Em Up",
+    "artist": "2Pac",
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/72/00/89/720089d8-c063-a323-e0cc-de921e50b968/00602527051789.rgb.jpg/600x600bb.jpg",
+    "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785603589/aura/hit_em_up.mp3"
   },
   {
     "id": 7,
-    "title": "Without Me",
-    "artist": "Eminem",
-    "cover": "assets/images/covers/Eminem - Without Me.jpg",
-    "audio": "assets/songs/Eminem - Without Me.mp3"
+    "title": "Bad Liar",
+    "artist": "Imagine Dragons",
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/3f/80/a8/3f80a8ef-5409-42ac-c126-c7354698c7fc/18UMGIM65849.rgb.jpg/600x600bb.jpg",
+    "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785601001/aura/bad_liar.mp3"
   },
   {
     "id": 8,
-    "title": "Stereo Hearts",
-    "artist": "Gym Class Heroes",
-    "cover": "assets/images/covers/Gym Class Heroes - Stereo Hearts.jpg",
-    "audio": "assets/songs/Gym Class Heroes - Stereo Hearts.mp3"
-  },
-  {
-    "id": 9,
-    "title": "La Isla Bonita",
-    "artist": "Madonna",
-    "cover": "assets/images/covers/Madonna - La Isla Bonita.jpg",
-    "audio": "assets/songs/Madonna - La Isla Bonita.mp3"
-  },
-  {
-    "id": 10,
-    "title": "Beat It",
-    "artist": "Michael Jackson",
-    "cover": "assets/images/covers/Michael Jackson - Beat It.jpg",
-    "audio": "assets/songs/Michael Jackson - Beat It.mp3"
-  },
-  {
-    "id": 11,
-    "title": "Cheri Cheri Lady",
-    "artist": "Modern Talking",
-    "cover": "assets/images/covers/Modern Talking - Cheri Cheri Lady.jpg",
-    "audio": "assets/songs/Modern Talking - Cheri Cheri Lady.mp3"
-  },
-  {
-    "id": 12,
-    "title": "Bye Bye Bye",
-    "artist": "NSYNC",
-    "cover": "assets/images/covers/NSYNC - Bye Bye Bye.jpg",
-    "audio": "assets/songs/NSYNC - Bye Bye Bye.mp3"
-  },
-  {
-    "id": 13,
-    "title": "Sunflower",
-    "artist": "Post Malone, Swae Lee",
-    "cover": "assets/images/covers/Post Malone, Swae Lee - Sunflower.jpg",
-    "audio": "assets/songs/Post Malone, Swae Lee - Sunflower.mp3"
-  },
-  {
-    "id": 14,
-    "title": "Blinding Lights",
-    "artist": "The Weeknd",
-    "cover": "assets/images/covers/The Weeknd - Blinding Lights.jpg",
-    "audio": "assets/songs/The Weeknd - Blinding Lights.mp3"
-  },
-  {
-    "id": 15,
-    "title": "Starboy",
-    "artist": "The Weeknd",
-    "cover": "assets/images/covers/The Weeknd - Starboy.jpg",
-    "audio": "assets/songs/The Weeknd - Starboy.mp3"
+    "title": "death bed (feat. beabadoobee) [coffee for your head]",
+    "artist": "Powfu",
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/8b/a9/36/8ba936f3-2d8b-1012-89cc-92f75eb76961/886448289180.jpg/600x600bb.jpg",
+    "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785600611/aura/death_bed.mp3"
   }
 ];
 
-const playlists = [
+let playlists = [
   {
     id: 1,
-    title: "Chill Mix",
-    cover: songs[0]?.cover || "",
-    songs: [0,1,2,3,4,5,6,7],
-  },
-  {
-    id: 2,
     title: "All Tracks Mix",
-    cover: songs[Math.min(1, songs.length - 1)]?.cover || "",
-    songs: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    cover: songs[0]?.cover || "",
+    songs: songs.map((_, i) => i),
   }
 ];
