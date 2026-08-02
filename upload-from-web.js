@@ -12,12 +12,12 @@ cloudinary.config({
 
 const args = process.argv.slice(2);
 let rawUrl = args[0];
-let customTitle = args[1]; // Optional override if you want to type it manually
+let customTitle = args[1]; // The manual override!
 
 async function uploadFromYouTube() {
   if (!rawUrl) {
     console.log("❌ Error: Missing YouTube link!");
-    console.log("👉 Usage: node upload-from-web.js \"YOUTUBE_LINK\"");
+    console.log("👉 Usage: node upload-from-web.js \"YOUTUBE_LINK\" \"optional_custom_name\"");
     return;
   }
 
@@ -40,30 +40,31 @@ async function uploadFromYouTube() {
       quiet: true,
     });
 
-    let rawTitle = customTitle || info.title;
+    let songTitle;
+    let cleanId;
 
-    // 🧠 SMART CLEANING: Strip out YouTube SEO clutter, movie names, and tags for iTunes
-    let songTitle = rawTitle
-      .split('|')[0]                    // Cut everything after the first '|'
-      .replace(/[-–—].*/, '')           // Cut everything after a dash '-' (removes movie/artist clutter)
-      .replace(/\(.*?\)/g, '')          // Remove parentheses like (Official Video)
-      .replace(/\[.*?\]/g, '')          // Remove brackets like [HD]
-      .replace(/lyrical|audio|video|official|hd|song|full/gi, '') // Remove common spam words
-      .trim();
+    // 🧠 THE UPGRADE: If you provide a name, use it exactly as-is. 
+    // If not, try to auto-clean the YouTube title.
+    if (customTitle) {
+      songTitle = customTitle;
+      console.log(`🎵 Using Custom Override Title: "${songTitle}"`);
+      cleanId = songTitle.replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g, '_').toLowerCase();
+    } else {
+      let rawTitle = info.title;
+      songTitle = rawTitle
+        .split('|')[0]                    
+        .replace(/[-–—].*/, '')           
+        .replace(/\(.*?\)/g, '')          
+        .replace(/\[.*?\]/g, '')          
+        .replace(/lyrical|audio|video|official|hd|song|full/gi, '') 
+        .trim();
 
-    // Fallback if cleaning leaves it blank
-    if (!songTitle || songTitle.length < 2) {
-      songTitle = rawTitle;
+      if (!songTitle || songTitle.length < 2) {
+        songTitle = rawTitle;
+      }
+      console.log(`🎵 Cleaned YouTube Title: "${songTitle}"`);
+      cleanId = rawTitle.replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g, '_').toLowerCase().slice(0, 50);
     }
-
-    console.log(`🎵 Cleaned Title for iTunes: "${songTitle}"`);
-
-    // Create a safe ID for Cloudinary using the original raw title or cleaned title
-    const cleanId = rawTitle
-      .replace(/[^a-zA-Z0-9]/g, '_')
-      .replace(/_+/g, '_')
-      .toLowerCase()
-      .slice(0, 50); // Keep it short
 
     const tempFileName = `${cleanId}.mp3`;
 
