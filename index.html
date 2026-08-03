@@ -42,7 +42,12 @@
         <section class="recently-played">
           <div class="section-header">
             <h2>Recently Played</h2>
-            <a href="#" aria-label="See all recently played tracks">See all</a>
+            <a
+              href="#"
+              aria-label="See all recently played tracks"
+              id="show-more-recent-btn"
+              >Show more</a
+            >
           </div>
           <div class="recent-list"></div>
         </section>
@@ -342,6 +347,57 @@
         </div>
       </div>
     </section>
+
+    <!-- RECENT HISTORY SCREEN -->
+    <section class="recent-history-screen hidden" aria-label="Recent History">
+      <div class="recent-history-header">
+        <div>
+          <p>Show More</p>
+          <h2>Recent Plays</h2>
+        </div>
+        <button id="close-recent-history" aria-label="Close">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <div id="recent-history-list" class="recent-history-list">
+        <!-- JavaScript will inject the vertical song list here -->
+      </div>
+    </section>
+    <!-- Song Options Bottom Sheet (3-Dots Menu) -->
+    <div
+      class="options-overlay hidden"
+      id="optionsOverlay"
+      aria-label="Close options"
+    ></div>
+    <div class="song-options-sheet" id="songOptionsSheet">
+      <div class="sheet-drag-handle"></div>
+
+      <div class="options-header">
+        <img id="options-cover" src="" alt="Song Cover" />
+        <div class="options-info">
+          <p id="options-artist">Artist Name</p>
+          <h3 id="options-title">Song Title</h3>
+        </div>
+      </div>
+
+      <div class="options-list">
+        <button class="option-item" id="opt-like">
+          <i data-lucide="heart" aria-hidden="true"></i> <span>Like</span>
+        </button>
+        <button class="option-item" id="opt-queue-next">
+          <i data-lucide="list-plus" aria-hidden="true"></i>
+          <span>Play Next</span>
+        </button>
+        <button class="option-item" id="opt-queue-last">
+          <i data-lucide="list" aria-hidden="true"></i>
+          <span>Add to Queue</span>
+        </button>
+        <button class="option-item" id="opt-share">
+          <i data-lucide="share-2" aria-hidden="true"></i> <span>Share</span>
+        </button>
+      </div>
+    </div>
 
     <!-- Footer / Mini Player & Bottom Navigation -->
     <footer class="footer">

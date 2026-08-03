@@ -297,20 +297,26 @@ footer {
   box-shadow: var(--shadow-sm);
 }
 
-/* Consolidated & Cleaned .song-card h1 rule with ellipsis */
-.song-card h1 {
+.song-card p {
   margin-top: var(--space-2);
-  font-size: var(--fs-sm);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--clr-text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
 }
 
-.song-card p {
-  margin-top: var(--space-1);
-  font-size: var(--fs-xs);
-  color: var(--clr-text-muted);
+.song-card h1 {
+  margin-top: 2px;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  color: var(--clr-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .playlist-list,
@@ -834,7 +840,7 @@ footer {
   max-width: 340px;
   aspect-ratio: 1/1;
   object-fit: cover;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
 }
 
@@ -1397,4 +1403,214 @@ footer {
   text-overflow: ellipsis;
   width: 100%;
   display: block;
+}
+
+/* ===========================
+   RECENT HISTORY SCREEN
+=========================== */
+.recent-history-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--clr-bg);
+  z-index: 85; /* Sits exactly over the home screen */
+  padding-bottom: calc(
+    var(--mini-player-height) + var(--bottom-nav-height) + var(--space-6)
+  );
+  overflow-y: auto;
+}
+
+.recent-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--space-6) var(--space-5) var(--space-4);
+  position: sticky;
+  top: 0;
+  background: var(--clr-bg);
+  z-index: 10;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.recent-history-header p {
+  font-size: 10px;
+  color: var(--clr-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.recent-history-header h2 {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-bold);
+  color: var(--clr-text);
+}
+
+#close-recent-history {
+  color: var(--clr-text-muted);
+  padding: 5px;
+  transition: color var(--transition-fast);
+}
+
+#close-recent-history:hover {
+  color: var(--clr-text);
+}
+
+.recent-history-list {
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* =========================================================
+   UNIVERSAL TEXT ORDER: ARTIST ON TOP, SONG TITLE ON BOTTOM
+========================================================= */
+
+/* Ensure text containers use flexbox column layout */
+.songs-info,
+.recent-search-info,
+.live-search-card .songs-info,
+.queue-item > div {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* 1. ARTIST NAME -> MOVED TO TOP (Order 1) */
+.songs-info p,
+.recent-search-info p,
+.live-search-card .songs-info p,
+.queue-item p {
+  order: 1 !important;
+  font-size: 10px !important;
+  text-transform: uppercase !important;
+  color: var(--clr-text-muted) !important;
+  font-weight: var(--fw-bold) !important;
+  letter-spacing: 0.5px !important;
+  margin: 0 0 2px 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* 2. SONG TITLE -> MOVED TO BOTTOM (Order 2) */
+.songs-info h1,
+.songs-info h2,
+.songs-info h3,
+.songs-info h4,
+.recent-search-info h4,
+.live-search-card .songs-info h1,
+.queue-item h4 {
+  order: 2 !important;
+  font-size: var(--fs-sm) !important;
+  font-weight: var(--fw-bold) !important;
+  color: var(--clr-text) !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* ===========================
+   SONG OPTIONS BOTTOM SHEET (3-DOTS MENU)
+=========================== */
+.options-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 900;
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none; /* Can't click when hidden */
+}
+
+.options-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+  display: block !important;
+}
+
+.song-options-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--clr-surface);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: var(--space-4) var(--space-5) calc(var(--space-8) + 20px)
+    var(--space-5);
+  z-index: 901;
+  transform: translateY(100%); /* Hidden below screen */
+  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+  border-top: 1px solid var(--clr-border);
+}
+
+.song-options-sheet.active {
+  transform: translateY(0); /* Slide up */
+}
+
+.sheet-drag-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--clr-border);
+  border-radius: 2px;
+  margin: 0 auto var(--space-5) auto;
+}
+
+.options-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--glass-border);
+  margin-bottom: var(--space-2);
+}
+
+.options-header img {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+}
+
+.options-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.options-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-4) 0;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
+  color: var(--clr-text);
+  transition: color var(--transition-fast);
+  width: 100%;
+  text-align: left;
+}
+
+.option-item:active {
+  color: var(--clr-primary);
+  transform: scale(0.98);
+}
+
+.option-item i {
+  color: var(--clr-text-muted);
+  width: 22px;
+  height: 22px;
 }

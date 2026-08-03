@@ -66,8 +66,10 @@ const renderRecentSongs = () => {
       return `
       <article class="song-card" data-index="${i}">
         <img src="${song?.cover || ''}" alt="${song?.title || 'Unknown'}">
-        <h1>${song?.title || 'Unknown'}</h1>
+        <!-- Artist moved to top -->
         <p>${song?.artist || 'Unknown Artist'}</p>
+        <!-- Title moved below -->
+        <h1>${song?.title || 'Unknown'}</h1>
       </article>`;
     })
     .join("");
@@ -373,4 +375,80 @@ backToLibraryBtn?.addEventListener("click", () => {
 
 [closeLibraryBtn, closeSearchBtn].forEach((btn) => {
   btn?.addEventListener("click", () => navBtns[0]?.click());
+});
+
+// ==========================================
+// RECENT HISTORY FULL SCREEN LOGIC
+// ==========================================
+const showMoreRecentBtn = document.getElementById('show-more-recent-btn');
+const recentHistoryScreen = document.querySelector('.recent-history-screen');
+const closeRecentHistoryBtn = document.getElementById('close-recent-history');
+const recentHistoryList = document.getElementById('recent-history-list');
+const homeScreenElement = document.querySelector('.home-screen');
+
+// Open the screen when "See all" is clicked
+showMoreRecentBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    homeScreenElement?.classList.add('hidden');
+    recentHistoryScreen?.classList.remove('hidden');
+    renderRecentHistoryFull();
+});
+
+// Close the screen when "X" is clicked
+closeRecentHistoryBtn?.addEventListener('click', () => {
+    recentHistoryScreen?.classList.add('hidden');
+    homeScreenElement?.classList.remove('hidden');
+});
+
+// Render the vertical list
+const renderRecentHistoryFull = () => {
+    if (!recentHistoryList) return;
+    
+    let recent = getSafeRecentSongs(); 
+    recent = recent.filter((i) => songs && songs[i] !== undefined);
+
+    if (recent.length === 0) {
+        recentHistoryList.innerHTML = `<p style="text-align:center; color: var(--clr-text-muted); padding-top: 30px;">No recent plays yet.</p>`;
+        return;
+    }
+
+    recentHistoryList.innerHTML = recent.map(i => {
+        const song = songs[i];
+        return `
+        <article class="songs-card recent-history-card" data-index="${i}" style="padding: 0;">
+          <div class="songs-left">
+            <img src="${song.cover}" alt="${song.title}" style="width: 50px; height: 50px; border-radius: var(--radius-sm); object-fit: cover;">
+            <div class="songs-info" style="justify-content: center;">
+              <p style="font-size: 10px; text-transform: uppercase; color: var(--clr-text-muted); margin-bottom: 2px;">${song.artist}</p>
+              <h1 style="font-size: var(--fs-sm); font-weight: var(--fw-bold); color: var(--clr-text); margin: 0;">${song.title}</h1>
+            </div>
+          </div>
+        </article>
+        `;
+    }).join('');
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+};
+
+// Play a song when clicked from the new list
+recentHistoryList?.addEventListener('click', (e) => {
+    const card = e.target.closest('.recent-history-card');
+    if(!card) return;
+
+    const index = Number(card.dataset.index);
+    
+    // Update the Playing From UI
+    currentPlaylistName = "Recent Plays";
+    currentPlaylistQueue = getSafeRecentSongs().filter(i => songs && songs[i] !== undefined);
+    
+    const playingFromSection = document.querySelector(".playing-from");
+    const playingFromTitle = document.querySelector(".playing-from h3");
+    
+    if (playingFromSection && playingFromTitle) {
+        playingFromTitle.textContent = currentPlaylistName;
+        playingFromSection.classList.remove("hidden");
+    }
+
+    if (typeof loadSong === 'function') loadSong(index);
+    if (typeof playSong === 'function') playSong();
 });
