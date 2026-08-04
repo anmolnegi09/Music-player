@@ -93,7 +93,7 @@ const renderLocalSearchResults = (filtered) => {
   if (!searchList) return;
 
   if (filtered.length === 0) {
-    searchList.innerHTML = `<p style="text-align:center; padding-top: 30px; color: var(--clr-text-muted);">Song not found in your library.</p>`;
+    searchList.innerHTML = `<p style="text-align:center; padding-top: 30px; color: var(--clr-text-muted);">Song not found.</p>`;
     return;
   }
 

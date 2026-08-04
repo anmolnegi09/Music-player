@@ -121,35 +121,6 @@ const renderSuggestedSongs = () => {
 };
 
 // ----------------------
-// Featured Playlists
-// ----------------------
-const renderFeaturedPlaylists = () => {
-  const container = document.getElementById("featuredPlaylistList");
-  if (!container || !songs || !songs.length) return;
-
-  const indices = shuffledIndices(songs.length, Math.min(6, songs.length));
-
-  container.innerHTML = indices
-    .map((index) => {
-      const song = songs[index];
-      return `
-      <article class="featured-card" data-index="${index}">
-        <img src="${song?.cover || ''}" alt="${song?.title || 'Unknown'}">
-        <div class="featured-card-footer">
-          <div class="featured-card-info">
-            <p>${song?.artist || 'Unknown Artist'}</p>
-            <h4>${song?.title || 'Unknown'}</h4>
-          </div>
-          <button class="more-btn"><i data-lucide="ellipsis-vertical" size="16"></i></button>
-        </div>
-      </article>`;
-    })
-    .join("");
-
-  if (typeof lucide !== 'undefined') lucide.createIcons();
-};
-
-// ----------------------
 // Playlist Click Logic
 // ----------------------
 playlistList?.addEventListener("click", (e) => {

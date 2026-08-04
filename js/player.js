@@ -25,9 +25,9 @@ function loadSong(index) {
   audio.src = song.audio;
   updatePlayerButton();
 
-  const liked = typeof getLikedSongs === "function" ? getLikedSongs() : []; 
+  const liked = typeof getLikedSongs === "function" ? getLikedSongs() : [];
   isFavorite = liked.includes(currentSongIndex);
-  updateFavoriteButton?.(); 
+  updateFavoriteButton?.();
 }
 
 function playSong() {
@@ -36,7 +36,7 @@ function playSong() {
     playPromise
       .then(() => updatePlayerButton())
       .catch((err) => {
-        console.warn("Audio load interrupted smoothly. Loading next...", err); 
+        console.warn("Audio load interrupted smoothly. Loading next...", err);
       });
   } else {
     updatePlayerButton();
@@ -65,7 +65,7 @@ function updateFullPlayer(song) {
 // ----------------------
 // Mini Player Buttons
 // ----------------------
-// Added Optional Chaining (?.) to all event listeners. 
+// Added Optional Chaining (?.) to all event listeners.
 // If the button doesn't exist in HTML, the JS won't crash.
 miniNextBtn?.addEventListener("click", (e) => {
   e.stopPropagation();
@@ -75,9 +75,9 @@ miniNextBtn?.addEventListener("click", (e) => {
 miniLikeBtn?.addEventListener("click", (e) => {
   e.stopPropagation();
   if (typeof toggleLikedSong === "function") {
-      isFavorite = toggleLikedSong(currentSongIndex);
-      updateFavoriteButton?.();
-      renderFavoritesCount?.();
+    isFavorite = toggleLikedSong(currentSongIndex);
+    updateFavoriteButton?.();
+    renderFavoritesCount?.();
   }
 });
 
@@ -87,12 +87,12 @@ miniLikeBtn?.addEventListener("click", (e) => {
 function updatePlayerButton() {
   const icon = audio.paused ? "play" : "pause";
   const iconHTML = `<i data-lucide="${icon}"></i>`;
-  
+
   if (playerBtn) playerBtn.innerHTML = iconHTML;
   if (playBtnLarge) playBtnLarge.innerHTML = iconHTML;
-  
+
   // Guard against the Lucide library failing to load
-  if (typeof lucide !== 'undefined') lucide.createIcons(); 
+  if (typeof lucide !== "undefined") lucide.createIcons();
 }
 
 function togglePlay(e) {
@@ -118,7 +118,10 @@ const allPlayerScreens = [
 
 function openFullPlayer() {
   // Optimized: Replaced the for-loop with the cleaner array `.find()` method.
-  activeScreenBeforePlayer = allPlayerScreens.find(screen => screen && !screen.classList.contains("hidden")) || null;
+  activeScreenBeforePlayer =
+    allPlayerScreens.find(
+      (screen) => screen && !screen.classList.contains("hidden"),
+    ) || null;
 
   allPlayerScreens.forEach((screen) => screen?.classList.add("hidden"));
   playerScreen?.classList.remove("hidden");
@@ -159,56 +162,82 @@ progressBar?.addEventListener("input", () => {
 // ----------------------
 // Track Navigation (Smart Queue Engine)
 // ----------------------
-function getActiveQueue() {
-  return currentPlaylistQueue.length > 0
-    ? currentPlaylistQueue
-    : songs.map((_, i) => i);
-}
-
-// Optimized: Created a single function to handle index math for both Next and Previous buttons.
-function getNewSongIndex(step) {
-  const queue = getActiveQueue();
-  let currentIndex = queue.indexOf(currentSongIndex);
-  if (currentIndex === -1) currentIndex = 0;
-  
-  if (isShuffle && step > 0) { // Only shuffle on 'next'
-      return queue[Math.floor(Math.random() * queue.length)];
-  }
-  
-  return queue[(currentIndex + step + queue.length) % queue.length];
-}
-
 function playNext() {
-  currentSongIndex = getNewSongIndex(1);
+  // Priority 1: User explicitly queued a manual song
+  if (window.userQueue && window.userQueue.length > 0) {
+    const nextQueuedSong = window.userQueue.shift();
+    const queuedIndex = songs.findIndex((s) => s.id === nextQueuedSong.id);
+    if (queuedIndex !== -1) {
+      currentSongIndex = queuedIndex;
+      loadSong(currentSongIndex);
+      playSong();
+      if (typeof renderQueue === "function") renderQueue();
+      return;
+    }
+  }
+
+  // Priority 2: Use the Playlist Queue, OR default to all songs
+  const activeArray =
+    window.currentPlaylistQueue && window.currentPlaylistQueue.length > 0
+      ? window.currentPlaylistQueue
+      : songs.map((_, i) => i); // Fallback to global library
+
+  if (typeof isShuffle !== "undefined" && isShuffle) {
+    currentSongIndex =
+      activeArray[Math.floor(Math.random() * activeArray.length)];
+  } else {
+    const currentIndex = activeArray.indexOf(currentSongIndex);
+    // Move forward, loop seamlessly back to the start if we hit the end!
+    currentSongIndex = activeArray[(currentIndex + 1) % activeArray.length];
+  }
+
   loadSong(currentSongIndex);
   playSong();
+  if (typeof renderQueue === "function") renderQueue();
 }
+
+function playPrevious() {
+  // Determine if we are in a playlist or normal mode
+  const activeArray =
+    window.currentPlaylistQueue && window.currentPlaylistQueue.length > 0
+      ? window.currentPlaylistQueue
+      : songs.map((_, i) => i);
+
+  const currentIndex = activeArray.indexOf(currentSongIndex);
+
+  // If the song somehow isn't in the active array, just restart the array
+  if (currentIndex === -1) {
+    currentSongIndex = activeArray[0];
+  } else {
+    // Go backwards, loop to the very end if we are at the beginning!
+    currentSongIndex =
+      activeArray[(currentIndex - 1 + activeArray.length) % activeArray.length];
+  }
+
+  loadSong(currentSongIndex);
+  playSong();
+  if (typeof renderQueue === "function") renderQueue();
+}
+
+// Ensure the buttons trigger our new bulletproof functions
+previousBtn?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  playPrevious();
+});
+
+nextBtn?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  playNext();
+});
 
 shuffleBtn?.addEventListener("click", () => {
   isShuffle = !isShuffle;
   shuffleBtn.classList.toggle("active", isShuffle);
 });
 
-previousBtn?.addEventListener("click", () => {
-  currentSongIndex = getNewSongIndex(-1);
-  loadSong(currentSongIndex);
-  playSong();
-});
-
-nextBtn?.addEventListener("click", playNext);
-
 repeatBtn?.addEventListener("click", () => {
   isRepeat = !isRepeat;
   repeatBtn.classList.toggle("active", isRepeat);
-});
-
-audio.addEventListener("ended", () => {
-  if (isRepeat) {
-    audio.currentTime = 0;
-    playSong();
-  } else {
-    playNext();
-  }
 });
 
 // ----------------------
@@ -221,11 +250,13 @@ audio.addEventListener("error", () => {
   consecutivePlaybackFailures++;
   // Changed to console.warn to highlight it better in dev tools
   console.warn(
-    `Playback failed for "${songs[currentSongIndex]?.title}" (${consecutivePlaybackFailures}/${MAX_CONSECUTIVE_FAILURES}). Skipping...`
+    `Playback failed for "${songs[currentSongIndex]?.title}" (${consecutivePlaybackFailures}/${MAX_CONSECUTIVE_FAILURES}). Skipping...`,
   );
 
   if (consecutivePlaybackFailures >= MAX_CONSECUTIVE_FAILURES) {
-    console.error("Too many songs failed to play in a row. Stopping auto-skip.");
+    console.error(
+      "Too many songs failed to play in a row. Stopping auto-skip.",
+    );
     return;
   }
 
@@ -250,40 +281,155 @@ closeQueue?.addEventListener("click", () => {
 
 function renderQueue() {
   if (!queueList) return;
+  queueList.innerHTML = ""; // Clear the list
 
-  const queueToRender = getActiveQueue();
-  const fragment = document.createDocumentFragment();
+  let html = "";
 
-  queueToRender.forEach((songIndex) => {
-    const song = songs[songIndex];
-    if (!song) return;
+  // 1. MANUAL QUEUE ("Up Next" - Songs explicitly added)
+  if (window.userQueue && window.userQueue.length > 0) {
+    html += `<h4 style="padding: 10px 0; color: var(--clr-text); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Up Next</h4>`;
+    
+    window.userQueue.forEach((song, index) => {
+      html += `
+        <div class="queue-list-row" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+          <div class="queue-song-info" data-queue-index="${index}" style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0; cursor: pointer;">
+            <img src="${song.cover || ''}" style="width: 45px; height: 45px; border-radius: 6px; object-fit: cover; flex-shrink: 0;">
+            <div style="display: flex; flex-direction: column; align-items: flex-start; min-width: 0;">
+              <p style="margin: 0 0 4px 0; font-size: 0.75rem; text-transform: uppercase; color: var(--clr-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${song.artist || 'Unknown'}</p>
+              <h4 style="margin: 0; font-size: 0.95rem; font-weight: 500; color: var(--clr-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${song.title || 'Unknown'}</h4>
+            </div>
+          </div>
+          <button class="remove-queue-btn" data-queue-index="${index}" style="background: none; border: none; padding: 10px; cursor: pointer; color: var(--clr-text-muted);">
+            <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+          </button>
+        </div>
+      `;
+    });
+  }
 
-    const songItem = document.createElement("div");
-    songItem.className = `queue-item ${songIndex === currentSongIndex ? "playing" : ""}`;
-    songItem.dataset.index = songIndex;
-    // Added fallbacks for properties inside innerHTML
-    songItem.innerHTML = `
-      <img src="${song.cover || ''}" alt="${song.title || 'Unknown'}">
-      <div>
-        <h4>${song.title || 'Unknown Title'}</h4>
-        <p>${song.artist || 'Unknown Artist'}</p>
+  // 2. PLAYLIST QUEUE (Shows the whole list, highlights the active song)
+  if (window.currentPlaylistQueue && window.currentPlaylistQueue.length > 0) {
+    html += `<h4 style="padding: 15px 0 5px 0; color: var(--clr-text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Playing from Playlist</h4>`;
+    
+    window.currentPlaylistQueue.forEach((songIndex) => {
+      const song = songs[songIndex];
+      const isPlaying = songIndex === currentSongIndex; // Magic check!
+
+      // Dynamic styles based on whether it is playing or not
+      const textColor = isPlaying ? "var(--clr-primary, #a855f7)" : "var(--clr-text, #fff)";
+      const artistColor = isPlaying ? "var(--clr-primary, #a855f7)" : "var(--clr-text-muted, #aaa)";
+      const opacity = isPlaying ? "1" : "0.5";
+      const border = isPlaying ? "2px solid var(--clr-primary, #a855f7)" : "none";
+      const rightIcon = isPlaying ? `<i data-lucide="bar-chart-2" style="width: 20px; height: 20px; color: var(--clr-primary, #a855f7);"></i>` : "";
+
+      html += `
+        <div class="queue-list-row" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); opacity: ${opacity};">
+          <div class="playlist-song-info" data-song-index="${songIndex}" style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0; cursor: pointer;">
+            <img src="${song.cover || ''}" style="width: 45px; height: 45px; border-radius: 6px; object-fit: cover; flex-shrink: 0; border: ${border};">
+            <div style="display: flex; flex-direction: column; align-items: flex-start; min-width: 0;">
+              <p style="margin: 0 0 4px 0; font-size: 0.75rem; text-transform: uppercase; color: ${artistColor}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${song.artist || 'Unknown'}</p>
+              <h4 style="margin: 0; font-size: 0.95rem; font-weight: 500; color: ${textColor}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${song.title || 'Unknown'}</h4>
+            </div>
+          </div>
+          <div>${rightIcon}</div>
+        </div>
+      `;
+    });
+  }
+
+  // 3. EMPTY STATE
+  if (html === "") {
+    queueList.innerHTML = `
+      <div style="text-align: center; padding: var(--space-8) var(--space-4); color: var(--clr-text-muted);">
+        <i data-lucide="list-music" style="width: 48px; height: 48px; margin-bottom: 10px; opacity: 0.5;"></i>
+        <h3 style="color: var(--clr-text); margin-bottom: 5px;">Your queue is empty</h3>
+        <p style="font-size: 0.9rem;">Add songs using the 3-dot menu!</p>
       </div>
     `;
-    fragment.appendChild(songItem);
-  });
+  } else {
+    queueList.innerHTML = html;
+  }
 
-  queueList.innerHTML = "";
-  queueList.appendChild(fragment);
+  if (typeof lucide !== 'undefined') lucide.createIcons(); 
 }
 
+// THE NEW SMART CLICK LISTENER
 queueList?.addEventListener("click", (e) => {
-  const item = e.target.closest(".queue-item");
-  if (!item) return;
-  
-  const songIndex = Number(item.dataset.index);
-  loadSong(songIndex);
-  playSong();
-  renderQueue();
+  // 1. Remove manual song
+  const removeBtn = e.target.closest(".remove-queue-btn");
+  if (removeBtn) {
+    e.stopPropagation();
+    const indexToRemove = Number(removeBtn.dataset.queueIndex);
+    window.userQueue.splice(indexToRemove, 1);
+    renderQueue();
+    return;
+  }
+
+  // 2. Play manual song instantly
+  const manualSongInfo = e.target.closest(".queue-song-info");
+  if (manualSongInfo) {
+    const qIndex = Number(manualSongInfo.dataset.queueIndex);
+    const realIndex = songs.findIndex(
+      (s) => s.id === window.userQueue[qIndex].id,
+    );
+    if (realIndex !== -1) {
+      window.userQueue.splice(qIndex, 1); // Remove from queue since we are playing it
+      currentSongIndex = realIndex;
+      loadSong(currentSongIndex);
+      playSong();
+      renderQueue();
+    }
+    return;
+  }
+
+  // 3. Play playlist song instantly
+  const playlistSongInfo = e.target.closest(".playlist-song-info");
+  if (playlistSongInfo) {
+    const realIndex = Number(playlistSongInfo.dataset.songIndex);
+    currentSongIndex = realIndex;
+    loadSong(currentSongIndex);
+    playSong();
+    renderQueue(); // Re-render so the queue shifts upward!
+  }
+});
+
+queueList?.addEventListener("click", (e) => {
+  // 1. Did the user click the "X" remove button?
+  const removeBtn = e.target.closest(".remove-queue-btn");
+  if (removeBtn) {
+    e.stopPropagation(); // Stop click from playing the song
+    const indexToRemove = Number(removeBtn.dataset.queueIndex);
+
+    // Remove that specific song from the array
+    window.userQueue.splice(indexToRemove, 1);
+
+    // Re-draw the visual queue to show it's gone
+    renderQueue();
+    return;
+  }
+
+  // 2. Did the user click the song info to play it?
+  const songInfo = e.target.closest(".queue-song-info");
+  if (songInfo) {
+    const qIndex = Number(songInfo.dataset.queueIndex);
+    const songToPlay = window.userQueue[qIndex];
+
+    // Find where this song lives in the main database
+    const realIndex = songs.findIndex((s) => s.id === songToPlay.id);
+
+    if (realIndex !== -1) {
+      // Take it out of the queue (since we are playing it right now)
+      window.userQueue.splice(qIndex, 1);
+
+      // Load and play it
+      currentSongIndex = realIndex;
+      loadSong(currentSongIndex);
+      playSong();
+
+      // Update the UI
+      renderQueue();
+    }
+  }
 });
 
 // ----------------------
@@ -291,9 +437,9 @@ queueList?.addEventListener("click", (e) => {
 // ----------------------
 favoriteBtn?.addEventListener("click", () => {
   if (typeof toggleLikedSong === "function") {
-      isFavorite = toggleLikedSong(currentSongIndex);
-      updateFavoriteButton?.();
-      renderFavoritesCount?.();
+    isFavorite = toggleLikedSong(currentSongIndex);
+    updateFavoriteButton?.();
+    renderFavoritesCount?.();
   }
 });
 
@@ -309,8 +455,9 @@ colorProbeImg.onload = () => {
 
   try {
     // Guard against ColorThief script failing to load in HTML
-    if (typeof colorThief === 'undefined') throw new Error("colorThief is not defined"); 
-    
+    if (typeof colorThief === "undefined")
+      throw new Error("colorThief is not defined");
+
     const palette = colorThief.getPalette(colorProbeImg, 5);
     let chosenColor = palette[0];
 
@@ -325,7 +472,7 @@ colorProbeImg.onload = () => {
 
     let [r, g, b] = chosenColor;
     const finalBrightness = (r * 299 + g * 587 + b * 114) / 1000;
-    
+
     if (finalBrightness > 130) {
       r = Math.floor(r * 0.35);
       g = Math.floor(g * 0.35);
@@ -347,3 +494,19 @@ colorProbeImg.onerror = () => {
 function applyDynamicColor(imgUrl) {
   if (imgUrl) colorProbeImg.src = imgUrl; // Guard against empty URL
 }
+
+// ----------------------
+// Auto-Play Engine
+// ----------------------
+audio.addEventListener("ended", () => {
+  // If repeat is toggled on, loop the current song
+  if (typeof isRepeat !== "undefined" && isRepeat) {
+    audio.currentTime = 0;
+    playSong();
+  } else {
+    // Otherwise, move to the next song in the queue/playlist
+    if (typeof playNext === "function") {
+      playNext();
+    }
+  }
+});

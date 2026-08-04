@@ -235,25 +235,24 @@
       </div>
     </section>
 
-    <!-- Library Screen -->
+<!-- DEDICATED LIBRARY SCREEN -->
     <section class="library-screen hidden" aria-label="Library Screen">
       <header class="screen-header">
-        <button class="close-library-btn" aria-label="Close Library">
-          <i data-lucide="x" aria-hidden="true"></i>
-        </button>
         <h2>Your Library</h2>
+        <div style="width: 24px"></div>
       </header>
 
-      <div class="library-grid">
-        <article class="library-folder" id="favorites-folder">
-          <div class="folder-icon">
-            <i data-lucide="heart" fill="currentColor" aria-hidden="true"></i>
-          </div>
-          <div class="folder-info">
-            <h3>Liked Songs</h3>
-            <p id="fav-song-count">0 songs</p>
-          </div>
-        </article>
+      <!-- Grid Container -->
+      <div
+        id="library-grid"
+        style="
+          padding: 20px;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 15px;
+        "
+      >
+        <!-- JavaScript will inject the Liked Songs and Playlist cards here! -->
       </div>
     </section>
 
@@ -459,5 +458,10 @@
         }
       });
     </script>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+      <i data-lucide="check-circle"></i>
+      <span id="toast-message">Message goes here</span>
+    </div>
   </body>
 </html>
