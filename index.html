@@ -222,7 +222,7 @@
       </div>
     </section>
 
-<!-- DEDICATED LIBRARY SCREEN -->
+    <!-- DEDICATED LIBRARY SCREEN -->
     <section class="library-screen hidden" aria-label="Library Screen">
       <header class="screen-header">
         <h2>Your Library</h2>
@@ -230,15 +230,7 @@
       </header>
 
       <!-- Grid Container -->
-      <div
-        id="library-grid"
-        style="
-          padding: 20px;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 15px;
-        "
-      >
+      <div id="library-grid" class="library-grid">
         <!-- JavaScript will inject the Liked Songs and Playlist cards here! -->
       </div>
     </section>
@@ -389,7 +381,7 @@
     <footer class="footer">
       <div class="mini-player" id="miniPlayer">
         <div class="mini-info">
-          <img id="miniCover" src="" alt="Mini Player Cover" />
+          <img id="miniCover" src="" alt="Mini Player Cover" crossorigin="anonymous" />
           <div>
             <p id="miniArtist">Artist Name</p>
             <h1 id="miniTitle">Song Title</h1>
@@ -397,6 +389,9 @@
         </div>
 
         <div class="mini-controls">
+          <button id="mini-prev" class="desktop-prev-btn">
+            <i data-lucide="skip-back"></i>
+          </button>
           <button id="playerBtn" aria-label="Play/Pause">
             <i data-lucide="play" aria-hidden="true"></i>
           </button>

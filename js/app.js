@@ -77,7 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (moreBtn) {
       e.stopPropagation();
 
-      // We only declare 'card' once right here!
       const card = moreBtn.closest(
         ".suggested-card, .songs-card, .featured-card, .song-card, .playlist-card, .library-playlist-card",
       );
@@ -89,14 +88,12 @@ document.addEventListener("DOMContentLoaded", () => {
         card.classList.contains("library-playlist-card");
 
       if (isPlaylist) {
-        // --- PLAYLIST MODE ---
         const artistName =
           card.dataset.artist ||
           card.querySelector("h1, h4")?.textContent.trim();
         optionsSheet.dataset.itemType = "playlist";
         optionsSheet.dataset.artistName = artistName;
 
-        // 🌟 FIX: Find the cover directly from the database using the artist's name!
         const firstSong = songs.find((s) => s.artist === artistName);
         optCover.src = firstSong
           ? firstSong.cover
@@ -109,7 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
           JSON.parse(localStorage.getItem("likedPlaylists")) || [];
         updateMenuHeartIcon(likedPlaylists.includes(artistName));
       } else {
-        // --- SONG MODE ---
         optionsSheet.dataset.itemType = "song";
 
         let selectedSongIndex = -1;
@@ -117,7 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (card.dataset.index !== undefined) {
           selectedSongIndex = parseInt(card.dataset.index);
         } else {
-          // Absolute fallback ONLY if data-index is somehow missing
           const titleText = (
             card.querySelector(".player-title, h4, h3, h1")?.textContent || ""
           ).trim();
@@ -129,20 +124,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (selectedSongIndex !== -1 && songs[selectedSongIndex]) {
           const selectedSong = songs[selectedSongIndex];
 
-          // Save the exact index
           optionsSheet.dataset.songIndex = selectedSongIndex;
           optCover.src = selectedSong.cover;
           optTitle.innerText = selectedSong.title;
           optArtist.innerText = selectedSong.artist;
 
-          // Check if it's liked
           let likedSongs =
             typeof getLikedSongs === "function"
               ? getLikedSongs()
               : JSON.parse(localStorage.getItem("likedSongs")) || [];
           updateMenuHeartIcon(likedSongs.includes(selectedSongIndex));
         } else {
-          console.error("Could not find song data for this card.");
           optionsSheet.dataset.songIndex = "";
           optCover.src = card.querySelector("img")?.src || "";
           optTitle.innerText =
@@ -194,7 +186,6 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       const songIndex = parseInt(optionsSheet.dataset.songIndex);
 
-      // 🌟 FIX 2: Ghost Shield! Stop 'NaN' from ever saving to your database.
       if (isNaN(songIndex) || songIndex < 0) {
         if (typeof showToast === "function")
           showToast("Error: Cannot like this item.");
@@ -246,8 +237,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   optPlayNext?.addEventListener("click", () => {
     if (optionsSheet.dataset.itemType === "playlist") {
-      if (typeof showToast === "function")
-        showToast("Playlists load instantly on click!");
+      const artistName = optionsSheet.dataset.artistName;
+      const mixSongs = songs.filter((s) => s.artist === artistName);
+
+      if (mixSongs.length > 0) {
+        mixSongs.forEach((song) => {
+          window.userQueue = window.userQueue.filter((s) => s.id !== song.id);
+        });
+        window.userQueue = [...mixSongs, ...window.userQueue];
+        if (typeof showToast === "function")
+          showToast(`Playing ${artistName} Mix next`);
+      }
     } else {
       const songIndex = parseInt(optionsSheet.dataset.songIndex);
       const songToQueue = songs[songIndex];
@@ -265,8 +265,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   optAddQueue?.addEventListener("click", () => {
     if (optionsSheet.dataset.itemType === "playlist") {
-      if (typeof showToast === "function")
-        showToast("Added playlist to background queue!");
+      const artistName = optionsSheet.dataset.artistName;
+      const mixSongs = songs.filter((s) => s.artist === artistName);
+
+      if (mixSongs.length > 0) {
+        mixSongs.forEach((song) => {
+          window.userQueue = window.userQueue.filter((s) => s.id !== song.id);
+        });
+        window.userQueue = [...window.userQueue, ...mixSongs];
+        if (typeof showToast === "function")
+          showToast(`Added ${artistName} Mix to queue`);
+      }
     } else {
       const songIndex = parseInt(optionsSheet.dataset.songIndex);
       const songToQueue = songs[songIndex];
@@ -437,7 +446,6 @@ function renderLibrary() {
   const likedPlaylists =
     JSON.parse(localStorage.getItem("likedPlaylists")) || [];
 
-  // Injecting CSS directly for the slick Hover Effects
   let html = `
     <style>
       .library-playlist-card .lib-play-btn { opacity: 0; transform: translateY(10px); transition: all 0.3s ease; }
@@ -458,22 +466,14 @@ function renderLibrary() {
 
     html += `
       <div class="library-playlist-card" data-artist="${artistName}" style="position: relative; border-radius: 12px; cursor: pointer; aspect-ratio: 1/1; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-        
-        <!-- Background Image with smooth zoom on hover -->
         <div class="lib-bg" style="position: absolute; inset: 0; background-image: url('${coverImg}'); background-size: cover; background-position: center; z-index: 1; transition: transform 0.4s ease;"></div>
         <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%); z-index: 2;"></div>
-        
-        <!-- 3-Dot Menu Button (Top Right) -->
         <button class="more-btn" style="position: absolute; top: 10px; right: 10px; z-index: 4; background: rgba(0,0,0,0.5); border: none; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px);">
           <i data-lucide="more-vertical" size="18"></i>
         </button>
-
-        <!-- Play Button Overlay (Bottom Right - Appears on Hover) -->
         <button class="lib-play-btn" style="position: absolute; bottom: 15px; right: 15px; z-index: 4; background: var(--clr-primary, #a855f7); border: none; color: white; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4);">
           <i data-lucide="play" size="22" fill="currentColor" style="margin-left: 2px;"></i>
         </button>
-
-        <!-- Text Content -->
         <div style="position: relative; z-index: 3; pointer-events: none; width: 70%;">
           <h4 style="margin: 0; font-size: 1rem; color: white; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${artistName} Mix</h4>
           <p style="margin: 4px 0 0 0; font-size: 0.75rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.5px;">Playlist</p>
@@ -502,7 +502,6 @@ document.getElementById("library-grid")?.addEventListener("click", (e) => {
   const playBtn = e.target.closest(".lib-play-btn");
   const moreBtn = e.target.closest(".more-btn");
 
-  // Let the global app.js listener handle the 3-dot menu!
   if (moreBtn) return;
 
   if (playlistCard) {
@@ -513,7 +512,6 @@ document.getElementById("library-grid")?.addEventListener("click", (e) => {
 
     if (mixIndices.length > 0) {
       if (playBtn) {
-        // 1. PLAY BUTTON CLICKED -> Play instantly
         e.stopPropagation();
         window.currentPlaylistQueue = mixIndices;
         currentSongIndex = mixIndices[0];
@@ -522,7 +520,6 @@ document.getElementById("library-grid")?.addEventListener("click", (e) => {
         if (typeof showToast === "function")
           showToast(`Playing ${artistName} Mix`);
       } else {
-        // 2. CARD CLICKED -> Open Playlist View
         openLibraryPlaylistDetail(artistName, mixIndices);
       }
     }
@@ -541,7 +538,6 @@ function openLibraryPlaylistDetail(artistName, mixIndices) {
   libraryScreen.classList.add("hidden");
   detailScreen.classList.remove("hidden");
 
-  // Populate Header
   const leadSong = songs[mixIndices[0]];
   document.getElementById("playlist-detail-cover").src = leadSong.cover || "";
   document.getElementById("playlist-detail-name").innerText =
@@ -549,7 +545,6 @@ function openLibraryPlaylistDetail(artistName, mixIndices) {
   document.getElementById("playlist-detail-count").innerText =
     `${mixIndices.length} Songs`;
 
-  // Populate Song List
   const detailSongs = document.querySelector(".playlist-detail-songs");
   if (detailSongs) {
     detailSongs.innerHTML = mixIndices
@@ -572,7 +567,6 @@ function openLibraryPlaylistDetail(artistName, mixIndices) {
 
     if (typeof lucide !== "undefined") lucide.createIcons();
 
-    // Make the songs clickable to play
     detailSongs.onclick = (e) => {
       const card = e.target.closest(".songs-card");
       const mBtn = e.target.closest(".more-btn");
@@ -585,4 +579,38 @@ function openLibraryPlaylistDetail(artistName, mixIndices) {
       }
     };
   }
+}
+
+// ==========================================
+// DESKTOP "PREVIOUS" BUTTON LOGIC
+// ==========================================
+document.getElementById("mini-prev")?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  if (typeof prevSong === "function") {
+    prevSong();
+  }
+});
+
+// ==========================================
+// DYNAMIC PLAYER GRADIENT (ColorThief)
+// ==========================================
+const miniCoverImg = document.getElementById("miniCover");
+const miniPlayerBox = document.getElementById("miniPlayer");
+
+if (miniCoverImg && miniPlayerBox) {
+  miniCoverImg.addEventListener("load", function () {
+    try {
+      const colorThief = new ColorThief();
+      const [r, g, b] = colorThief.getColor(miniCoverImg);
+
+      miniPlayerBox.style.background = `linear-gradient(to right, rgba(${r}, ${g}, ${b}, 0.85) 0%, rgba(${r}, ${g}, ${b}, 0.2) 65%, var(--clr-bg) 100%)`;
+      miniCoverImg.style.boxShadow = `0 4px 20px rgba(${r}, ${g}, ${b}, 0.6)`;
+      miniPlayerBox.style.borderTop = `1px solid rgba(${r}, ${g}, ${b}, 0.3)`;
+    } catch (error) {
+      console.log("ColorThief blocked by CORS, using default background.");
+      miniPlayerBox.style.background = "var(--clr-surface-light)";
+      miniPlayerBox.style.borderTop = "1px solid var(--clr-border)";
+      miniCoverImg.style.boxShadow = "none";
+    }
+  });
 }
