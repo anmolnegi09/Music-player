@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (typeof renderLibrary === "function") renderLibrary();
 
   // ==========================================
-  // 3-DOT OPTIONS MENU LOGIC (Dual-Mode)
+  // 3-DOT OPTIONS MENU LOGIC (Synchronized)
   // ==========================================
   const optionsSheet = document.getElementById("songOptionsSheet");
   const optionsOverlay = document.getElementById("optionsOverlay");
@@ -71,25 +71,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 1. OPENING THE MENU (Bulletproof Matcher)
+  // 1. OPENING THE MENU
   document.body.addEventListener("click", (e) => {
     const moreBtn = e.target.closest(".more-btn");
     if (moreBtn) {
       e.stopPropagation();
+
+      // We only declare 'card' once right here!
       const card = moreBtn.closest(
-        ".suggested-card, .songs-card, .featured-card, .song-card, article, div",
+        ".suggested-card, .songs-card, .featured-card, .song-card, .playlist-card, .library-playlist-card",
       );
       if (!card) return;
 
-      const isPlaylist = card.classList.contains("featured-card");
+      const isPlaylist =
+        card.classList.contains("featured-card") ||
+        card.classList.contains("playlist-card") ||
+        card.classList.contains("library-playlist-card");
 
       if (isPlaylist) {
         // --- PLAYLIST MODE ---
-        const artistName = card.dataset.artist;
+        const artistName =
+          card.dataset.artist ||
+          card.querySelector("h1, h4")?.textContent.trim();
         optionsSheet.dataset.itemType = "playlist";
         optionsSheet.dataset.artistName = artistName;
 
-        optCover.src = card.querySelector("img")?.src || "";
+        // 🌟 FIX: Find the cover directly from the database using the artist's name!
+        const firstSong = songs.find((s) => s.artist === artistName);
+        optCover.src = firstSong
+          ? firstSong.cover
+          : card.querySelector("img")?.src || "";
+
         optTitle.innerText = `${artistName} Mix`;
         optArtist.innerText = "Playlist";
 
@@ -100,63 +112,45 @@ document.addEventListener("DOMContentLoaded", () => {
         // --- SONG MODE ---
         optionsSheet.dataset.itemType = "song";
 
-        // 🌟 ROBUST MATCHING: Find the song precisely
-        let selectedSong = null;
+        let selectedSongIndex = -1;
 
-        // 1. Try matching via direct data attributes if available
-        const directId = card.dataset.songId || card.dataset.index;
-        if (directId !== undefined && songs[directId]) {
-          selectedSong = songs[directId];
-        }
-
-        // 2. Fallback: Clean and precise text matching
-        if (!selectedSong) {
-          const titleEl = card.querySelector(
-            ".player-title, h4, h3, .song-title",
-          );
-          const artistEl = card.querySelector(
-            ".player-artist, p, .song-artist",
-          );
-
-          const title = (
-            titleEl?.textContent ||
-            titleEl?.innerText ||
-            ""
+        if (card.dataset.index !== undefined) {
+          selectedSongIndex = parseInt(card.dataset.index);
+        } else {
+          // Absolute fallback ONLY if data-index is somehow missing
+          const titleText = (
+            card.querySelector(".player-title, h4, h3, h1")?.textContent || ""
           ).trim();
-          const artist = (
-            artistEl?.textContent ||
-            artistEl?.innerText ||
-            ""
-          ).trim();
-
-          selectedSong = songs.find(
-            (s) =>
-              s.title.toLowerCase() === title.toLowerCase() &&
-              s.artist.toLowerCase() === artist.toLowerCase(),
+          selectedSongIndex = songs.findIndex(
+            (s) => s.title.toLowerCase().trim() === titleText.toLowerCase(),
           );
         }
 
-        // 3. Absolute fallback to whatever image/text is inside the card if database lookup fails
-        const coverSrc = card.querySelector("img")?.src || "";
-        const fallbackTitle =
-          card.querySelector("h4, h3")?.textContent || "Unknown Title";
-        const fallbackArtist =
-          card.querySelector("p")?.textContent || "Unknown Artist";
+        if (selectedSongIndex !== -1 && songs[selectedSongIndex]) {
+          const selectedSong = songs[selectedSongIndex];
 
-        if (selectedSong) {
-          optionsSheet.dataset.songId = selectedSong.id;
-          optCover.src = selectedSong.cover || coverSrc;
+          // Save the exact index
+          optionsSheet.dataset.songIndex = selectedSongIndex;
+          optCover.src = selectedSong.cover;
           optTitle.innerText = selectedSong.title;
           optArtist.innerText = selectedSong.artist;
 
-          let likedSongs = JSON.parse(localStorage.getItem("likedSongs")) || [];
-          updateMenuHeartIcon(likedSongs.includes(selectedSong.id));
+          // Check if it's liked
+          let likedSongs =
+            typeof getLikedSongs === "function"
+              ? getLikedSongs()
+              : JSON.parse(localStorage.getItem("likedSongs")) || [];
+          updateMenuHeartIcon(likedSongs.includes(selectedSongIndex));
         } else {
-          // If no database match, use visual elements directly
-          optionsSheet.dataset.songId = "";
-          optCover.src = coverSrc;
-          optTitle.innerText = fallbackTitle.trim();
-          optArtist.innerText = fallbackArtist.trim();
+          console.error("Could not find song data for this card.");
+          optionsSheet.dataset.songIndex = "";
+          optCover.src = card.querySelector("img")?.src || "";
+          optTitle.innerText =
+            card.querySelector(".player-title, h4, h3, h1")?.textContent ||
+            "Unknown Title";
+          optArtist.innerText =
+            card.querySelector(".player-artist, p")?.textContent ||
+            "Unknown Artist";
           updateMenuHeartIcon(false);
         }
       }
@@ -198,18 +192,47 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("likedPlaylists", JSON.stringify(likedPlaylists));
       if (typeof renderLibrary === "function") renderLibrary();
     } else {
-      const songId = parseInt(optionsSheet.dataset.songId);
-      let likedSongs = JSON.parse(localStorage.getItem("likedSongs")) || [];
+      const songIndex = parseInt(optionsSheet.dataset.songIndex);
 
-      if (likedSongs.includes(songId)) {
-        likedSongs = likedSongs.filter((id) => id !== songId);
+      // 🌟 FIX 2: Ghost Shield! Stop 'NaN' from ever saving to your database.
+      if (isNaN(songIndex) || songIndex < 0) {
         if (typeof showToast === "function")
-          showToast("Removed from Liked Songs");
-      } else {
-        likedSongs.push(songId);
-        if (typeof showToast === "function") showToast("Added to Liked Songs");
+          showToast("Error: Cannot like this item.");
+        setTimeout(closeOptionsSheet, 250);
+        return;
       }
-      localStorage.setItem("likedSongs", JSON.stringify(likedSongs));
+
+      if (typeof toggleLikedSong === "function") {
+        const isNowLiked = toggleLikedSong(songIndex);
+        if (typeof showToast === "function")
+          showToast(
+            isNowLiked ? "Added to Liked Songs" : "Removed from Liked Songs",
+          );
+
+        if (
+          typeof currentSongIndex !== "undefined" &&
+          currentSongIndex === songIndex
+        ) {
+          isFavorite = isNowLiked;
+          if (typeof updateFavoriteButton === "function")
+            updateFavoriteButton();
+        }
+
+        if (typeof renderFavoritesCount === "function") renderFavoritesCount();
+        if (typeof renderLikedSongs === "function") renderLikedSongs();
+      } else {
+        let likedSongs = JSON.parse(localStorage.getItem("likedSongs")) || [];
+        if (likedSongs.includes(songIndex)) {
+          likedSongs = likedSongs.filter((id) => id !== songIndex);
+          if (typeof showToast === "function")
+            showToast("Removed from Liked Songs");
+        } else {
+          likedSongs.push(songIndex);
+          if (typeof showToast === "function")
+            showToast("Added to Liked Songs");
+        }
+        localStorage.setItem("likedSongs", JSON.stringify(likedSongs));
+      }
       if (typeof renderLibrary === "function") renderLibrary();
     }
 
@@ -226,10 +249,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (typeof showToast === "function")
         showToast("Playlists load instantly on click!");
     } else {
-      const songId = parseInt(optionsSheet.dataset.songId);
-      const songToQueue = songs.find((s) => s.id === songId);
+      const songIndex = parseInt(optionsSheet.dataset.songIndex);
+      const songToQueue = songs[songIndex];
       if (songToQueue) {
-        window.userQueue = window.userQueue.filter((s) => s.id !== songId);
+        window.userQueue = window.userQueue.filter(
+          (s) => s.id !== songToQueue.id,
+        );
         window.userQueue.unshift(songToQueue);
         if (typeof showToast === "function")
           showToast(`Will play next: ${songToQueue.title}`);
@@ -243,10 +268,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (typeof showToast === "function")
         showToast("Added playlist to background queue!");
     } else {
-      const songId = parseInt(optionsSheet.dataset.songId);
-      const songToQueue = songs.find((s) => s.id === songId);
+      const songIndex = parseInt(optionsSheet.dataset.songIndex);
+      const songToQueue = songs[songIndex];
       if (songToQueue) {
-        window.userQueue = window.userQueue.filter((s) => s.id !== songId);
+        window.userQueue = window.userQueue.filter(
+          (s) => s.id !== songToQueue.id,
+        );
         window.userQueue.push(songToQueue);
         if (typeof showToast === "function")
           showToast(`Added to queue: ${songToQueue.title}`);
@@ -306,7 +333,6 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", () => {
       const text = btn.textContent.toLowerCase();
 
-      // Update active nav styling
       document
         .querySelectorAll(".nav-item")
         .forEach((item) => item.classList.remove("active"));
@@ -329,7 +355,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Back button from Liked Songs view
   document
     .querySelector(".back-to-library-btn")
     ?.addEventListener("click", () => {
@@ -399,18 +424,28 @@ function renderFeaturedPlaylists() {
 }
 
 // ==========================================
-// LIBRARY SCREEN ENGINE
+// LIBRARY SCREEN ENGINE (Premium UI)
 // ==========================================
 function renderLibrary() {
   const grid = document.getElementById("library-grid");
   if (!grid) return;
 
-  const likedSongs = JSON.parse(localStorage.getItem("likedSongs")) || [];
+  const likedSongs =
+    typeof getLikedSongs === "function"
+      ? getLikedSongs()
+      : JSON.parse(localStorage.getItem("likedSongs")) || [];
   const likedPlaylists =
     JSON.parse(localStorage.getItem("likedPlaylists")) || [];
 
+  // Injecting CSS directly for the slick Hover Effects
   let html = `
-    <div id="btn-liked-songs" style="background: var(--clr-surface-light, #2a2a35); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; aspect-ratio: 1/1; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+    <style>
+      .library-playlist-card .lib-play-btn { opacity: 0; transform: translateY(10px); transition: all 0.3s ease; }
+      .library-playlist-card:hover .lib-play-btn { opacity: 1; transform: translateY(0); }
+      .library-playlist-card:hover .lib-bg { transform: scale(1.05); }
+    </style>
+
+    <div id="btn-liked-songs" style="background: var(--clr-surface-light, #2a2a35); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; aspect-ratio: 1/1; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 0.2s;">
       <i data-lucide="heart" style="fill: white; color: white; margin-bottom: 12px; width: 32px; height: 32px;"></i>
       <h4 style="margin: 0; font-size: 1.05rem; font-weight: 600;">Liked Songs</h4>
       <p style="margin: 6px 0 0 0; font-size: 0.8rem; color: var(--clr-text-muted, #aaa);">${likedSongs.length} songs</p>
@@ -423,10 +458,24 @@ function renderLibrary() {
 
     html += `
       <div class="library-playlist-card" data-artist="${artistName}" style="position: relative; border-radius: 12px; cursor: pointer; aspect-ratio: 1/1; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-        <div style="position: absolute; inset: 0; background-image: url('${coverImg}'); background-size: cover; background-position: center; z-index: 1;"></div>
+        
+        <!-- Background Image with smooth zoom on hover -->
+        <div class="lib-bg" style="position: absolute; inset: 0; background-image: url('${coverImg}'); background-size: cover; background-position: center; z-index: 1; transition: transform 0.4s ease;"></div>
         <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%); z-index: 2;"></div>
-        <div style="position: relative; z-index: 3;">
-          <h4 style="margin: 0; font-size: 1rem; color: white; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">${artistName} Mix</h4>
+        
+        <!-- 3-Dot Menu Button (Top Right) -->
+        <button class="more-btn" style="position: absolute; top: 10px; right: 10px; z-index: 4; background: rgba(0,0,0,0.5); border: none; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px);">
+          <i data-lucide="more-vertical" size="18"></i>
+        </button>
+
+        <!-- Play Button Overlay (Bottom Right - Appears on Hover) -->
+        <button class="lib-play-btn" style="position: absolute; bottom: 15px; right: 15px; z-index: 4; background: var(--clr-primary, #a855f7); border: none; color: white; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4);">
+          <i data-lucide="play" size="22" fill="currentColor" style="margin-left: 2px;"></i>
+        </button>
+
+        <!-- Text Content -->
+        <div style="position: relative; z-index: 3; pointer-events: none; width: 70%;">
+          <h4 style="margin: 0; font-size: 1rem; color: white; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${artistName} Mix</h4>
           <p style="margin: 4px 0 0 0; font-size: 0.75rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.5px;">Playlist</p>
         </div>
       </div>
@@ -437,15 +486,25 @@ function renderLibrary() {
   if (typeof lucide !== "undefined") lucide.createIcons();
 }
 
-// Handle clicks inside the Library Grid
+// ----------------------
+// Smart Click Handlers
+// ----------------------
 document.getElementById("library-grid")?.addEventListener("click", (e) => {
   const likedBtn = e.target.closest("#btn-liked-songs");
   if (likedBtn) {
-    openLikedSongsView();
+    document.querySelector(".library-screen")?.classList.add("hidden");
+    document.querySelector(".liked-songs-screen")?.classList.remove("hidden");
+    if (typeof renderLikedSongs === "function") renderLikedSongs();
     return;
   }
 
   const playlistCard = e.target.closest(".library-playlist-card");
+  const playBtn = e.target.closest(".lib-play-btn");
+  const moreBtn = e.target.closest(".more-btn");
+
+  // Let the global app.js listener handle the 3-dot menu!
+  if (moreBtn) return;
+
   if (playlistCard) {
     const artistName = playlistCard.dataset.artist;
     const mixIndices = songs
@@ -453,72 +512,76 @@ document.getElementById("library-grid")?.addEventListener("click", (e) => {
       .filter((index) => index !== -1);
 
     if (mixIndices.length > 0) {
-      window.currentPlaylistQueue = mixIndices;
-      currentSongIndex = mixIndices[0];
-
-      if (typeof loadSong === "function") loadSong(currentSongIndex);
-      if (typeof playSong === "function") playSong();
-      if (typeof showToast === "function")
-        showToast(`Playing ${artistName} Mix`);
-      if (typeof renderQueue === "function") renderQueue();
+      if (playBtn) {
+        // 1. PLAY BUTTON CLICKED -> Play instantly
+        e.stopPropagation();
+        window.currentPlaylistQueue = mixIndices;
+        currentSongIndex = mixIndices[0];
+        if (typeof loadSong === "function") loadSong(currentSongIndex);
+        if (typeof playSong === "function") playSong();
+        if (typeof showToast === "function")
+          showToast(`Playing ${artistName} Mix`);
+      } else {
+        // 2. CARD CLICKED -> Open Playlist View
+        openLibraryPlaylistDetail(artistName, mixIndices);
+      }
     }
   }
 });
 
-// Open and render Liked Songs Sub-screen
-function openLikedSongsView() {
+// ----------------------
+// Open Playlist Detail View
+// ----------------------
+function openLibraryPlaylistDetail(artistName, mixIndices) {
+  const detailScreen = document.querySelector(".playlist-detail-screen");
   const libraryScreen = document.querySelector(".library-screen");
-  const likedSongsScreen = document.querySelector(".liked-songs-screen");
-  const likedSongsList = document.querySelector(
-    ".liked-songs-screen .liked-songs-list",
-  );
 
-  const likedSongIds = JSON.parse(localStorage.getItem("likedSongs")) || [];
-  if (likedSongIds.length === 0) {
-    if (typeof showToast === "function") showToast("No liked songs yet!");
-    return;
-  }
+  if (!detailScreen || !libraryScreen) return;
 
-  libraryScreen?.classList.add("hidden");
-  likedSongsScreen?.classList.remove("hidden");
+  libraryScreen.classList.add("hidden");
+  detailScreen.classList.remove("hidden");
 
-  let html = "";
-  likedSongIds.forEach((songId) => {
-    const song = songs.find((s) => s.id === songId);
-    if (!song) return;
+  // Populate Header
+  const leadSong = songs[mixIndices[0]];
+  document.getElementById("playlist-detail-cover").src = leadSong.cover || "";
+  document.getElementById("playlist-detail-name").innerText =
+    `${artistName} Mix`;
+  document.getElementById("playlist-detail-count").innerText =
+    `${mixIndices.length} Songs`;
 
-    html += `
-      <div class="liked-song-row" data-song-id="${song.id}" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer;">
-        <div style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0;">
-          <img src="${song.cover || ""}" style="width: 45px; height: 45px; border-radius: 6px; object-fit: cover;">
-          <div style="min-width: 0;">
-            <h4 style="margin: 0 0 4px 0; font-size: 0.95rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${song.title}</h4>
-            <p style="margin: 0; font-size: 0.75rem; color: var(--clr-text-muted);">${song.artist}</p>
+  // Populate Song List
+  const detailSongs = document.querySelector(".playlist-detail-songs");
+  if (detailSongs) {
+    detailSongs.innerHTML = mixIndices
+      .map((index) => {
+        const s = songs[index];
+        return `
+        <article class="songs-card" data-index="${index}" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer;">
+          <div class="songs-left" style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0;">
+            <img src="${s.cover || ""}" style="width: 45px; height: 45px; border-radius: 6px; object-fit: cover; flex-shrink: 0;">
+            <div class="songs-info" style="display: flex; flex-direction: column; min-width: 0;">
+              <h1 style="margin: 0 0 4px 0; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white;">${s.title}</h1>
+              <p style="margin: 0; font-size: 0.75rem; color: var(--clr-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${s.artist}</p>
+            </div>
           </div>
-        </div>
-      </div>
-    `;
-  });
+          <button class="more-btn" style="background: none; border: none; color: white; cursor: pointer; padding: 5px;"><i data-lucide="more-vertical" size="16"></i></button>
+        </article>
+      `;
+      })
+      .join("");
 
-  if (likedSongsList) {
-    likedSongsList.innerHTML = html;
     if (typeof lucide !== "undefined") lucide.createIcons();
 
-    likedSongsList.onclick = (e) => {
-      const row = e.target.closest(".liked-song-row");
-      if (row) {
-        const songId = Number(row.dataset.songId);
-        const realIndex = songs.findIndex((s) => s.id === songId);
-        if (realIndex !== -1) {
-          currentSongIndex = realIndex;
-          window.currentPlaylistQueue = likedSongIds
-            .map((id) => songs.findIndex((s) => s.id === id))
-            .filter((i) => i !== -1);
-          if (typeof loadSong === "function") loadSong(currentSongIndex);
-          if (typeof playSong === "function") playSong();
-          if (typeof showToast === "function")
-            showToast(`Playing ${songs[realIndex].title}`);
-        }
+    // Make the songs clickable to play
+    detailSongs.onclick = (e) => {
+      const card = e.target.closest(".songs-card");
+      const mBtn = e.target.closest(".more-btn");
+      if (card && !mBtn) {
+        const songIdx = Number(card.dataset.index);
+        window.currentPlaylistQueue = mixIndices;
+        window.currentPlaylistName = `${artistName} Mix`;
+        if (typeof loadSong === "function") loadSong(songIdx);
+        if (typeof playSong === "function") playSong();
       }
     };
   }

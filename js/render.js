@@ -55,7 +55,7 @@ const saveRecentSong = (index) => {
 
 const renderRecentSongs = () => {
   if (!recentList) return;
-  
+
   let recent = getSafeRecentSongs();
   recent = recent.filter((i) => songs && songs[i] !== undefined);
   localStorage.setItem("recentSongs", JSON.stringify(recent));
@@ -65,11 +65,11 @@ const renderRecentSongs = () => {
       const song = songs[i];
       return `
       <article class="song-card" data-index="${i}">
-        <img src="${song?.cover || ''}" alt="${song?.title || 'Unknown'}">
+        <img src="${song?.cover || ""}" alt="${song?.title || "Unknown"}">
         <!-- Artist moved to top -->
-        <p>${song?.artist || 'Unknown Artist'}</p>
+        <p>${song?.artist || "Unknown Artist"}</p>
         <!-- Title moved below -->
-        <h1>${song?.title || 'Unknown'}</h1>
+        <h1>${song?.title || "Unknown"}</h1>
       </article>`;
     })
     .join("");
@@ -77,20 +77,22 @@ const renderRecentSongs = () => {
 
 const renderPlaylists = () => {
   if (!playlistList || !playlists) return; // Failsafe for missing data
-  
+
   playlistList.innerHTML = playlists
-    .map((p, i) => `
+    .map(
+      (p, i) => `
       <article class="playlist-card" data-index="${i}">
-        <img src="${p?.cover || ''}" alt="${p?.title || 'Playlist'}">
+        <img src="${p?.cover || ""}" alt="${p?.title || "Playlist"}">
         <div class="playlist-info">
-          <h1>${p?.title || 'Unknown Playlist'}</h1>
+          <h1>${p?.title || "Unknown Playlist"}</h1>
           <p>${p?.songs?.length || 0} Songs</p>
         </div>
         <button class="play-btn"><i data-lucide="play"></i></button>
-      </article>`)
+      </article>`,
+    )
     .join("");
-    
-  if (typeof lucide !== 'undefined') lucide.createIcons();
+
+  if (typeof lucide !== "undefined") lucide.createIcons();
 };
 
 // ----------------------
@@ -107,17 +109,17 @@ const renderSuggestedSongs = () => {
       const song = songs[index];
       return `
       <article class="suggested-card" data-index="${index}">
-        <img src="${song?.cover || ''}" alt="${song?.title || 'Unknown'}">
+        <img src="${song?.cover || ""}" alt="${song?.title || "Unknown"}">
         <div class="suggested-info">
-          <p>${song?.artist || 'Unknown Artist'}</p>
-          <h4>${song?.title || 'Unknown'}</h4>
+          <p>${song?.artist || "Unknown Artist"}</p>
+          <h4>${song?.title || "Unknown"}</h4>
         </div>
         <button class="more-btn"><i data-lucide="ellipsis-vertical" size="16"></i></button>
       </article>`;
     })
     .join("");
 
-  if (typeof lucide !== 'undefined') lucide.createIcons();
+  if (typeof lucide !== "undefined") lucide.createIcons();
 };
 
 // ----------------------
@@ -149,9 +151,13 @@ playlistList?.addEventListener("click", (e) => {
   currentPlaylistName = selectedPlaylist.title;
   updatePlayingFromUI();
 
-  if (playlistDetailCover) playlistDetailCover.src = selectedPlaylist.cover || '';
-  if (playlistDetailName) playlistDetailName.textContent = selectedPlaylist.title || 'Unknown Playlist';
-  if (playlistDetailCount) playlistDetailCount.textContent = `${selectedPlaylist.songs?.length || 0} Songs`;
+  if (playlistDetailCover)
+    playlistDetailCover.src = selectedPlaylist.cover || "";
+  if (playlistDetailName)
+    playlistDetailName.textContent =
+      selectedPlaylist.title || "Unknown Playlist";
+  if (playlistDetailCount)
+    playlistDetailCount.textContent = `${selectedPlaylist.songs?.length || 0} Songs`;
 
   if (playlistDetailSongs) {
     playlistDetailSongs.innerHTML = (selectedPlaylist.songs || [])
@@ -161,10 +167,10 @@ playlistList?.addEventListener("click", (e) => {
         return `
           <article class="songs-card" data-index="${songIndex}">
             <div class="songs-left">
-              <img src="${s?.cover || ''}" alt="${s?.title || 'Unknown'}">
+              <img src="${s?.cover || ""}" alt="${s?.title || "Unknown"}">
               <div class="songs-info">
-                <h1>${s?.title || 'Unknown'}</h1>
-                <p>${s?.artist || 'Unknown Artist'}</p>
+                <h1>${s?.title || "Unknown"}</h1>
+                <p>${s?.artist || "Unknown Artist"}</p>
               </div>
             </div>
             <button class="more-btn"><i data-lucide="ellipsis"></i></button>
@@ -175,12 +181,20 @@ playlistList?.addEventListener("click", (e) => {
 
   homeScreen?.classList.add("hidden");
   playlistDetailScreen?.classList.remove("hidden");
-  if (typeof lucide !== 'undefined') lucide.createIcons();
+  if (typeof lucide !== "undefined") lucide.createIcons();
 });
 
 closePlaylistBtn?.addEventListener("click", () => {
   playlistDetailScreen?.classList.add("hidden");
-  homeScreen?.classList.remove("hidden");
+  
+  // If the Library tab is currently active, go back to Library. Otherwise, go Home.
+  const libraryTabActive = document.querySelector(".nav-item:nth-child(3)")?.classList.contains("active");
+  
+  if (libraryTabActive) {
+    document.querySelector(".library-screen")?.classList.remove("hidden");
+  } else {
+    homeScreen?.classList.remove("hidden");
+  }
 });
 
 playlistDetailSongs?.addEventListener("click", (e) => {
@@ -203,7 +217,7 @@ const homeClickContainers = [
   document.getElementById("suggestedGrid"),
   document.getElementById("featuredPlaylistList"),
   playlistList,
-].filter(Boolean); 
+].filter(Boolean);
 
 homeClickContainers.forEach((list) => {
   list.addEventListener("click", (e) => {
@@ -242,18 +256,18 @@ const updateFavoriteButton = () => {
     miniLikeBtn.classList.toggle("active", isFavorite);
   }
 
-  if (typeof lucide !== 'undefined') lucide.createIcons();
+  if (typeof lucide !== "undefined") lucide.createIcons();
 };
 
 const renderFavoritesCount = () => {
-  if (favSongCount && typeof getLikedSongs === 'function') {
+  if (favSongCount && typeof getLikedSongs === "function") {
     favSongCount.textContent = `${getLikedSongs().length} songs`;
   }
 };
 
 const renderLikedSongs = () => {
   if (!likedSongsList) return;
-  const liked = typeof getLikedSongs === 'function' ? getLikedSongs() : [];
+  const liked = typeof getLikedSongs === "function" ? getLikedSongs() : [];
 
   if (!liked.length) {
     likedSongsList.innerHTML = `<p style="text-align:center; margin-top: 50px; color: var(--clr-text-muted);">No favorite songs yet.</p>`;
@@ -265,22 +279,30 @@ const renderLikedSongs = () => {
     .map((i) => {
       const song = songs[i];
       return `
-      <article class="songs-card" data-index="${i}">
-        <div class="songs-left">
-          <img src="${song?.cover || ''}" alt="${song?.title || 'Unknown'}">
-          <div class="songs-info">
-            <h1>${song?.title || 'Unknown'}</h1>
-            <p>${song?.artist || 'Unknown Artist'}</p>
+      <article class="songs-card" data-index="${i}" style="display: flex; align-items: center; justify-content: space-between; width: 100%; overflow: hidden; padding-right: 15px;">
+        
+        <div class="songs-left" style="display: flex; align-items: center; flex: 1; min-width: 0; gap: 15px;">
+          <img src="${song?.cover || ""}" alt="${song?.title || "Unknown"}" style="flex-shrink: 0;">
+          
+          <div class="songs-info" style="display: flex; flex-direction: column; min-width: 0; flex: 1;">
+            <h1 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; font-size: 0.95rem;">
+              ${song?.title || "Unknown"}
+            </h1>
+            <p style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; font-size: 0.75rem;">
+              ${song?.artist || "Unknown Artist"}
+            </p>
           </div>
         </div>
-        <button class="favorite-btn active remove-liked-btn" data-index="${i}">
+
+        <button class="favorite-btn active remove-liked-btn" data-index="${i}" style="flex-shrink: 0; background: none; border: none; cursor: pointer; padding: 5px;">
           <i data-lucide="heart" fill="currentColor" color="#ff4040"></i>
         </button>
+
       </article>`;
     })
     .join("");
-    
-  if (typeof lucide !== 'undefined') lucide.createIcons();
+
+  if (typeof lucide !== "undefined") lucide.createIcons();
 };
 
 likedSongsList?.addEventListener("click", (e) => {
@@ -289,7 +311,11 @@ likedSongsList?.addEventListener("click", (e) => {
 
   if (removeBtn) {
     const index = Number(removeBtn.dataset.index);
-    if (typeof toggleLikedSong === 'function' && toggleLikedSong(index) === false && index === currentSongIndex) {
+    if (
+      typeof toggleLikedSong === "function" &&
+      toggleLikedSong(index) === false &&
+      index === currentSongIndex
+    ) {
       isFavorite = false;
       updateFavoriteButton();
     }
@@ -297,7 +323,8 @@ likedSongsList?.addEventListener("click", (e) => {
     renderFavoritesCount();
   } else if (card) {
     currentPlaylistName = "Liked Songs";
-    currentPlaylistQueue = typeof getLikedSongs === 'function' ? getLikedSongs() : [];
+    currentPlaylistQueue =
+      typeof getLikedSongs === "function" ? getLikedSongs() : [];
     updatePlayingFromUI();
 
     loadSong(Number(card.dataset.index));
@@ -328,7 +355,7 @@ navBtns.forEach((btn, idx) => {
     screens[idx]?.classList.remove("hidden");
 
     if (idx === 2) renderFavoritesCount();
-    if (idx === 3 && typeof lucide !== 'undefined') lucide.createIcons();
+    if (idx === 3 && typeof lucide !== "undefined") lucide.createIcons();
   });
 });
 
@@ -351,41 +378,42 @@ backToLibraryBtn?.addEventListener("click", () => {
 // ==========================================
 // RECENT HISTORY FULL SCREEN LOGIC
 // ==========================================
-const showMoreRecentBtn = document.getElementById('show-more-recent-btn');
-const recentHistoryScreen = document.querySelector('.recent-history-screen');
-const closeRecentHistoryBtn = document.getElementById('close-recent-history');
-const recentHistoryList = document.getElementById('recent-history-list');
-const homeScreenElement = document.querySelector('.home-screen');
+const showMoreRecentBtn = document.getElementById("show-more-recent-btn");
+const recentHistoryScreen = document.querySelector(".recent-history-screen");
+const closeRecentHistoryBtn = document.getElementById("close-recent-history");
+const recentHistoryList = document.getElementById("recent-history-list");
+const homeScreenElement = document.querySelector(".home-screen");
 
 // Open the screen when "See all" is clicked
-showMoreRecentBtn?.addEventListener('click', (e) => {
-    e.preventDefault();
-    homeScreenElement?.classList.add('hidden');
-    recentHistoryScreen?.classList.remove('hidden');
-    renderRecentHistoryFull();
+showMoreRecentBtn?.addEventListener("click", (e) => {
+  e.preventDefault();
+  homeScreenElement?.classList.add("hidden");
+  recentHistoryScreen?.classList.remove("hidden");
+  renderRecentHistoryFull();
 });
 
 // Close the screen when "X" is clicked
-closeRecentHistoryBtn?.addEventListener('click', () => {
-    recentHistoryScreen?.classList.add('hidden');
-    homeScreenElement?.classList.remove('hidden');
+closeRecentHistoryBtn?.addEventListener("click", () => {
+  recentHistoryScreen?.classList.add("hidden");
+  homeScreenElement?.classList.remove("hidden");
 });
 
 // Render the vertical list
 const renderRecentHistoryFull = () => {
-    if (!recentHistoryList) return;
-    
-    let recent = getSafeRecentSongs(); 
-    recent = recent.filter((i) => songs && songs[i] !== undefined);
+  if (!recentHistoryList) return;
 
-    if (recent.length === 0) {
-        recentHistoryList.innerHTML = `<p style="text-align:center; color: var(--clr-text-muted); padding-top: 30px;">No recent plays yet.</p>`;
-        return;
-    }
+  let recent = getSafeRecentSongs();
+  recent = recent.filter((i) => songs && songs[i] !== undefined);
 
-    recentHistoryList.innerHTML = recent.map(i => {
-        const song = songs[i];
-        return `
+  if (recent.length === 0) {
+    recentHistoryList.innerHTML = `<p style="text-align:center; color: var(--clr-text-muted); padding-top: 30px;">No recent plays yet.</p>`;
+    return;
+  }
+
+  recentHistoryList.innerHTML = recent
+    .map((i) => {
+      const song = songs[i];
+      return `
         <article class="songs-card recent-history-card" data-index="${i}" style="padding: 0;">
           <div class="songs-left">
             <img src="${song.cover}" alt="${song.title}" style="width: 50px; height: 50px; border-radius: var(--radius-sm); object-fit: cover;">
@@ -396,30 +424,33 @@ const renderRecentHistoryFull = () => {
           </div>
         </article>
         `;
-    }).join('');
+    })
+    .join("");
 
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+  if (typeof lucide !== "undefined") lucide.createIcons();
 };
 
 // Play a song when clicked from the new list
-recentHistoryList?.addEventListener('click', (e) => {
-    const card = e.target.closest('.recent-history-card');
-    if(!card) return;
+recentHistoryList?.addEventListener("click", (e) => {
+  const card = e.target.closest(".recent-history-card");
+  if (!card) return;
 
-    const index = Number(card.dataset.index);
-    
-    // Update the Playing From UI
-    currentPlaylistName = "Recent Plays";
-    currentPlaylistQueue = getSafeRecentSongs().filter(i => songs && songs[i] !== undefined);
-    
-    const playingFromSection = document.querySelector(".playing-from");
-    const playingFromTitle = document.querySelector(".playing-from h3");
-    
-    if (playingFromSection && playingFromTitle) {
-        playingFromTitle.textContent = currentPlaylistName;
-        playingFromSection.classList.remove("hidden");
-    }
+  const index = Number(card.dataset.index);
 
-    if (typeof loadSong === 'function') loadSong(index);
-    if (typeof playSong === 'function') playSong();
+  // Update the Playing From UI
+  currentPlaylistName = "Recent Plays";
+  currentPlaylistQueue = getSafeRecentSongs().filter(
+    (i) => songs && songs[i] !== undefined,
+  );
+
+  const playingFromSection = document.querySelector(".playing-from");
+  const playingFromTitle = document.querySelector(".playing-from h3");
+
+  if (playingFromSection && playingFromTitle) {
+    playingFromTitle.textContent = currentPlaylistName;
+    playingFromSection.classList.remove("hidden");
+  }
+
+  if (typeof loadSong === "function") loadSong(index);
+  if (typeof playSong === "function") playSong();
 });
