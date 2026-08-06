@@ -4,91 +4,91 @@ let songs = [
     "id": 1,
     "title": "Until I Bleed Out",
     "artist": "The Weeknd",
-    "cover": "https://i.ytimg.com/vi/N2OCkGRRDQ4/hqdefault.jpg",
+    "cover": "https://i.ytimg.com/vi/N2OCkGRRDQ4/maxresdefault.jpg",
     "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785949067/aura/until_i_bleed_out.mp3"
   },
   {
     "id": 2,
-    "title": "Often",
+    "title": "After Hours",
     "artist": "The Weeknd",
-    "cover": "https://i.ytimg.com/vi/WxYgXmZ9xh8/hqdefault.jpg",
+    "cover": "https://i.ytimg.com/vi/WxYgXmZ9xh8/maxresdefault.jpg",
     "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785949048/aura/after_hours.mp3"
   },
   {
     "id": 3,
     "title": "Repeat After Me (Interlude)",
     "artist": "The Weeknd",
-    "cover": "https://i.ytimg.com/vi/2ZvfcF5R62c/hqdefault.jpg",
+    "cover": "https://i.ytimg.com/vi/2ZvfcF5R62c/maxresdefault.jpg",
     "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785949018/aura/repeat_after_me_interlude_.mp3"
   },
   {
     "id": 4,
     "title": "Save Your Tears",
     "artist": "The Weeknd",
-    "cover": "https://i.ytimg.com/vi/RmYCOm4ehKs/hqdefault.jpg",
+    "cover": "https://i.ytimg.com/vi/RmYCOm4ehKs/maxresdefault.jpg",
     "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785948996/aura/save_your_tears.mp3"
   },
   {
     "id": 5,
     "title": "In Your Eyes",
     "artist": "The Weeknd",
-    "cover": "https://i.ytimg.com/vi/yRVotpLaCD4/hqdefault.jpg",
+    "cover": "https://i.ytimg.com/vi/yRVotpLaCD4/maxresdefault.jpg",
     "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785948974/aura/in_your_eyes.mp3"
   },
   {
     "id": 6,
     "title": "Faith",
     "artist": "The Weeknd",
-    "cover": "https://i.ytimg.com/vi/wXjNtjKXepo/hqdefault.jpg",
+    "cover": "https://i.ytimg.com/vi/wXjNtjKXepo/maxresdefault.jpg",
     "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785948949/aura/faith.mp3"
   },
   {
     "id": 7,
     "title": "Heartless",
     "artist": "The Weeknd",
-    "cover": "https://i.ytimg.com/vi/rbb-_YU2S4c/hqdefault.jpg",
+    "cover": "https://i.ytimg.com/vi/rbb-_YU2S4c/maxresdefault.jpg",
     "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785948916/aura/heartless.mp3"
   },
   {
     "id": 8,
-    "title": "Escape From LA (Sollos Focus Mix)",
+    "title": "Escape From LA",
     "artist": "The Weeknd",
-    "cover": "https://i.ytimg.com/vi/lgNlFmsn4c8/hqdefault.jpg",
+    "cover": "https://i.ytimg.com/vi/lgNlFmsn4c8/maxresdefault.jpg",
     "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785948886/aura/escape_from_la.mp3"
   },
   {
     "id": 9,
     "title": "Snowchild",
     "artist": "The Weeknd",
-    "cover": "https://i.ytimg.com/vi/oju5I2CXt_Y/hqdefault.jpg",
+    "cover": "https://i.ytimg.com/vi/oju5I2CXt_Y/maxresdefault.jpg",
     "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785948852/aura/snowchild.mp3"
   },
   {
     "id": 10,
-    "title": "Scared To Live (SNL Live)",
+    "title": "Scared To Live",
     "artist": "The Weeknd",
-    "cover": "https://i.ytimg.com/vi/U7yCEqKSs0U/hqdefault.jpg",
+    "cover": "https://i.ytimg.com/vi/U7yCEqKSs0U/maxresdefault.jpg",
     "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785948823/aura/scared_to_live.mp3"
   },
   {
     "id": 11,
     "title": "Hardest To Love",
     "artist": "The Weeknd",
-    "cover": "https://i.ytimg.com/vi/AnS96xdZ_7o/hqdefault.jpg",
+    "cover": "https://i.ytimg.com/vi/AnS96xdZ_7o/maxresdefault.jpg",
     "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785948801/aura/hardest_to_love.mp3"
   },
   {
     "id": 12,
-    "title": "After Hours",
+    "title": "Too Late",
     "artist": "The Weeknd",
-    "cover": "https://i.ytimg.com/vi/r-xaK0LWTZ4/hqdefault.jpg",
+    "cover": "https://i.ytimg.com/vi/r-xaK0LWTZ4/maxresdefault.jpg",
     "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785948779/aura/too_late.mp3"
   },
   {
     "id": 13,
     "title": "Alone Again",
     "artist": "The Weeknd",
-    "cover": "https://i.ytimg.com/vi/i8r4zJC1i70/hqdefault.jpg",
+    "cover": "https://i.ytimg.com/vi/i8r4zJC1i70/maxresdefault.jpg",
     "audio": "https://res.cloudinary.com/mr2p03ci/video/upload/v1785948753/aura/alone_again.mp3"
   },
   {

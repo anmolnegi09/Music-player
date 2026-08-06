@@ -5,23 +5,21 @@ try {
     colorThief = new ColorThief();
   }
 } catch (e) {
-  // Upgraded to warn for better visibility in dev tools
   console.warn("ColorThief not loaded yet:", e.message);
 }
 
+// Replace the top updatePlayingFromUI block:
 const updatePlayingFromUI = () => {
   const playingFromSection = document.querySelector(".playing-from");
   const playingFromTitle = document.querySelector(".playing-from h3");
   if (!playingFromSection || !playingFromTitle) return;
 
-  if (currentPlaylistName !== "") {
-    playingFromTitle.textContent = currentPlaylistName;
-    playingFromSection.classList.remove("hidden");
-  } else {
-    playingFromSection.classList.add("hidden");
-  }
-};
+  // FIX: Unify variable usage and default to "All Songs"
+  const activeName = window.currentPlaylistName || "All Songs";
 
+  playingFromTitle.textContent = activeName;
+  playingFromSection.classList.remove("hidden"); // Always keep it visible!
+};
 // ----------------------
 // Fisher-Yates shuffle
 // ----------------------
@@ -37,7 +35,6 @@ function shuffledIndices(count, take) {
 // ----------------------
 // Rendering & Saving Data
 // ----------------------
-// Helper to safely parse local storage
 const getSafeRecentSongs = () => {
   try {
     return JSON.parse(localStorage.getItem("recentSongs")) || [];
@@ -66,9 +63,7 @@ const renderRecentSongs = () => {
       return `
       <article class="song-card" data-index="${i}">
         <img src="${song?.cover || ""}" alt="${song?.title || "Unknown"}">
-        <!-- Artist moved to top -->
         <p>${song?.artist || "Unknown Artist"}</p>
-        <!-- Title moved below -->
         <h1>${song?.title || "Unknown"}</h1>
       </article>`;
     })
@@ -76,7 +71,7 @@ const renderRecentSongs = () => {
 };
 
 const renderPlaylists = () => {
-  if (!playlistList || !playlists) return; // Failsafe for missing data
+  if (!playlistList || !playlists) return;
 
   playlistList.innerHTML = playlists
     .map(
@@ -96,7 +91,7 @@ const renderPlaylists = () => {
 };
 
 // ----------------------
-// Suggested For You (2-Column Grid)
+// Suggested For You
 // ----------------------
 const renderSuggestedSongs = () => {
   const gridContainer = document.getElementById("suggestedGrid");
@@ -133,7 +128,7 @@ playlistList?.addEventListener("click", (e) => {
   const playlistIndex = Number(card.dataset.index);
   const selectedPlaylist = playlists[playlistIndex];
 
-  if (!selectedPlaylist) return; // Guard against bad index
+  if (!selectedPlaylist) return;
 
   if (playBtn) {
     e.stopPropagation();
@@ -160,20 +155,31 @@ playlistList?.addEventListener("click", (e) => {
     playlistDetailCount.textContent = `${selectedPlaylist.songs?.length || 0} Songs`;
 
   if (playlistDetailSongs) {
+    // 🌟 FIX: Force strict vertical layout for the song list
+    playlistDetailSongs.style.display = "flex";
+    playlistDetailSongs.style.flexDirection = "column";
+    playlistDetailSongs.style.padding = "0 20px 120px 20px";
+    playlistDetailSongs.style.width = "100%";
+    playlistDetailSongs.style.gap = "0";
+
     playlistDetailSongs.innerHTML = (selectedPlaylist.songs || [])
       .map((songIndex) => {
         const s = songs[songIndex];
         if (!s) return "";
+        const isHq = s.cover && s.cover.includes("hqdefault");
+
         return `
-          <article class="songs-card" data-index="${songIndex}">
-            <div class="songs-left">
-              <img src="${s?.cover || ""}" alt="${s?.title || "Unknown"}">
-              <div class="songs-info">
-                <h1>${s?.title || "Unknown"}</h1>
-                <p>${s?.artist || "Unknown Artist"}</p>
+          <article class="songs-card" data-index="${songIndex}" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; width: 100%;">
+            <div class="songs-left" style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0;">
+              <div style="width: 45px; height: 45px; border-radius: 6px; overflow: hidden; flex-shrink: 0;">
+                <img src="${s.cover || ""}" style="width: 100%; height: 100%; object-fit: cover; ${isHq ? "transform: scale(1.35);" : ""}">
+              </div>
+              <div class="songs-info" style="display: flex; flex-direction: column; justify-content: center; min-width: 0; flex: 1;">
+                <h1 style="margin: 0 0 4px 0; font-size: 0.95rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--clr-text); width: 100%; display: block;">${s.title}</h1>
+                <p style="margin: 0; font-size: 0.75rem; color: var(--clr-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; width: 100%; display: block;">${s.artist}</p>
               </div>
             </div>
-            <button class="more-btn"><i data-lucide="ellipsis"></i></button>
+            <button class="more-btn" style="background: none; border: none; color: var(--clr-text-muted); cursor: pointer; padding: 5px; flex-shrink: 0;"><i data-lucide="more-vertical" size="18"></i></button>
           </article>`;
       })
       .join("");
@@ -186,10 +192,11 @@ playlistList?.addEventListener("click", (e) => {
 
 closePlaylistBtn?.addEventListener("click", () => {
   playlistDetailScreen?.classList.add("hidden");
-  
-  // If the Library tab is currently active, go back to Library. Otherwise, go Home.
-  const libraryTabActive = document.querySelector(".nav-item:nth-child(3)")?.classList.contains("active");
-  
+
+  const libraryTabActive = document
+    .querySelector(".nav-item:nth-child(3)")
+    ?.classList.contains("active");
+
   if (libraryTabActive) {
     document.querySelector(".library-screen")?.classList.remove("hidden");
   } else {
@@ -209,9 +216,8 @@ playlistDetailSongs?.addEventListener("click", (e) => {
 });
 
 // ----------------------
-// Home Screen Clicks (event delegation)
+// Home Screen Clicks
 // ----------------------
-// Optimized: Filter out any containers that didn't render (null values)
 const homeClickContainers = [
   recentList,
   document.getElementById("suggestedGrid"),
@@ -229,15 +235,25 @@ homeClickContainers.forEach((list) => {
     if (!card || card.dataset.index === undefined) return;
     if (card.classList.contains("playlist-card")) return;
 
-    currentPlaylistName = "";
-    currentPlaylistQueue = [];
-    updatePlayingFromUI();
+    const clickedIndex = Number(card.dataset.index);
 
-    loadSong(Number(card.dataset.index));
+    // 🌟 FIX: Generate a shuffled array of all songs, excluding the clicked one
+    let allIndices = songs.map((_, i) => i).filter((i) => i !== clickedIndex);
+    for (let i = allIndices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allIndices[i], allIndices[j]] = [allIndices[j], allIndices[i]];
+    }
+
+    // 🌟 FIX: Put the clicked song at the very front of the shuffled list
+    window.currentPlaylistName = "All Songs";
+    window.currentPlaylistQueue = [clickedIndex, ...allIndices];
+
+    if (typeof updatePlayingFromUI === "function") updatePlayingFromUI();
+
+    loadSong(clickedIndex);
     playSong();
   });
 });
-
 // ----------------------
 // Favorites System
 // ----------------------
@@ -280,10 +296,8 @@ const renderLikedSongs = () => {
       const song = songs[i];
       return `
       <article class="songs-card" data-index="${i}" style="display: flex; align-items: center; justify-content: space-between; width: 100%; overflow: hidden; padding-right: 15px;">
-        
         <div class="songs-left" style="display: flex; align-items: center; flex: 1; min-width: 0; gap: 15px;">
           <img src="${song?.cover || ""}" alt="${song?.title || "Unknown"}" style="flex-shrink: 0;">
-          
           <div class="songs-info" style="display: flex; flex-direction: column; min-width: 0; flex: 1;">
             <h1 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; font-size: 0.95rem;">
               ${song?.title || "Unknown"}
@@ -293,11 +307,9 @@ const renderLikedSongs = () => {
             </p>
           </div>
         </div>
-
         <button class="favorite-btn active remove-liked-btn" data-index="${i}" style="flex-shrink: 0; background: none; border: none; cursor: pointer; padding: 5px;">
           <i data-lucide="heart" fill="currentColor" color="#ff4040"></i>
         </button>
-
       </article>`;
     })
     .join("");
@@ -384,7 +396,6 @@ const closeRecentHistoryBtn = document.getElementById("close-recent-history");
 const recentHistoryList = document.getElementById("recent-history-list");
 const homeScreenElement = document.querySelector(".home-screen");
 
-// Open the screen when "See all" is clicked
 showMoreRecentBtn?.addEventListener("click", (e) => {
   e.preventDefault();
   homeScreenElement?.classList.add("hidden");
@@ -392,13 +403,11 @@ showMoreRecentBtn?.addEventListener("click", (e) => {
   renderRecentHistoryFull();
 });
 
-// Close the screen when "X" is clicked
 closeRecentHistoryBtn?.addEventListener("click", () => {
   recentHistoryScreen?.classList.add("hidden");
   homeScreenElement?.classList.remove("hidden");
 });
 
-// Render the vertical list
 const renderRecentHistoryFull = () => {
   if (!recentHistoryList) return;
 
@@ -430,26 +439,18 @@ const renderRecentHistoryFull = () => {
   if (typeof lucide !== "undefined") lucide.createIcons();
 };
 
-// Play a song when clicked from the new list
 recentHistoryList?.addEventListener("click", (e) => {
   const card = e.target.closest(".recent-history-card");
   if (!card) return;
 
   const index = Number(card.dataset.index);
 
-  // Update the Playing From UI
   currentPlaylistName = "Recent Plays";
   currentPlaylistQueue = getSafeRecentSongs().filter(
     (i) => songs && songs[i] !== undefined,
   );
 
-  const playingFromSection = document.querySelector(".playing-from");
-  const playingFromTitle = document.querySelector(".playing-from h3");
-
-  if (playingFromSection && playingFromTitle) {
-    playingFromTitle.textContent = currentPlaylistName;
-    playingFromSection.classList.remove("hidden");
-  }
+  updatePlayingFromUI();
 
   if (typeof loadSong === "function") loadSong(index);
   if (typeof playSong === "function") playSong();

@@ -1,4 +1,3 @@
-// search.js
 const browseSection = document.querySelector(".browse-section");
 
 // ==========================================
@@ -65,7 +64,6 @@ const renderRecentSearchesUI = () => {
 // Run on initial page load
 document.addEventListener('DOMContentLoaded', renderRecentSearchesUI);
 
-
 // ==========================================
 // 2. SEARCH INPUT LOGIC (Local Database)
 // ==========================================
@@ -114,23 +112,27 @@ const renderLocalSearchResults = (filtered) => {
     }).join("");
 };
 
-
 // ==========================================
 // 3. CLICK EVENTS (Play Song & Manage History)
 // ==========================================
-
-// When you click a song from the search results
 searchList?.addEventListener("click", (e) => {
   const card = e.target.closest(".search-result-card");
   if (!card) return;
 
   const originalIndex = Number(card.dataset.index);
 
-  // 🧠 SAVE THE SONG INDEX TO HISTORY BEFORE PLAYING
+  // SAVE THE SONG INDEX TO HISTORY BEFORE PLAYING
   saveRecentSearch(originalIndex);
 
+  // 🌟 FIX: Generate smart shuffled queue
+  let allIndices = songs.map((_, i) => i).filter(i => i !== originalIndex);
+  for (let i = allIndices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [allIndices[i], allIndices[j]] = [allIndices[j], allIndices[i]];
+  }
+
   currentPlaylistName = "Search Results";
-  currentPlaylistQueue = [];
+  currentPlaylistQueue = [originalIndex, ...allIndices];
 
   const playingFromSection = document.querySelector(".playing-from");
   const playingFromTitle = document.querySelector(".playing-from h3");
@@ -144,20 +146,25 @@ searchList?.addEventListener("click", (e) => {
   if (typeof playSong === 'function') playSong();
 });
 
-// When you click on a Recent Search song card or the 'X' button
 document.getElementById('recentSearchesList')?.addEventListener('click', (e) => {
   const removeBtn = e.target.closest('.remove-search-btn');
   const item = e.target.closest('.recent-search-item');
 
   if (removeBtn) {
-    e.stopPropagation(); // Stops the song from playing when clicking X
+    e.stopPropagation(); 
     removeRecentSearch(removeBtn.dataset.index);
   } else if (item) {
-    // Play the song instantly
     const index = Number(item.dataset.index);
     
+    // 🌟 FIX: Generate smart shuffled queue
+    let allIndices = songs.map((_, i) => i).filter(i => i !== index);
+    for (let i = allIndices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allIndices[i], allIndices[j]] = [allIndices[j], allIndices[i]];
+    }
+
     currentPlaylistName = "Recent Searches";
-    currentPlaylistQueue = [];
+    currentPlaylistQueue = [index, ...allIndices];
 
     const playingFromSection = document.querySelector(".playing-from");
     const playingFromTitle = document.querySelector(".playing-from h3");
@@ -172,5 +179,4 @@ document.getElementById('recentSearchesList')?.addEventListener('click', (e) => 
   }
 });
 
-// Clear All button
 document.getElementById('clear-all-searches')?.addEventListener('click', clearAllSearches);

@@ -1,10 +1,12 @@
+// ----------------------
+// Local Storage Manager
+// ----------------------
 const getLikedSongs = () => {
   try {
     const storedData = localStorage.getItem("likedSongs");
     // Explicitly handle null cases before passing to JSON.parse
     return storedData ? JSON.parse(storedData) : [];
   } catch (error) {
-    // Upgraded to warn so you can see if data corruption occurs
     console.warn("Error parsing likedSongs from localStorage. Resetting.", error.message);
     return [];
   }

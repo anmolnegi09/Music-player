@@ -7,12 +7,8 @@ let currentPlaylistName = "";
 
 const audio = new Audio();
 
-// CRITICAL WARNING: Your comment mentions this is initialized in storage.js.
-// If storage.js loads before this file and uses 'let currentSongIndex = 0;', 
-// having 'let' here again will crash your app with a "SyntaxError: Identifier has already been declared".
-// Fix: If it is declared in storage.js, change this to just: currentSongIndex = currentSongIndex || 0;
+// Global player state
 let currentSongIndex = 0; 
-
 let isRepeat = false;
 let isShuffle = false;
 let isFavorite = false;

@@ -1,9 +1,8 @@
 // ==========================================
 // GLOBAL VARIABLES & UTILITIES
 // ==========================================
-let userQueue = []; // Temporarily holds our queued songs
+window.userQueue = window.userQueue || [];
 
-// Global Toast Notification Function
 window.showToast = function (message) {
   const toast = document.getElementById("toast");
   const toastMessage = document.getElementById("toast-message");
@@ -24,19 +23,36 @@ window.showToast = function (message) {
 // INITIALIZATION & UI SETUP
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-  // --- 1. Load Saved State ---
+  // 🌟 FIX: Restore the Queue State from LocalStorage
+  try {
+    const savedQueue = localStorage.getItem("currentPlaylistQueue");
+    if (savedQueue) window.currentPlaylistQueue = JSON.parse(savedQueue);
+
+    const savedName = localStorage.getItem("currentPlaylistName");
+    if (savedName) window.currentPlaylistName = savedName;
+
+    const savedUserQueue = localStorage.getItem("userQueue");
+    if (savedUserQueue) window.userQueue = JSON.parse(savedUserQueue);
+  } catch (e) {
+    console.warn("Could not restore queue state", e);
+  }
+
   const savedIndex = localStorage.getItem("currentSongIndex");
-  if (savedIndex !== null && songs && songs[Number(savedIndex)]) {
+  if (
+    savedIndex !== null &&
+    typeof songs !== "undefined" &&
+    songs[Number(savedIndex)]
+  ) {
     currentSongIndex = Number(savedIndex);
   } else {
     currentSongIndex = 0;
   }
 
-  if (songs && songs.length > 0) {
-    if (typeof loadSong === "function") loadSong(currentSongIndex);
-  }
+  // Update the UI Header with the restored name!
+  if (typeof updatePlayingFromUI === "function") updatePlayingFromUI();
 
-  // --- 2. Render UI Sections ---
+  if (typeof loadSong === "function") loadSong(currentSongIndex);
+
   if (typeof renderRecentSongs === "function") renderRecentSongs();
   if (typeof renderPlaylists === "function") renderPlaylists();
   if (typeof renderSuggestedSongs === "function") renderSuggestedSongs();
@@ -45,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (typeof renderLibrary === "function") renderLibrary();
 
   // ==========================================
-  // 3-DOT OPTIONS MENU LOGIC (Synchronized)
+  // 3-DOT OPTIONS MENU LOGIC
   // ==========================================
   const optionsSheet = document.getElementById("songOptionsSheet");
   const optionsOverlay = document.getElementById("optionsOverlay");
@@ -71,11 +87,44 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 1. OPENING THE MENU
   document.body.addEventListener("click", (e) => {
     const moreBtn = e.target.closest(".more-btn");
-    if (moreBtn) {
+    const playerMenuBtn = e.target.closest(".player-menu-btn");
+
+    if (moreBtn || playerMenuBtn) {
       e.stopPropagation();
+
+      const optQueueNext = document.getElementById("opt-queue-next");
+      const optQueueLast = document.getElementById("opt-queue-last");
+      const optLikeToggle = document.getElementById("opt-like");
+
+      if (playerMenuBtn) {
+        if (
+          typeof currentSongIndex !== "undefined" &&
+          songs[currentSongIndex]
+        ) {
+          const currentSong = songs[currentSongIndex];
+
+          optionsSheet.dataset.itemType = "song";
+          optionsSheet.dataset.songIndex = currentSongIndex;
+          optCover.src = currentSong.cover;
+          optTitle.innerText = currentSong.title;
+          optArtist.innerText = currentSong.artist;
+
+          if (optQueueNext) optQueueNext.style.display = "none";
+          if (optQueueLast) optQueueLast.style.display = "none";
+          if (optLikeToggle) optLikeToggle.style.display = "none";
+
+          optionsOverlay?.classList.remove("hidden");
+          optionsOverlay?.classList.add("active");
+          optionsSheet?.classList.add("active");
+        }
+        return;
+      }
+
+      if (optQueueNext) optQueueNext.style.display = "flex";
+      if (optQueueLast) optQueueLast.style.display = "flex";
+      if (optLikeToggle) optLikeToggle.style.display = "flex";
 
       const card = moreBtn.closest(
         ".suggested-card, .songs-card, .featured-card, .song-card, .playlist-card, .library-playlist-card",
@@ -98,7 +147,6 @@ document.addEventListener("DOMContentLoaded", () => {
         optCover.src = firstSong
           ? firstSong.cover
           : card.querySelector("img")?.src || "";
-
         optTitle.innerText = `${artistName} Mix`;
         optArtist.innerText = "Playlist";
 
@@ -107,7 +155,6 @@ document.addEventListener("DOMContentLoaded", () => {
         updateMenuHeartIcon(likedPlaylists.includes(artistName));
       } else {
         optionsSheet.dataset.itemType = "song";
-
         let selectedSongIndex = -1;
 
         if (card.dataset.index !== undefined) {
@@ -123,7 +170,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (selectedSongIndex !== -1 && songs[selectedSongIndex]) {
           const selectedSong = songs[selectedSongIndex];
-
           optionsSheet.dataset.songIndex = selectedSongIndex;
           optCover.src = selectedSong.cover;
           optTitle.innerText = selectedSong.title;
@@ -153,7 +199,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 2. CLOSING THE MENU
   function closeOptionsSheet() {
     if (!optionsSheet || !optionsOverlay) return;
     optionsSheet.classList.remove("active");
@@ -163,7 +208,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   optionsOverlay?.addEventListener("click", closeOptionsSheet);
 
-  // 3. THE LIKE BUTTON LOGIC
   optLikeBtn?.addEventListener("click", () => {
     const itemType = optionsSheet.dataset.itemType;
 
@@ -230,10 +274,8 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(closeOptionsSheet, 250);
   });
 
-  // 4. QUEUE SYSTEM LOGIC
   const optPlayNext = document.getElementById("opt-queue-next");
   const optAddQueue = document.getElementById("opt-queue-last");
-  window.userQueue = window.userQueue || [];
 
   optPlayNext?.addEventListener("click", () => {
     if (optionsSheet.dataset.itemType === "playlist") {
@@ -260,6 +302,8 @@ document.addEventListener("DOMContentLoaded", () => {
           showToast(`Will play next: ${songToQueue.title}`);
       }
     }
+    // 🌟 FIX: Save manual queue instantly
+    localStorage.setItem("userQueue", JSON.stringify(window.userQueue));
     closeOptionsSheet();
   });
 
@@ -288,10 +332,11 @@ document.addEventListener("DOMContentLoaded", () => {
           showToast(`Added to queue: ${songToQueue.title}`);
       }
     }
+    // 🌟 FIX: Save manual queue instantly
+    localStorage.setItem("userQueue", JSON.stringify(window.userQueue));
     closeOptionsSheet();
   });
 
-  // 5. SHARE LOGIC
   const optShareBtn =
     document.getElementById("opt-share") ||
     document.querySelector(".more-menu-share");
@@ -317,9 +362,6 @@ document.addEventListener("DOMContentLoaded", () => {
     closeOptionsSheet();
   });
 
-  // ==========================================
-  // NATIVE SCREEN SWITCHING (FIXED GLITCH)
-  // ==========================================
   const homeScreen = document.querySelector(".home-screen");
   const libraryScreen = document.querySelector(".library-screen");
   const likedSongsScreen = document.querySelector(".liked-songs-screen");
@@ -372,12 +414,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// ==========================================
-// FEATURED PLAYLISTS ENGINE (ARTIST MIXES)
-// ==========================================
 function renderFeaturedPlaylists() {
   const container = document.getElementById("featuredPlaylistList");
-  if (!container || !songs || !songs.length) return;
+  if (!container || typeof songs === "undefined" || !songs.length) return;
 
   let uniqueArtists = [...new Set(songs.map((song) => song.artist))];
   uniqueArtists = uniqueArtists.sort(() => 0.5 - Math.random()).slice(0, 6);
@@ -393,9 +432,7 @@ function renderFeaturedPlaylists() {
         <div class="featured-card-footer">
           <div class="featured-card-info">
             <p>Artist Mix</p>
-            <h4 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">
-              ${artist}
-            </h4>
+            <h4 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">${artist}</h4>
           </div>
           <button class="more-btn"><i data-lucide="more-vertical" size="16"></i></button>
         </div>
@@ -421,6 +458,9 @@ function renderFeaturedPlaylists() {
 
       if (mixIndices.length > 0) {
         window.currentPlaylistQueue = mixIndices;
+        window.currentPlaylistName = `${artistName} Mix`;
+        if (typeof updatePlayingFromUI === "function") updatePlayingFromUI();
+
         currentSongIndex = mixIndices[0];
         if (typeof loadSong === "function") loadSong(currentSongIndex);
         if (typeof playSong === "function") playSong();
@@ -432,9 +472,6 @@ function renderFeaturedPlaylists() {
   };
 }
 
-// ==========================================
-// LIBRARY SCREEN ENGINE (Premium UI)
-// ==========================================
 function renderLibrary() {
   const grid = document.getElementById("library-grid");
   if (!grid) return;
@@ -461,7 +498,10 @@ function renderLibrary() {
   `;
 
   likedPlaylists.forEach((artistName) => {
-    const artistSongs = songs.filter((s) => s.artist === artistName);
+    const artistSongs =
+      typeof songs !== "undefined"
+        ? songs.filter((s) => s.artist === artistName)
+        : [];
     const coverImg = artistSongs.length > 0 ? artistSongs[0].cover : "";
 
     html += `
@@ -486,9 +526,6 @@ function renderLibrary() {
   if (typeof lucide !== "undefined") lucide.createIcons();
 }
 
-// ----------------------
-// Smart Click Handlers
-// ----------------------
 document.getElementById("library-grid")?.addEventListener("click", (e) => {
   const likedBtn = e.target.closest("#btn-liked-songs");
   if (likedBtn) {
@@ -504,7 +541,7 @@ document.getElementById("library-grid")?.addEventListener("click", (e) => {
 
   if (moreBtn) return;
 
-  if (playlistCard) {
+  if (playlistCard && typeof songs !== "undefined") {
     const artistName = playlistCard.dataset.artist;
     const mixIndices = songs
       .map((s, index) => (s.artist === artistName ? index : -1))
@@ -514,11 +551,15 @@ document.getElementById("library-grid")?.addEventListener("click", (e) => {
       if (playBtn) {
         e.stopPropagation();
         window.currentPlaylistQueue = mixIndices;
+        window.currentPlaylistName = `${artistName} Mix`;
+        if (typeof updatePlayingFromUI === "function") updatePlayingFromUI();
+
         currentSongIndex = mixIndices[0];
         if (typeof loadSong === "function") loadSong(currentSongIndex);
         if (typeof playSong === "function") playSong();
         if (typeof showToast === "function")
           showToast(`Playing ${artistName} Mix`);
+        if (typeof renderQueue === "function") renderQueue();
       } else {
         openLibraryPlaylistDetail(artistName, mixIndices);
       }
@@ -526,20 +567,48 @@ document.getElementById("library-grid")?.addEventListener("click", (e) => {
   }
 });
 
-// ----------------------
-// Open Playlist Detail View
-// ----------------------
 function openLibraryPlaylistDetail(artistName, mixIndices) {
   const detailScreen = document.querySelector(".playlist-detail-screen");
   const libraryScreen = document.querySelector(".library-screen");
 
-  if (!detailScreen || !libraryScreen) return;
+  if (!detailScreen || !libraryScreen || typeof songs === "undefined") return;
 
   libraryScreen.classList.add("hidden");
   detailScreen.classList.remove("hidden");
 
   const leadSong = songs[mixIndices[0]];
-  document.getElementById("playlist-detail-cover").src = leadSong.cover || "";
+  const coverImg = document.getElementById("playlist-detail-cover");
+
+  // 🌟 FIX 1: Wrap the image to safely crop out the YouTube black bars!
+  if (coverImg) {
+    if (!coverImg.parentElement.classList.contains("cover-wrapper")) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "cover-wrapper";
+      wrapper.style.width = "220px";
+      wrapper.style.height = "220px";
+      wrapper.style.borderRadius = "var(--radius-xl)";
+      wrapper.style.overflow = "hidden"; // Hides the zoomed black bars
+      wrapper.style.margin = "0 auto 1rem auto";
+      wrapper.style.boxShadow = "var(--shadow-lg)";
+
+      coverImg.parentNode.insertBefore(wrapper, coverImg);
+      wrapper.appendChild(coverImg);
+
+      coverImg.style.width = "100%";
+      coverImg.style.height = "100%";
+      coverImg.style.margin = "0";
+      coverImg.style.boxShadow = "none";
+      coverImg.style.objectFit = "cover";
+    }
+
+    coverImg.src = leadSong.cover || "";
+    // If it's a YouTube hqdefault, zoom in 35% to hide the black bars
+    coverImg.style.transform =
+      leadSong.cover && leadSong.cover.includes("hqdefault")
+        ? "scale(1.35)"
+        : "scale(1)";
+  }
+
   document.getElementById("playlist-detail-name").innerText =
     `${artistName} Mix`;
   document.getElementById("playlist-detail-count").innerText =
@@ -547,19 +616,31 @@ function openLibraryPlaylistDetail(artistName, mixIndices) {
 
   const detailSongs = document.querySelector(".playlist-detail-songs");
   if (detailSongs) {
+    // 🌟 FIX 2: Force strict vertical layout for the song list
+    detailSongs.style.display = "flex";
+    detailSongs.style.flexDirection = "column";
+    detailSongs.style.padding = "0 20px 120px 20px";
+    detailSongs.style.width = "100%";
+    detailSongs.style.gap = "0";
+
     detailSongs.innerHTML = mixIndices
       .map((index) => {
         const s = songs[index];
+        const isHq = s.cover && s.cover.includes("hqdefault");
+
+        // 🌟 FIX 3: Structured list item with proper truncation and cropped mini-covers
         return `
-        <article class="songs-card" data-index="${index}" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer;">
+        <article class="songs-card" data-index="${index}" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; width: 100%;">
           <div class="songs-left" style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0;">
-            <img src="${s.cover || ""}" style="width: 45px; height: 45px; border-radius: 6px; object-fit: cover; flex-shrink: 0;">
-            <div class="songs-info" style="display: flex; flex-direction: column; min-width: 0;">
-              <h1 style="margin: 0 0 4px 0; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white;">${s.title}</h1>
-              <p style="margin: 0; font-size: 0.75rem; color: var(--clr-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${s.artist}</p>
+            <div style="width: 45px; height: 45px; border-radius: 6px; overflow: hidden; flex-shrink: 0;">
+              <img src="${s.cover || ""}" style="width: 100%; height: 100%; object-fit: cover; ${isHq ? "transform: scale(1.35);" : ""}">
+            </div>
+            <div class="songs-info" style="display: flex; flex-direction: column; justify-content: center; min-width: 0; flex: 1;">
+              <h1 style="margin: 0 0 4px 0; font-size: 0.95rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--clr-text); width: 100%; display: block;">${s.title}</h1>
+              <p style="margin: 0; font-size: 0.75rem; color: var(--clr-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; width: 100%; display: block;">${s.artist}</p>
             </div>
           </div>
-          <button class="more-btn" style="background: none; border: none; color: white; cursor: pointer; padding: 5px;"><i data-lucide="more-vertical" size="16"></i></button>
+          <button class="more-btn" style="background: none; border: none; color: var(--clr-text-muted); cursor: pointer; padding: 5px; flex-shrink: 0;"><i data-lucide="more-vertical" size="18"></i></button>
         </article>
       `;
       })
@@ -574,6 +655,8 @@ function openLibraryPlaylistDetail(artistName, mixIndices) {
         const songIdx = Number(card.dataset.index);
         window.currentPlaylistQueue = mixIndices;
         window.currentPlaylistName = `${artistName} Mix`;
+        if (typeof updatePlayingFromUI === "function") updatePlayingFromUI();
+
         if (typeof loadSong === "function") loadSong(songIdx);
         if (typeof playSong === "function") playSong();
       }
@@ -581,14 +664,9 @@ function openLibraryPlaylistDetail(artistName, mixIndices) {
   }
 }
 
-// ==========================================
-// DESKTOP "PREVIOUS" BUTTON LOGIC
-// ==========================================
 document.getElementById("mini-prev")?.addEventListener("click", (e) => {
   e.stopPropagation();
-  if (typeof prevSong === "function") {
-    prevSong();
-  }
+  if (typeof prevSong === "function") prevSong();
 });
 
 // ==========================================
@@ -596,6 +674,8 @@ document.getElementById("mini-prev")?.addEventListener("click", (e) => {
 // ==========================================
 const miniCoverImg = document.getElementById("miniCover");
 const miniPlayerBox = document.getElementById("miniPlayer");
+const fullPlayerScreen = document.querySelector(".player-screen");
+const fullCoverImg = document.querySelector(".player-cover-img");
 
 if (miniCoverImg && miniPlayerBox) {
   miniCoverImg.addEventListener("load", function () {
@@ -603,14 +683,52 @@ if (miniCoverImg && miniPlayerBox) {
       const colorThief = new ColorThief();
       const [r, g, b] = colorThief.getColor(miniCoverImg);
 
-      miniPlayerBox.style.background = `linear-gradient(to right, rgba(${r}, ${g}, ${b}, 0.85) 0%, rgba(${r}, ${g}, ${b}, 0.2) 65%, var(--clr-bg) 100%)`;
+      miniPlayerBox.style.background = `linear-gradient(to right, var(--clr-bg) 5%, rgba(${r}, ${g}, ${b}, 0.4) 50%, var(--clr-bg) 95%)`;
       miniCoverImg.style.boxShadow = `0 4px 20px rgba(${r}, ${g}, ${b}, 0.6)`;
       miniPlayerBox.style.borderTop = `1px solid rgba(${r}, ${g}, ${b}, 0.3)`;
+
+      if (fullPlayerScreen) {
+        fullPlayerScreen.style.backgroundImage = `radial-gradient(circle at 50% 40%, rgba(${r}, ${g}, ${b}, 0.5) 0%, var(--clr-bg) 70%)`;
+      }
+      if (fullCoverImg) {
+        fullCoverImg.style.boxShadow = `0 25px 60px rgba(${r}, ${g}, ${b}, 0.5)`;
+      }
     } catch (error) {
       console.log("ColorThief blocked by CORS, using default background.");
       miniPlayerBox.style.background = "var(--clr-surface-light)";
       miniPlayerBox.style.borderTop = "1px solid var(--clr-border)";
       miniCoverImg.style.boxShadow = "none";
+      if (fullPlayerScreen) fullPlayerScreen.style.background = "var(--clr-bg)";
+      if (fullCoverImg) fullCoverImg.style.boxShadow = "var(--shadow-lg)";
     }
   });
 }
+
+// ==========================================
+// QUEUE SCREEN UI TOGGLE LOGIC
+// ==========================================
+window.addEventListener(
+  "click",
+  (e) => {
+    const qBtn = e.target.closest(".queue-btn");
+    const cBtn = e.target.closest(".close-queue");
+    const qScreen = document.querySelector(".queue-screen");
+
+    if (qBtn && qScreen) {
+      e.stopPropagation();
+      e.preventDefault();
+      if (qScreen.classList.contains("show")) {
+        qScreen.classList.remove("show");
+      } else {
+        if (typeof renderQueue === "function") renderQueue();
+        qScreen.classList.add("show");
+      }
+    }
+
+    if (cBtn && qScreen) {
+      e.stopPropagation();
+      qScreen.classList.remove("show");
+    }
+  },
+  true,
+);
