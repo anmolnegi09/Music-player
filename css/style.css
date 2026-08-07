@@ -1,18 +1,24 @@
 :root {
-  /* Colors */
-  --clr-bg: #09090b;
-  --clr-surface: #18181b;
-  --clr-surface-light: #27272a;
-  --clr-primary: #8b5cf6;
-  --clr-primary-hover: #7c3aed;
-  --clr-primary-light: #a78bfa;
+  /* YouTube Music Official Palette */
+  --clr-bg: #000000; /* OLED Pure Black */
+  --clr-surface: #1d1d1d; /* YTM Matte Gray (for bottom sheets & mini player) */
+  --clr-surface-light: #282828; /* Lighter Gray for hover states */
+
+  /* Primary Accents (White & Light Gray) */
+  --clr-primary: #ffffff; /* Pure White Accent */
+  --clr-primary-hover: #e5e5e5; /* Slightly dimmed white for clicks */
+  --clr-primary-light: #ffffff;
+
+  /* Status Colors (Keep these standard) */
   --clr-success: #22c55e;
   --clr-danger: #ef4444;
   --clr-warning: #facc15;
-  --clr-text: #fafafa;
-  --clr-text-muted: #a1a1aa;
-  --clr-border: #2a2a2a;
-  --bg: #09090b;
+
+  /* Text & Borders */
+  --clr-text: #ffffff; /* Bright White Text */
+  --clr-text-muted: #aaaaaa; /* YTM Standard Gray for subtext */
+  --clr-border: #2a2a2a; /* Faint separator lines */
+  --bg: #000000;
 
   /* Transitions */
   --transition-fast: 0.15s ease;
@@ -20,13 +26,13 @@
   --transition-slow: 0.4s ease;
 
   /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.8);
 
   /* Glass */
-  --glass-bg: rgba(255, 255, 255, 0.04);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.1);
 
   /* Typography */
   --ff-primary: "Plus Jakarta Sans", sans-serif;
@@ -231,6 +237,9 @@ footer {
 
 .login {
   background-color: var(--clr-primary);
+  color: var(
+    --clr-bg
+  ); /* 🌟 FIX: Forces text to be black so it's visible on the white button */
   border-radius: var(--radius-xl);
   height: 40px;
   width: 100px;
@@ -814,7 +823,7 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 var(--space-6); 
+  padding: 0 var(--space-6);
   margin-top: 0; /* Removing the old harsh margin */
 }
 .player-cover-img {
@@ -890,7 +899,9 @@ footer {
   align-items: center;
 }
 .player-controls button {
-  transition: transform var(--transition-fast), color var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    color var(--transition-fast);
   color: var(--clr-text);
 }
 .player-controls button i {
@@ -1880,29 +1891,37 @@ footer {
     z-index: 99999999 !important; /* Forces the 3-Dot Menu to the absolute front */
   }
 
-/* 12. Desktop Slide-In Queue Panel */
+  /* 12. Desktop Slide-In Queue Panel */
   .queue-screen {
     top: 0 !important;
     right: 0 !important;
     left: auto !important;
     bottom: 0 !important;
-    width: 380px !important;
+    width: 420px !important; /* 🌟 FIX: Slightly wider to fit desktop text comfortably */
     height: 100vh !important;
     border-radius: 0 !important;
-    background: rgba(15, 15, 20, 0.85) !important; 
-    backdrop-filter: blur(25px) !important; 
-    border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
-    
-    overflow-x: hidden !important; 
-    overflow-y: auto !important; 
-    
-    transform: translateX(100%) !important; 
+    background: var(--clr-bg) !important; /* 🌟 FIX: Pure black background */
+    border-left: 1px solid var(--clr-border) !important;
+    padding: 0 30px !important; /* 🌟 FIX: Adds proper spacing away from the scrollbar */
+
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+
+    transform: translateX(100%) !important;
     transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
   }
 
   /* 🌟 THE MISSING RULE: This slides the panel onto the desktop screen! */
   .queue-screen.show {
-    transform: translateX(0) !important; 
+    transform: translateX(0) !important;
+  }
+
+  /* 🌟 FIX: Perfectly blends the queue header into the queue screen */
+  .queue-header {
+    background-color: var(--clr-bg) !important;
+    padding-top: 35px !important;
+    padding-bottom: 20px !important;
+    border-bottom: 1px solid var(--clr-border) !important;
   }
 }
 
