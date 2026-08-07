@@ -772,7 +772,7 @@ footer {
 }
 
 /* ===========================
-   FULL PLAYER
+   FULL PLAYER (YTM STYLE)
 =========================== */
 .player-screen {
   background: var(--clr-bg);
@@ -782,140 +782,174 @@ footer {
   left: 0;
   width: 100%;
   z-index: var(--z-modal);
-  padding-bottom: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .player-header {
-  padding: var(--space-5);
+  padding: var(--space-4) var(--space-5);
   background: transparent !important;
   border: none !important;
+  flex-shrink: 0;
 }
 .playing-from {
   text-align: center;
 }
 .playing-from p {
-  font-size: var(--fs-xs);
+  font-size: 10px;
   color: var(--clr-text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
+  margin-bottom: 2px;
 }
 .playing-from h3 {
   font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-bold);
 }
 
+/* 🌟 The Magic Flexbox Container for the Cover */
 .player-cover {
-  padding: var(--space-5);
-  margin-top: calc(var(--header-height) + var(--space-4));
+  flex: 1; /* This forces the cover to perfectly center in the available space */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-6); 
+  margin-top: 0; /* Removing the old harsh margin */
 }
 .player-cover-img {
   width: 100%;
-  max-width: 340px;
+  max-width: 320px;
   aspect-ratio: 1/1;
   object-fit: cover;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
 }
 
+.player-details {
+  padding: 0 var(--space-6);
+  margin-bottom: var(--space-2);
+}
 .song-details {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-width: 0;
 }
-.song-details .player-artist {
-  font-size: 0.85rem;
-  color: var(--clr-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.song-details .player-title {
+  font-size: 1.6rem;
   font-weight: var(--fw-bold);
-  margin-bottom: 4px;
+  color: var(--clr-text);
+  margin-bottom: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.song-details .player-title {
-  font-size: var(--fs-xl);
-  font-weight: var(--fw-bold);
-  color: var(--clr-text);
-  margin-bottom: 0;
+.song-details .player-artist {
+  font-size: 1rem;
+  color: var(--clr-text-muted);
+  font-weight: var(--fw-medium);
+  text-transform: none; /* YouTube Music uses normal casing */
+  letter-spacing: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.player-details {
-  padding-inline: var(--space-5);
-}
 .player-details .favorite-btn {
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 10px;
 }
 .player-details svg {
-  height: var(--icon-md);
-  width: var(--icon-md);
+  height: 26px;
+  width: 26px;
 }
 
 .progress-section {
-  padding-top: var(--space-6);
-  padding-inline: var(--space-5);
+  padding: var(--space-2) var(--space-6) 0;
 }
 .progress-bar {
   width: 100%;
-  accent-color: var(--clr-primary);
-  height: 4px;
+  height: 3px; /* Sleeker line */
+  accent-color: var(--clr-text); /* White accent */
   cursor: pointer;
 }
 .time-info {
   display: flex;
   justify-content: space-between;
-  margin-top: var(--space-2);
-  font-size: var(--fs-xs);
+  margin-top: 8px;
+  font-size: 12px;
   color: var(--clr-text-muted);
+  font-weight: var(--fw-medium);
 }
 
 .player-controls {
-  padding-top: var(--space-6);
-  padding-inline: var(--space-5);
+  padding: var(--space-4) var(--space-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .player-controls button {
-  transition:
-    transform var(--transition-fast),
-    color var(--transition-fast);
+  transition: transform var(--transition-fast), color var(--transition-fast);
+  color: var(--clr-text);
+}
+.player-controls button i {
+  width: 26px;
+  height: 26px;
 }
 .player-controls button:hover {
-  color: var(--clr-primary-light);
+  color: var(--clr-text-muted);
 }
 .player-controls button:active {
   transform: scale(0.9);
 }
 
+/* 🌟 YouTube Music Style Play Button */
 .play-btn-large {
-  background-color: var(--clr-primary);
+  background-color: var(--clr-text); /* White circle */
+  color: var(--clr-bg) !important; /* Black icon */
   border-radius: var(--radius-round);
-  height: 70px;
-  width: 70px;
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+  height: 64px;
+  width: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none; /* Removes the purple glow */
+}
+.play-btn-large i {
+  width: 32px !important;
+  height: 32px !important;
+  fill: var(--clr-bg); /* Makes the triangle solid black */
 }
 .play-btn-large:hover {
-  background-color: var(--clr-primary-hover);
+  background-color: #e5e5e5;
+  color: var(--clr-bg) !important;
 }
 
 .player-bottom {
-  padding-inline: var(--space-5);
-  padding-top: var(--space-8);
+  padding: var(--space-2) var(--space-6) calc(var(--space-6) + 15px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .lyrics-btn {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-md);
   font-weight: var(--fw-medium);
-  background: var(--clr-surface-light);
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-round);
+  color: var(--clr-text-muted);
+  background: transparent;
+  padding: 0;
+}
+.lyrics-btn:hover {
+  color: var(--clr-text);
+}
+.queue-btn {
+  color: var(--clr-text-muted);
+}
+.queue-btn:hover {
+  color: var(--clr-text);
 }
 
 /* ===========================

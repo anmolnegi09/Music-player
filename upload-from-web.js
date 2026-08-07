@@ -27,7 +27,7 @@ async function uploadFromYouTube() {
   let tempFileName = ""; 
 
   try {
-    console.log(`🔍 Fetching video details using cookies file...`);
+    console.log(`🔍 Fetching video details...`);
     const info = await youtubedl(cleanUrl, {
       dumpSingleJson: true, noWarnings: true, quiet: true, cookies: "cookies.txt", noPlaylist: true,
     });
@@ -47,21 +47,18 @@ async function uploadFromYouTube() {
 
     tempFileName = `${cleanId}.mp3`;
     
-    // 🌟 Extract Artist & Exact YouTube Cover Image!
     const ytArtist = info.artist || info.uploader || info.channel || "Unknown Artist";
     const safeArtist = ytArtist.replace(/[/\\?%*:|"<>=\n|]/g, '').trim();
-    const ytCover = info.thumbnail ? info.thumbnail.split("?")[0] : ""; // Strips query parameters for a clean link
 
     console.log(`⬇️ Extracting audio...`);
     await youtubedl(cleanUrl, {
       extractAudio: true, audioFormat: "mp3", format: "bestaudio", noPlaylist: true, output: `${cleanId}.%(ext)s`, ffmpegLocation: `"${ffmpegPath}"`, cookies: "cookies.txt", quiet: true, noWarnings: true,
     });
 
-    console.log(`☁️ Uploading to Cloudinary with Cover & Artist tags...`);
+    console.log(`☁️ Uploading to Cloudinary with Artist tags...`);
     
-    // 🌟 Secretly inject both the artist AND the cover image URL!
     await cloudinary.uploader.upload(tempFileName, {
-      resource_type: "video", folder: "aura", public_id: cleanId, context: `artist=${safeArtist}|cover=${ytCover}`
+      resource_type: "video", folder: "aura", public_id: cleanId, context: `artist=${safeArtist}`
     });
 
     console.log(`🔄 Updating music database...`);

@@ -65,14 +65,8 @@ async function uploadAlbumFromYouTube() {
     }
 
     const tempFileName = `${cleanId}.mp3`;
-    
-    // 🌟 Extract Artist & YouTube Music Cover Image!
     const ytArtist = track.uploader || track.channel || "Unknown Artist"; 
     const safeArtist = ytArtist.replace(/[/\\?%*:|"<>=\n|]/g, '').trim();
-    let ytCover = "";
-    if (track.thumbnails && track.thumbnails.length > 0) {
-      ytCover = track.thumbnails[track.thumbnails.length - 1].url.split("?")[0];
-    }
 
     try {
       console.log(`[${i + 1}/${tracks.length}] ⬇️ Extracting: "${songTitle}"...`);
@@ -80,9 +74,8 @@ async function uploadAlbumFromYouTube() {
         extractAudio: true, audioFormat: "mp3", format: "bestaudio", noPlaylist: true, output: `${cleanId}.%(ext)s`, ffmpegLocation: `"${ffmpegPath}"`, cookies: "cookies.txt", quiet: true, noWarnings: true,
       });
 
-      // 🌟 Inject the artist and cover tags!
       await cloudinary.uploader.upload(tempFileName, {
-        resource_type: "video", folder: "aura", public_id: cleanId, context: `artist=${safeArtist}|cover=${ytCover}`
+        resource_type: "video", folder: "aura", public_id: cleanId, context: `artist=${safeArtist}`
       });
 
       downloadedCount++;
