@@ -1,6 +1,3 @@
-// ==========================================
-// GLOBAL VARIABLES & UTILITIES
-// ==========================================
 window.userQueue = window.userQueue || [];
 
 window.showToast = function (message) {
@@ -19,11 +16,7 @@ window.showToast = function (message) {
   }, 3000);
 };
 
-// ==========================================
-// INITIALIZATION & UI SETUP
-// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-  // 🌟 FIX: Restore the Queue State from LocalStorage
   try {
     const savedQueue = localStorage.getItem("currentPlaylistQueue");
     if (savedQueue) window.currentPlaylistQueue = JSON.parse(savedQueue);
@@ -48,11 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
     currentSongIndex = 0;
   }
 
-  // Update the UI Header with the restored name!
   if (typeof updatePlayingFromUI === "function") updatePlayingFromUI();
-
   if (typeof loadSong === "function") loadSong(currentSongIndex);
-
   if (typeof renderRecentSongs === "function") renderRecentSongs();
   if (typeof renderPlaylists === "function") renderPlaylists();
   if (typeof renderSuggestedSongs === "function") renderSuggestedSongs();
@@ -60,9 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (typeof renderFavoritesCount === "function") renderFavoritesCount();
   if (typeof renderLibrary === "function") renderLibrary();
 
-  // ==========================================
-  // 3-DOT OPTIONS MENU LOGIC
-  // ==========================================
   const optionsSheet = document.getElementById("songOptionsSheet");
   const optionsOverlay = document.getElementById("optionsOverlay");
   const optCover = document.getElementById("options-cover");
@@ -302,7 +289,6 @@ document.addEventListener("DOMContentLoaded", () => {
           showToast(`Will play next: ${songToQueue.title}`);
       }
     }
-    // 🌟 FIX: Save manual queue instantly
     localStorage.setItem("userQueue", JSON.stringify(window.userQueue));
     closeOptionsSheet();
   });
@@ -332,7 +318,6 @@ document.addEventListener("DOMContentLoaded", () => {
           showToast(`Added to queue: ${songToQueue.title}`);
       }
     }
-    // 🌟 FIX: Save manual queue instantly
     localStorage.setItem("userQueue", JSON.stringify(window.userQueue));
     closeOptionsSheet();
   });
@@ -579,7 +564,6 @@ function openLibraryPlaylistDetail(artistName, mixIndices) {
   const leadSong = songs[mixIndices[0]];
   const coverImg = document.getElementById("playlist-detail-cover");
 
-  // 🌟 FIX 1: Wrap the image to safely crop out the YouTube black bars!
   if (coverImg) {
     if (!coverImg.parentElement.classList.contains("cover-wrapper")) {
       const wrapper = document.createElement("div");
@@ -587,7 +571,7 @@ function openLibraryPlaylistDetail(artistName, mixIndices) {
       wrapper.style.width = "220px";
       wrapper.style.height = "220px";
       wrapper.style.borderRadius = "var(--radius-xl)";
-      wrapper.style.overflow = "hidden"; // Hides the zoomed black bars
+      wrapper.style.overflow = "hidden";
       wrapper.style.margin = "0 auto 1rem auto";
       wrapper.style.boxShadow = "var(--shadow-lg)";
 
@@ -602,7 +586,6 @@ function openLibraryPlaylistDetail(artistName, mixIndices) {
     }
 
     coverImg.src = leadSong.cover || "";
-    // If it's a YouTube hqdefault, zoom in 35% to hide the black bars
     coverImg.style.transform =
       leadSong.cover && leadSong.cover.includes("hqdefault")
         ? "scale(1.35)"
@@ -616,7 +599,6 @@ function openLibraryPlaylistDetail(artistName, mixIndices) {
 
   const detailSongs = document.querySelector(".playlist-detail-songs");
   if (detailSongs) {
-    // 🌟 FIX 2: Force strict vertical layout for the song list
     detailSongs.style.display = "flex";
     detailSongs.style.flexDirection = "column";
     detailSongs.style.padding = "0 20px 120px 20px";
@@ -628,7 +610,6 @@ function openLibraryPlaylistDetail(artistName, mixIndices) {
         const s = songs[index];
         const isHq = s.cover && s.cover.includes("hqdefault");
 
-        // 🌟 FIX 3: Structured list item with proper truncation and cropped mini-covers
         return `
         <article class="songs-card" data-index="${index}" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; width: 100%;">
           <div class="songs-left" style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0;">
@@ -655,7 +636,6 @@ function openLibraryPlaylistDetail(artistName, mixIndices) {
         const songIdx = Number(card.dataset.index);
         window.currentPlaylistQueue = mixIndices;
         window.currentPlaylistName = `${artistName} Mix`;
-        if (typeof updatePlayingFromUI === "function") updatePlayingFromUI();
 
         if (typeof loadSong === "function") loadSong(songIdx);
         if (typeof playSong === "function") playSong();
@@ -669,9 +649,6 @@ document.getElementById("mini-prev")?.addEventListener("click", (e) => {
   if (typeof prevSong === "function") prevSong();
 });
 
-// ==========================================
-// DYNAMIC PLAYER GRADIENT (ColorThief)
-// ==========================================
 const miniCoverImg = document.getElementById("miniCover");
 const miniPlayerBox = document.getElementById("miniPlayer");
 const fullPlayerScreen = document.querySelector(".player-screen");
@@ -704,9 +681,6 @@ if (miniCoverImg && miniPlayerBox) {
   });
 }
 
-// ==========================================
-// QUEUE SCREEN UI TOGGLE LOGIC
-// ==========================================
 window.addEventListener(
   "click",
   (e) => {

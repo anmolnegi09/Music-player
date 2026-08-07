@@ -1,28 +1,12 @@
-// Safe ColorThief initialization check
 let colorThief = null;
 try {
   if (typeof ColorThief !== "undefined") {
     colorThief = new ColorThief();
   }
-} catch (e) {
-  console.warn("ColorThief not loaded yet:", e.message);
-}
+} catch (e) {}
 
-// Replace the top updatePlayingFromUI block:
-const updatePlayingFromUI = () => {
-  const playingFromSection = document.querySelector(".playing-from");
-  const playingFromTitle = document.querySelector(".playing-from h3");
-  if (!playingFromSection || !playingFromTitle) return;
+const updatePlayingFromUI = () => {};
 
-  // FIX: Unify variable usage and default to "All Songs"
-  const activeName = window.currentPlaylistName || "All Songs";
-
-  playingFromTitle.textContent = activeName;
-  playingFromSection.classList.remove("hidden"); // Always keep it visible!
-};
-// ----------------------
-// Fisher-Yates shuffle
-// ----------------------
 function shuffledIndices(count, take) {
   const arr = Array.from({ length: count }, (_, i) => i);
   for (let i = arr.length - 1; i > 0; i--) {
@@ -32,14 +16,10 @@ function shuffledIndices(count, take) {
   return arr.slice(0, take);
 }
 
-// ----------------------
-// Rendering & Saving Data
-// ----------------------
 const getSafeRecentSongs = () => {
   try {
     return JSON.parse(localStorage.getItem("recentSongs")) || [];
   } catch (error) {
-    console.warn("Corrupt recentSongs data found in storage, resetting.");
     return [];
   }
 };
@@ -90,9 +70,6 @@ const renderPlaylists = () => {
   if (typeof lucide !== "undefined") lucide.createIcons();
 };
 
-// ----------------------
-// Suggested For You
-// ----------------------
 const renderSuggestedSongs = () => {
   const gridContainer = document.getElementById("suggestedGrid");
   if (!gridContainer || !songs || !songs.length) return;
@@ -117,9 +94,6 @@ const renderSuggestedSongs = () => {
   if (typeof lucide !== "undefined") lucide.createIcons();
 };
 
-// ----------------------
-// Playlist Click Logic
-// ----------------------
 playlistList?.addEventListener("click", (e) => {
   const card = e.target.closest(".playlist-card");
   if (!card) return;
@@ -155,7 +129,6 @@ playlistList?.addEventListener("click", (e) => {
     playlistDetailCount.textContent = `${selectedPlaylist.songs?.length || 0} Songs`;
 
   if (playlistDetailSongs) {
-    // 🌟 FIX: Force strict vertical layout for the song list
     playlistDetailSongs.style.display = "flex";
     playlistDetailSongs.style.flexDirection = "column";
     playlistDetailSongs.style.padding = "0 20px 120px 20px";
@@ -215,9 +188,6 @@ playlistDetailSongs?.addEventListener("click", (e) => {
   playSong();
 });
 
-// ----------------------
-// Home Screen Clicks
-// ----------------------
 const homeClickContainers = [
   recentList,
   document.getElementById("suggestedGrid"),
@@ -237,14 +207,12 @@ homeClickContainers.forEach((list) => {
 
     const clickedIndex = Number(card.dataset.index);
 
-    // 🌟 FIX: Generate a shuffled array of all songs, excluding the clicked one
     let allIndices = songs.map((_, i) => i).filter((i) => i !== clickedIndex);
     for (let i = allIndices.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [allIndices[i], allIndices[j]] = [allIndices[j], allIndices[i]];
     }
 
-    // 🌟 FIX: Put the clicked song at the very front of the shuffled list
     window.currentPlaylistName = "All Songs";
     window.currentPlaylistQueue = [clickedIndex, ...allIndices];
 
@@ -254,9 +222,7 @@ homeClickContainers.forEach((list) => {
     playSong();
   });
 });
-// ----------------------
-// Favorites System
-// ----------------------
+
 const updateFavoriteButton = () => {
   const iconHTML = isFavorite
     ? `<i data-lucide="heart" fill="currentColor" color="#ff4040"></i>`
@@ -344,9 +310,6 @@ likedSongsList?.addEventListener("click", (e) => {
   }
 });
 
-// ----------------------
-// Main Navigation Logic
-// ----------------------
 const screens = [homeScreen, searchScreen, libraryScreen, profileScreen];
 const allPossibleScreens = [
   homeScreen,
@@ -387,9 +350,6 @@ backToLibraryBtn?.addEventListener("click", () => {
   btn?.addEventListener("click", () => navBtns[0]?.click());
 });
 
-// ==========================================
-// RECENT HISTORY FULL SCREEN LOGIC
-// ==========================================
 const showMoreRecentBtn = document.getElementById("show-more-recent-btn");
 const recentHistoryScreen = document.querySelector(".recent-history-screen");
 const closeRecentHistoryBtn = document.getElementById("close-recent-history");

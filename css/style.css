@@ -767,23 +767,6 @@ footer {
   flex-shrink: 0;
 }
 
-.playing-from {
-  text-align: center;
-}
-
-.playing-from p {
-  font-size: 10px;
-  color: var(--clr-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 2px;
-}
-
-.playing-from h3 {
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-bold);
-}
-
 .player-cover {
   flex: 1;
   display: flex;

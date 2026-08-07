@@ -1,21 +1,14 @@
-// ----------------------
-// State Variables
-// ----------------------
 let currentPlaylistQueue = [];
 let activeScreenBeforePlayer = null;
 let currentPlaylistName = "";
 
 const audio = new Audio();
 
-// Global player state
 let currentSongIndex = 0; 
 let isRepeat = false;
 let isShuffle = false;
 let isFavorite = false;
 
-// ----------------------
-// Main Screens & Lists
-// ----------------------
 const homeScreen = document.querySelector(".home-screen");
 const playerScreen = document.querySelector(".player-screen");
 const queueScreen = document.querySelector(".queue-screen");
@@ -31,9 +24,6 @@ const queueList = document.querySelector(".queue-list");
 const searchList = document.querySelector(".search-list");
 const likedSongsList = document.querySelector(".liked-songs-list");
 
-// ----------------------
-// Mini Player Elements
-// ----------------------
 const miniPlayer = document.getElementById("miniPlayer");
 const miniCover = document.getElementById("miniCover");
 const miniArtist = document.getElementById("miniArtist");
@@ -42,9 +32,6 @@ const playerBtn = document.getElementById("playerBtn");
 const miniNextBtn = document.getElementById("miniNextBtn");
 const miniLikeBtn = document.getElementById("miniLikeBtn");
 
-// ----------------------
-// Full Player Elements
-// ----------------------
 const backBtn = document.querySelector(".back-btn");
 const playerCover = document.querySelector(".player-cover-img");
 const playerTitle = document.querySelector(".song-details h2");
@@ -61,9 +48,6 @@ const progressBar = document.querySelector(".progress-bar");
 const currentTime = document.querySelector(".current-time");
 const duration = document.querySelector(".duration");
 
-// ----------------------
-// Library & Nav Elements
-// ----------------------
 const queueBtn = document.querySelector(".queue-btn");
 const closeQueue = document.querySelector(".close-queue");
 const searchInput = document.querySelector(".search-input");
@@ -76,9 +60,6 @@ const favSongCount = document.getElementById("fav-song-count");
 const closeLibraryBtn = document.querySelector(".close-library-btn");
 const closeSearchBtn = document.querySelector(".close-search-btn");
 
-// ----------------------
-// Playlist Screen Elements
-// ----------------------
 const playlistDetailScreen = document.querySelector(".playlist-detail-screen");
 const closePlaylistBtn = document.querySelector(".close-playlist-btn");
 const playlistDetailCover = document.getElementById("playlist-detail-cover");

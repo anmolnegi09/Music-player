@@ -1,16 +1,13 @@
 const browseSection = document.querySelector(".browse-section");
 
-// ==========================================
-// 1. RECENT SEARCHES STORAGE & RENDER LOGIC
-// ==========================================
 const getRecentSearches = () =>
   JSON.parse(localStorage.getItem("recentSearches")) || [];
 
 const saveRecentSearch = (songIndex) => {
   let searches = getRecentSearches();
-  searches = searches.filter((id) => id !== songIndex); // Remove duplicate if it exists
-  searches.unshift(songIndex); // Add to the very top
-  searches = searches.slice(0, 5); // Keep only the top 5
+  searches = searches.filter((id) => id !== songIndex);
+  searches.unshift(songIndex);
+  searches = searches.slice(0, 5);
   localStorage.setItem("recentSearches", JSON.stringify(searches));
 };
 
@@ -32,11 +29,10 @@ const renderRecentSearchesUI = () => {
   if (!container || !list) return;
 
   const searches = getRecentSearches();
-  // Filter out any broken indexes just in case the database changes
   const validSearches = searches.filter((index) => songs && songs[index]);
 
   if (validSearches.length === 0) {
-    container.classList.add("hidden"); // Hide if empty
+    container.classList.add("hidden");
     return;
   }
 
@@ -64,12 +60,8 @@ const renderRecentSearchesUI = () => {
   if (typeof lucide !== "undefined") lucide.createIcons();
 };
 
-// Run on initial page load
 document.addEventListener("DOMContentLoaded", renderRecentSearchesUI);
 
-// ==========================================
-// 2. SEARCH INPUT LOGIC (Local Database)
-// ==========================================
 searchInput?.addEventListener("input", (e) => {
   const query = e.target.value.trim().toLowerCase();
 
@@ -78,7 +70,7 @@ searchInput?.addEventListener("input", (e) => {
 
   if (!query) {
     if (searchList) searchList.innerHTML = "";
-    renderRecentSearchesUI(); // Show recent searches again when input is cleared
+    renderRecentSearchesUI();
     return;
   }
 
@@ -117,19 +109,14 @@ const renderLocalSearchResults = (filtered) => {
     .join("");
 };
 
-// ==========================================
-// 3. CLICK EVENTS (Play Song & Manage History)
-// ==========================================
 searchList?.addEventListener("click", (e) => {
   const card = e.target.closest(".search-result-card");
   if (!card) return;
 
   const originalIndex = Number(card.dataset.index);
 
-  // SAVE THE SONG INDEX TO HISTORY BEFORE PLAYING
   saveRecentSearch(originalIndex);
 
-  // 🌟 FIX: Generate smart shuffled queue
   let allIndices = songs.map((_, i) => i).filter((i) => i !== originalIndex);
   for (let i = allIndices.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -138,14 +125,6 @@ searchList?.addEventListener("click", (e) => {
 
   currentPlaylistName = "Search Results";
   currentPlaylistQueue = [originalIndex, ...allIndices];
-
-  const playingFromSection = document.querySelector(".playing-from");
-  const playingFromTitle = document.querySelector(".playing-from h3");
-
-  if (playingFromSection && playingFromTitle) {
-    playingFromTitle.textContent = currentPlaylistName;
-    playingFromSection.classList.remove("hidden");
-  }
 
   if (typeof loadSong === "function") loadSong(originalIndex);
   if (typeof playSong === "function") playSong();
@@ -163,7 +142,6 @@ document
     } else if (item) {
       const index = Number(item.dataset.index);
 
-      // 🌟 FIX: Generate smart shuffled queue
       let allIndices = songs.map((_, i) => i).filter((i) => i !== index);
       for (let i = allIndices.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -172,14 +150,6 @@ document
 
       currentPlaylistName = "Recent Searches";
       currentPlaylistQueue = [index, ...allIndices];
-
-      const playingFromSection = document.querySelector(".playing-from");
-      const playingFromTitle = document.querySelector(".playing-from h3");
-
-      if (playingFromSection && playingFromTitle) {
-        playingFromTitle.textContent = currentPlaylistName;
-        playingFromSection.classList.remove("hidden");
-      }
 
       if (typeof loadSong === "function") loadSong(index);
       if (typeof playSong === "function") playSong();

@@ -1,13 +1,9 @@
-// ----------------------
-// Mini Player & Initialization
-// ----------------------
 function loadSong(index) {
   if (!songs || !songs[index]) return;
 
   currentSongIndex = index;
   localStorage.setItem("currentSongIndex", currentSongIndex);
 
-  // 🌟 FIX: Save the active queue and name to survive reloads!
   localStorage.setItem("currentPlaylistName", window.currentPlaylistName || "");
   localStorage.setItem(
     "currentPlaylistQueue",
@@ -39,6 +35,7 @@ function loadSong(index) {
   isFavorite = liked.includes(currentSongIndex);
   updateFavoriteButton?.();
 }
+
 function playSong() {
   const playPromise = audio.play();
   if (playPromise !== undefined) {
@@ -70,9 +67,6 @@ function updateFullPlayer(song) {
   if (playerArtist) playerArtist.textContent = song.artist || "Unknown Artist";
 }
 
-// ----------------------
-// Mini Player Buttons
-// ----------------------
 miniNextBtn?.addEventListener("click", (e) => {
   e.stopPropagation();
   playNext();
@@ -87,9 +81,6 @@ miniLikeBtn?.addEventListener("click", (e) => {
   }
 });
 
-// ----------------------
-// Play / Pause Logic
-// ----------------------
 function updatePlayerButton() {
   const icon = audio.paused ? "play" : "pause";
   const iconHTML = `<i data-lucide="${icon}"></i>`;
@@ -109,9 +100,6 @@ function togglePlay(e) {
 playerBtn?.addEventListener("click", togglePlay);
 playBtnLarge?.addEventListener("click", togglePlay);
 
-// ----------------------
-// Player Screen Navigation
-// ----------------------
 const allPlayerScreens = [
   homeScreen,
   searchScreen,
@@ -138,9 +126,6 @@ backBtn?.addEventListener("click", () => {
   (activeScreenBeforePlayer || homeScreen)?.classList.remove("hidden");
 });
 
-// ----------------------
-// Progress Bar
-// ----------------------
 function formatTime(seconds) {
   if (isNaN(seconds)) return "0:00";
   const minutes = Math.floor(seconds / 60);
@@ -163,11 +148,7 @@ progressBar?.addEventListener("input", () => {
   audio.currentTime = (progressBar.value / 100) * audio.duration;
 });
 
-// ----------------------
-// Track Navigation (Smart Queue Engine)
-// ----------------------
 function playNext() {
-  // Priority 1: User explicitly queued a manual song
   if (window.userQueue && window.userQueue.length > 0) {
     const nextQueuedSong = window.userQueue.shift();
     const queuedIndex = songs.findIndex((s) => s.id === nextQueuedSong.id);
@@ -180,7 +161,6 @@ function playNext() {
     }
   }
 
-  // Priority 2: Use Playlist Queue or default to all songs
   const activeArray =
     window.currentPlaylistQueue && window.currentPlaylistQueue.length > 0
       ? window.currentPlaylistQueue
@@ -239,25 +219,12 @@ repeatBtn?.addEventListener("click", () => {
   repeatBtn.classList.toggle("active", isRepeat);
 });
 
-// ----------------------
-// Auto-skip on Dead Stream
-// ----------------------
 let consecutivePlaybackFailures = 0;
 const MAX_CONSECUTIVE_FAILURES = 5;
 
 audio.addEventListener("error", () => {
   consecutivePlaybackFailures++;
-  console.warn(
-    `Playback failed for "${songs[currentSongIndex]?.title}" (${consecutivePlaybackFailures}/${MAX_CONSECUTIVE_FAILURES}). Skipping...`,
-  );
-
-  if (consecutivePlaybackFailures >= MAX_CONSECUTIVE_FAILURES) {
-    console.error(
-      "Too many consecutive playback failures. Stopping auto-skip.",
-    );
-    return;
-  }
-
+  if (consecutivePlaybackFailures >= MAX_CONSECUTIVE_FAILURES) return;
   playNext();
 });
 
@@ -265,9 +232,6 @@ audio.addEventListener("playing", () => {
   consecutivePlaybackFailures = 0;
 });
 
-// ----------------------
-// Queue Screen
-// ----------------------
 queueBtn?.addEventListener("click", () => {
   renderQueue();
   queueScreen?.classList.add("show");
@@ -285,7 +249,6 @@ function renderQueue() {
   let html = "";
   const playlistName = window.currentPlaylistName || "All Songs";
 
-  // 1. MANUAL QUEUE ("Up Next")
   if (window.userQueue && window.userQueue.length > 0) {
     html += `<h4 style="padding: 15px 0 10px 0; color: var(--clr-text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Up Next</h4>`;
 
@@ -305,15 +268,12 @@ function renderQueue() {
     });
   }
 
-  // 2. CONTEXT QUEUE (Playlist or All Songs)
   let activeArray =
     window.currentPlaylistQueue && window.currentPlaylistQueue.length > 0
       ? window.currentPlaylistQueue
       : typeof songs !== "undefined"
         ? songs.map((_, i) => i)
         : [];
-
-  // FIX: Removed the `.slice()` logic entirely! Now it shows previous songs too.
 
   if (activeArray.length > 0) {
     html += `<h4 style="padding: 15px 0 10px 0; color: var(--clr-text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Playing from ${playlistName}</h4>`;
@@ -325,7 +285,6 @@ function renderQueue() {
       const isPlaying = songIndex === currentSongIndex;
       const playingClass = isPlaying ? "playing" : "";
 
-      // Styling strictly matched to your screenshot (no opacity dimming, just color highlights)
       const rightIcon = isPlaying
         ? `<i data-lucide="bar-chart-2" style="width: 20px; height: 20px; color: var(--clr-primary); margin-left: auto; flex-shrink: 0;"></i>`
         : "";
@@ -352,7 +311,6 @@ function renderQueue() {
     });
   }
 
-  // 3. EMPTY STATE
   if (html === "") {
     queueList.innerHTML = `
       <div style="text-align: center; padding: var(--space-8) var(--space-4); color: var(--clr-text-muted);">
@@ -363,8 +321,6 @@ function renderQueue() {
     `;
   } else {
     queueList.innerHTML = html;
-
-    // Auto-Scroll to the playing song!
     setTimeout(() => {
       const playingItem = queueList.querySelector(".queue-item.playing");
       if (playingItem) {
@@ -375,9 +331,7 @@ function renderQueue() {
 
   if (typeof lucide !== "undefined") lucide.createIcons();
 }
-// ----------------------
-// SINGLE UNIFIED QUEUE CLICK LISTENER
-// ----------------------
+
 queueList?.addEventListener("click", (e) => {
   const removeBtn = e.target.closest(".remove-queue-btn");
   if (removeBtn) {
@@ -416,9 +370,6 @@ queueList?.addEventListener("click", (e) => {
   }
 });
 
-// ----------------------
-// Favorite Feature Button
-// ----------------------
 favoriteBtn?.addEventListener("click", () => {
   if (typeof toggleLikedSong === "function") {
     isFavorite = toggleLikedSong(currentSongIndex);
@@ -427,9 +378,6 @@ favoriteBtn?.addEventListener("click", () => {
   }
 });
 
-// ----------------------
-// Dynamic Color System
-// ----------------------
 const colorProbeImg = new Image();
 colorProbeImg.crossOrigin = "Anonymous";
 
@@ -464,7 +412,6 @@ colorProbeImg.onload = () => {
 
     miniPlayerEl.style.background = `linear-gradient(to right, rgba(${r}, ${g}, ${b}, 0.35) 0%, var(--clr-surface-light) 60%)`;
   } catch (error) {
-    console.warn("Color extraction error:", error.message);
     miniPlayerEl.style.background = "var(--clr-surface-light)";
   }
 };
@@ -478,9 +425,6 @@ function applyDynamicColor(imgUrl) {
   if (imgUrl) colorProbeImg.src = imgUrl;
 }
 
-// ----------------------
-// Auto-Play Engine
-// ----------------------
 audio.addEventListener("ended", () => {
   if (typeof isRepeat !== "undefined" && isRepeat) {
     audio.currentTime = 0;
